@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Session } from '@nestjs/common';
+import * as secureSession from 'fastify-secure-session'
 
 @Injectable()
 export class AppService {
-  getHello(): string {
-    return 'Hello World!';
+  getHello(@Session() session: secureSession.Session): string {
+    return "TOKEN : " + session.get('token');
   }
 }
