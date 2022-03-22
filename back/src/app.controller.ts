@@ -1,4 +1,4 @@
-import { Controller, Get, Session } from '@nestjs/common';
+import { Controller, Get, Session, Request } from '@nestjs/common';
 import { AppService } from './app.service';
 import * as secureSession from 'fastify-secure-session'
 
@@ -7,7 +7,9 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  getHello(@Session() session: secureSession.Session): string {
+  getHello(@Request() a, @Session() session: secureSession.Session): string {
+	console.log(a["raw"]['rawHeaders']);
+	console.log("\n\n\n\\");
     return this.appService.getHello(session);
   }
 }

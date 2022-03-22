@@ -13,7 +13,10 @@ async function bootstrap() {
 		salt: 'mq9hDxBVDbspDR6n',
 	  });
 	const port = 3000;
-	app.enableCors();
+	app.enableCors({
+		origin: "http://localhost:8080",
+		credentials: true,
+	});
 	await app.listen(port, () => console.log(`Server started on http://localhost:${port}`));
   }
   
