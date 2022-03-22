@@ -1,16 +1,16 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Session } from '@nestjs/common';
 import { UsersService } from './users.service'
+import * as secureSession from 'fastify-secure-session'
 
 @Controller('users')
 export class UsersController {
 	constructor(private readonly usersService: UsersService) {}
 
-	@Get()
-	all(): string {
-	  return this.usersService.all();
-	}
-	@Get(':a')
-	id(@Param('a') a): string {
-	  return this.usersService.id(a);
+	@Get('id')
+	id(@Session() session: secureSession.Session) {
+		const id = session.get('id');
+		if (id === undefined)
+			session.set('id', Math.random());
+		return (session.get('id'));
 	}
 }
