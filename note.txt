@@ -1,4 +1,4 @@
-https://docs.nestjs.com/recipes/sql-typeorm
+https://docs.nestjs.com/techniques/database
 // for postgressql
 
 docker_init.sh
@@ -6,3 +6,14 @@ docker_init.sh
 
 sapper
 // framework front
+
+
+
+// create table testos
+CREATE TABLE public.user_tetos
+(
+    id numeric,
+    name cstring[],
+    ok boolean,
+    PRIMARY KEY (id)
+);
