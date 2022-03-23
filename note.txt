@@ -18,3 +18,16 @@ CREATE TABLE public.user_tetos
     ok boolean,
     PRIMARY KEY (id)
 );
+
+
+// ormconfig.json
+{
+  "type": "postgres",
+  "host": "localhost",
+  "port": 5432,
+  "username": "postgres",
+  "password": "",
+  "database": "fttrans",
+  "entities": ["./**/*.entity.js"],
+  "synchronize": true
+}
