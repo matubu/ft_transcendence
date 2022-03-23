@@ -1,26 +1,7 @@
-https://docs.nestjs.com/techniques/database
-https://github.com/nestjs/nest/tree/master/sample/05-sql-typeorm/src/users
-// for postgressql
-
-docker_init.sh
-// docker school
-
 sapper
 // framework front
 
-
-
-// create table testos
-CREATE TABLE public.user_tetos
-(
-    id numeric,
-    name cstring[],
-    ok boolean,
-    PRIMARY KEY (id)
-);
-
-
-// ormconfig.json
+// /back/ormconfig.json
 {
   "type": "postgres",
   "host": "localhost",
