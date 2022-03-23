@@ -19,7 +19,6 @@ export class AuthController {
 						@Session() session: secureSession.Session)
 	{ 
 		const token = await this.authService.codeToToken(code);
-		session.set('bidon', "dasda");
 		if (token['access_token'] !== undefined)
 			session.set('token', token['access_token']);
 		return response.redirect(301, `http://localhost:8080/`);
