@@ -1,7 +1,8 @@
 version: '3.1'
 
 services:
-  sql:
+  PostGresSQL:
+    container_name: PostGresSQL
     image: postgres
     restart: always
     env_file:
