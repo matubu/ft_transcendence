@@ -36,7 +36,9 @@ CREATE TABLE public."Channels"
 
 CREATE TABLE public."Messages"
 (
+	id			numeric,
 	id_user 	numeric,
 	id_channel 	numeric,
-	msg 		character varying[]
+	msg 		character varying[],
+	PRIMARY KEY (id)
 );
