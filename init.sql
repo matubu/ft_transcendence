@@ -1,4 +1,4 @@
-CREATE TABLE public.Testos
+CREATE TABLE public."Testos"
 (
     id numeric,
     name character varying[],
