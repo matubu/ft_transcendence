@@ -1,22 +1,49 @@
-import { Controller, Get, Query, Param, Header, Res, Session, Redirect} from '@nestjs/common';
+import { Controller, Get, Query, Header, Res} from '@nestjs/common';
 import { AuthService } from './auth.service'
-import * as express from 'express';
-import * as secureSession from 'fastify-secure-session'
+import { UsersService } from 'src/users/users.service';
+import { UsersInterface } from 'src/users/interfaces/users.interface';
 
 @Controller('auth')
 export class AuthController {
-	constructor(private readonly authService: AuthService) {}
+	constructor(private readonly authService: AuthService,
+				private readonly usersService: UsersService) {}
 
 	@Get()
 	@Header('Content-Type', 'text/html')
-	async QuerycodeToToken(@Query() query: any[],
-	@Res({ passthrough: true }) response)
+	async setCookies(@Query() query: any[], @Res({ passthrough: true }) response)
 	{
 		const token = await this.authService.codeToToken(query['code']);
-		console.log(token['access_token']);
-		response.setCookie('key', 'value', { path: '/' })
-		//return token['access_token'];
-		// set cookies info
-		return '<script>window.close()</script>'
+		if (token['access_token'] !== undefined)
+		{
+			const info = await this.authService.getInfo(token['access_token']);
+			if (info['id'] !== undefined)
+			{
+				const users_value = await this.usersService.findOne(info['id'].toString());
+				let data = {};
+				data['id'] = info['id'];
+				if (users_value === undefined)
+				{
+					data['first_conn'] = true;
+					data['two_auth'] = false;
+					const createUser: UsersInterface = {
+						id: info['id'],
+						fullname: info['displayname'],
+						twoauth: false,
+						img: info['image_url']
+					};
+					await this.usersService.insert(createUser);
+					console.log(createUser);
+				}
+				else
+				{
+					data['first_conn'] = false;
+					const dataUser = await this.usersService.findOne(info['id']);
+					data['two_auth'] = dataUser['twoauth'];
+				}
+				console.log(data);
+				// response.setCookie('key', 'value', { path: '/' });
+			}
+		}
+		return ('<script>window.close()</script>');
 	}
 }

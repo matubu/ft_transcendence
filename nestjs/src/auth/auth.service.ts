@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Token } from './interfaces/token.interface';
 import { Error } from './interfaces/error.interface';
+import { Users42 } from './interfaces/users42.interface';
 import ENV = require('../env.json');
 const axios = require('axios');
 
@@ -19,6 +20,22 @@ export class AuthService {
 		}
 
 		return axios.post(url, data)
+		.then(res => {
+			// console.log(res['data'])
+			return res['data']
+		})
+		.catch(error => {
+			// console.error(error['response']['data'])
+			return error['response']['data']
+		})
+	}
+
+	getInfo(token: string) : Promise<Users42 | Error>
+	{
+		const url = "https://api.intra.42.fr/v2/me";
+		const data = { headers: { Authorization: `Bearer ${token}` } }
+
+		return axios.get(url, data)
 		.then(res => {
 			// console.log(res['data'])
 			return res['data']
