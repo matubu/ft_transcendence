@@ -7,7 +7,7 @@ const axios = require('axios');
 @Injectable()
 export class AuthService {
 	// https://api.intra.42.fr/apidoc/guides/web_application_flow
-	codeToToken(code: string): Token | Error
+	codeToToken(code: string): Promise<Token | Error>
 	{
 		const url = "https://api.intra.42.fr/oauth/token";
 		const data = {
@@ -15,19 +15,17 @@ export class AuthService {
 			"client_id": ENV['CLIENT_ID'],
 			"client_secret": ENV['CLIENT_SECRET'],
 			"code": code,
-			"redirect_uri": "http://localhost:3000/auth"
+			"redirect_uri": "http://localhost:3000/api/auth"
 		}
 
-		return (
-			axios.post(url, data)
-			.then(res => {
-				console.log(res['data'])
-				return res['data']
-			})
-			.catch(error => {
-				console.error(error['response']['data'])
-				return error['response']['data']
-			})
-		);
+		return axios.post(url, data)
+		.then(res => {
+			// console.log(res['data'])
+			return res['data']
+		})
+		.catch(error => {
+			// console.error(error['response']['data'])
+			return error['response']['data']
+		})
 	}
 }

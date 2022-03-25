@@ -9,18 +9,21 @@ CREATE TABLE public."Testos"
 CREATE TABLE public."Users"
 (
 	id 			numeric,
+	id42 		numeric,
 	fullname 	character varying[],
-	pseudo 		character varying[],
+	nickname 	character varying[],
 	twoauth		boolean,
 	img			character varying[]
 );
 
 CREATE TABLE public."Matchs"
 (
-	id 		numeric,
-	player1 numeric,
-	player2 numeric,
-	victory numeric,
+	id 				numeric,
+	player1 		numeric,
+	player2 		numeric,
+	player1_score	numeric,
+	player2_score	numeric,
+	victory			numeric,
 	PRIMARY KEY (id)
 );
 

@@ -1,14 +1,23 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export class Testos
+export class Users
 {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
-  name: string;
+  id42: number;
+
+  @Column()
+  fullname: string;
+
+  @Column({ default: null })
+  nickname: string;
 
   @Column({ default: false })
-  ok: boolean;
+  twoauth: boolean;
+
+  @Column()
+  img: string;
 }
