@@ -6,12 +6,11 @@
 	let ball = (color): HTMLDivElement => {
 		let elm = document.createElement('div')
 		elm.style.setProperty('--color', color)
-		elm.style.top = `${Math.random() * 100}%`
-		elm.style.left = `${Math.random() * 100}%`
 		return elm
 	}
 
 	let vel = (): number[] => [Math.random() * 2 - 1, Math.random() * 2 - 1]
+	let pos = (): number[] => [Math.random() * window.innerWidth, Math.random() * window.innerHeight]
 
 	onMount(() => {
 		container = document.createElement('div')
@@ -19,21 +18,21 @@
 
 		let balls: HTMLDivElement[] = [ball('#c55273'), ball('#424db3')]
 		let velocity = [vel(), vel()]
+		let position = [pos(), pos()]
 
 		let anim = () => {
 			for (let i in balls)
 			{
-				let x = +balls[i].style.left.slice(0, -1) + velocity[i][0] * .2
-				let y = +balls[i].style.top.slice(0, -1) + velocity[i][1] * .3
-				if (x > 90 || x < 10) velocity[i][0] *= -1
-				if (y > 90 || y < 10) velocity[i][1] *= -1
-				balls[i].style.left = `${x}%`
-				balls[i].style.top = `${y}%`
+				if (position[i][0] > window.innerWidth || position[i][0] < 0) velocity[i][0] *= -1
+				if (position[i][1] > window.innerHeight || position[i][1] < 0) velocity[i][1] *= -1
+				balls[i].style.transform = `translate3d(${position[i][0]}px,${position[i][1]}px,0)`
+				position[i][0] += velocity[i][0] * 5
+				position[i][1] += velocity[i][1] * 5
 			}
 			requestAnimationFrame(anim)
 		}
 
-		requestAnimationFrame(anim)
+		anim()
 
 		container.append(...balls)
 
@@ -56,10 +55,11 @@
 	}
 	:global(.animated-gradient div) {
 		position: fixed;
-		width: 110vmax;
-		height: 110vmax;
+		top: -50vmax;
+		left: -50vmax;
+		width: 100vmax;
+		height: 100vmax;
 		border-radius: 50%;
 		background: radial-gradient(var(--color), #0000);
-		transform: translate(-50%, -50%);
 	}
 </style>
