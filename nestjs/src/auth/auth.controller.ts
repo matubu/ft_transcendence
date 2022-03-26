@@ -32,7 +32,6 @@ export class AuthController {
 						img: info['image_url']
 					};
 					await this.usersService.insert(createUser);
-					console.log(createUser);
 				}
 				else
 				{
@@ -40,8 +39,9 @@ export class AuthController {
 					const dataUser = await this.usersService.findOne(info['id']);
 					data['two_auth'] = dataUser['twoauth'];
 				}
-				console.log(data);
-				// response.setCookie('key', 'value', { path: '/' });
+				response.setCookie('usersID', data['id'], { path: '/' });
+				response.setCookie('firstConn', data['first_conn'], { path: '/' });
+				response.setCookie('two_auth', data['two_auth'], { path: '/' });
 			}
 		}
 		return ('<script>window.close()</script>');
