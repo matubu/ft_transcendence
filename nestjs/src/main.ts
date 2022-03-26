@@ -12,10 +12,6 @@ async function bootstrap() {
 	  );
 	app.setGlobalPrefix('api');
 	const port = NESTJS_PORT;
-	app.enableCors({
-		origin: "http://localhost",
-		credentials: true,
-	});
 	const secret = SECRET_COOKIES;
 	app.register(fastifyCookie, {
 		secret: `${secret}`

@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Header, Res} from '@nestjs/common';
+import { Controller, Get, Query, Header, Res, Headers} from '@nestjs/common';
 import { AuthService } from './auth.service'
 import { UsersService } from 'src/users/users.service';
 import { UsersInterface } from 'src/users/interfaces/users.interface';
@@ -10,10 +10,9 @@ export class AuthController {
 
 	@Get()
 	@Header('Content-Type', 'text/html')
-	@Header('SameSite', 'None')
-	async setCookies(@Query() query: any[], @Res({ passthrough: true }) response)
+	async setCookies(@Query() query: any[], @Res({ passthrough: true }) response, @Headers() headers)
 	{
-		const token = await this.authService.codeToToken(query['code']);
+		const token = await this.authService.codeToToken(query['code'], headers.referer);
 		if (token['access_token'] !== undefined)
 		{
 			const info = await this.authService.getInfo(token['access_token']);
@@ -40,10 +39,10 @@ export class AuthController {
 					data['first_conn'] = false;
 				}
 				data['id'] = info['id'];
+				console.log('setCookie', JSON.stringify(data))
 				response.setCookie('user',
 									JSON.stringify(data),
 									{
-										// domain: 'c1r4p4',
 										path: '/',
 										signed: true
 									}

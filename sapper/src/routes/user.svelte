@@ -80,7 +80,7 @@
 		<div class="profile">
 			<User user={$user} size=150 />
 		</div>
-		<h1>Welcome, {$user.fullname}</h1>
+		<h1>Welcome, {$user.nickname ?? $user.fullname}</h1>
 
 		<div class="card-container">
 			<div class="card">
