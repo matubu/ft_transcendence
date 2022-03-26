@@ -3,7 +3,7 @@
 	import Button from '@components/Button.svelte'
 	import Room from '@components/Room.svelte'
 	import { user, useMediaQuery } from '@lib/store'
-	import { logIn } from '@lib/user'
+	import { logIn } from '@lib/utils'
 	import { onMount } from 'svelte'
 	import Absolute from '@components/Absolute.svelte'
 
