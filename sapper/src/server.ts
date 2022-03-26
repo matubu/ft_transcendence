@@ -3,7 +3,7 @@ import polka from 'polka'
 import * as sapper from '@sapper/server'
 import { createProxyMiddleware } from 'http-proxy-middleware';
 
-const { NODE_ENV, PORT } = process.env
+const { NODE_ENV, SAPPER_PORT } = process.env
 const dev = NODE_ENV === 'development'
 
 const server = polka()
@@ -22,4 +22,4 @@ server
 	)
 
 server
-	.listen(PORT)
+	.listen(SAPPER_PORT)

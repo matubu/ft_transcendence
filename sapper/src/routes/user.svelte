@@ -2,12 +2,12 @@
 	import { goto } from '@sapper/app';
 	import Button from '../components/Button.svelte'
 	import User from '../components/User.svelte'
-	import { logOut } from '../user';
+	import { logOut } from '../utils';
 	import { user } from '../store';
 	import { onMount } from 'svelte';
 
 	onMount(() => {
-		user.subscribe(username => username === undefined && goto('/'))
+		user.subscribe(user => user === undefined && goto('/'))
 	})
 </script>
 
@@ -75,40 +75,42 @@
 	}
 </style>
 
-<div class="container">
-	<div class="profile">
-		<User username={$user} size=150 />
-	</div>
-	<h1>Welcome, {$user}</h1>
-
-	<div class="card-container">
-		<div class="card">
-			<div>
-				<div>
-					<h2>2FA</h2>
-					<p>Each time you sign in to your Transcendence, you'll need your password and a verification code.</p>
-				</div>
-				<div>
-					<img width="70" height="70" src="https://cdn-icons-png.flaticon.com/512/3643/3643948.png" alt="">
-				</div>
-			</div>
-			<button>Enable 2fa</button>
+{#if $user}
+	<div class="container">
+		<div class="profile">
+			<User user={$user} size=150 />
 		</div>
-		<div class="card">
-			<div>
-				<div>
-					<h2>Personal information</h2>
-					<p>Change your nickname</p>
-				</div>
-				<div>
-					<User username={$user} size=70 />
-				</div>
-			</div>
-			<button>Change your nickname</button>
-		</div>
-	</div>
+		<h1>Welcome, {$user.fullname}</h1>
 
-	<Button primary on:click={() => {
-		logOut()
-	}}>Logout</Button>
-</div>
+		<div class="card-container">
+			<div class="card">
+				<div>
+					<div>
+						<h2>2FA</h2>
+						<p>Each time you sign in to your Transcendence, you'll need your password and a verification code.</p>
+					</div>
+					<div>
+						<img width="70" height="70" src="https://cdn-icons-png.flaticon.com/512/3643/3643948.png" alt="">
+					</div>
+				</div>
+				<button>Enable 2fa</button>
+			</div>
+			<div class="card">
+				<div>
+					<div>
+						<h2>Personal information</h2>
+						<p>Change your nickname</p>
+					</div>
+					<div>
+						<User user={$user} size=70 />
+					</div>
+				</div>
+				<button>Change your nickname</button>
+			</div>
+		</div>
+
+		<Button primary on:click={() => {
+			logOut()
+		}}>Logout</Button>
+	</div>
+{/if}

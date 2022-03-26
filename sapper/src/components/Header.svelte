@@ -4,7 +4,7 @@
 	import Notification from './Notification.svelte'
 	import User from './User.svelte'
 	import { user } from '../store'
-	import { logIn } from '../user';
+	import { logIn } from '../utils';
 
 	export let segment: string
 </script>
@@ -94,7 +94,7 @@
 	
 		{#if ($user)}
 			<Notification />
-			<div id="user"><User username={$user} href="/user" /></div>
+			<div id="user"><User user={$user} href="/user" /></div>
 		{:else}
 			<Button primary on:click={logIn}>Login</Button>
 		{/if}

@@ -1,10 +1,12 @@
 {
 	"name": "transcendence",
 	"scripts": {
-		"dev": "export $(cat .env) && sapper dev",
-		"build": "export $(cat .env) && sapper build",
-		"start": "export $(cat .env) && node __sapper__/build",
-		"validate": "export $(cat .env) && svelte-check --ignore src/node_modules/@sapper"
+		"dev": "export $(cat ../.env) && sapper dev",
+
+		"build": "export $(cat ../.env) && sapper build",
+		"start": "export $(cat ../.env) && node __sapper__/build",
+
+		"validate": "export $(cat ../.env) && svelte-check --ignore src/node_modules/@sapper"
 	},
 	"dependencies": {
 		"@rollup/plugin-alias": "^3.1.9",

@@ -2,7 +2,7 @@
 	import Head from '../components/Head.svelte'
 	import Button from '../components/Button.svelte'
 	import { user } from '../store'
-	import { logIn } from '../user'
+	import { logIn } from '../utils'
 </script>
 
 <style>

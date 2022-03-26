@@ -74,13 +74,13 @@
 		<div class="bubble"></div>
 	</IconButton>
 	<div class="notif">
-		<a href="/invite/[uuid]">
-			<User username="matubu" />
+		<!-- <a href="/invite/[uuid]">
+			<User user={{img: ''}} />
 			<span><strong>matubu</strong> invited you</span>
 		</a>
 		<a href="/invite/[uuid]">
-			<User username="test" />
+			<User user="test" />
 			<span><strong>test</strong> invited you</span>
-		</a>
+		</a> -->
 	</div>
 </div>

@@ -4,7 +4,7 @@
 	import { fly } from 'svelte/transition';
 	import { onMount } from 'svelte';
 	import { user } from '../store'
-	import { logIn } from '../user';
+	import { logIn } from '../utils';
 
 	let mounted = false
 	onMount(() => mounted = true)
