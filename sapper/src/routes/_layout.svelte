@@ -1,8 +1,9 @@
-<script context="module">
+<script lang="ts" context="module">
 	import { user } from '@lib/store'
 	import { updateUser } from '@lib/utils'
 
 	export async function preload(page, session) {
+		console.log('preload _layout')
 		if (typeof document === 'undefined')
 			user.set(session.user)
 		else

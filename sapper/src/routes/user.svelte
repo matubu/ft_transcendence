@@ -1,14 +1,16 @@
+<script lang="ts" context="module">
+	export async function preload(page, session) {
+		if (typeof document === 'undefined' && session.user === undefined)
+			this.redirect(307, '/')
+	}
+</script>
+
 <script lang="ts">
-	import { goto } from '@sapper/app';
+	import { goto } from '@sapper/app'
 	import Button from '../components/Button.svelte'
 	import User from '../components/User.svelte'
-	import { logOut } from '../utils';
-	import { user } from '../store';
-	import { onMount } from 'svelte';
-
-	onMount(() => {
-		user.subscribe(user => user === undefined && goto('/'))
-	})
+	import { logOut } from '../utils'
+	import { user } from '../store'
 </script>
 
 <style>
@@ -111,6 +113,7 @@
 
 		<Button primary on:click={() => {
 			logOut()
+			goto('/')
 		}}>Logout</Button>
 	</div>
 {/if}
