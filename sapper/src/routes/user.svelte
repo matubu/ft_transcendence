@@ -102,7 +102,7 @@
 						<p>Change your nickname</p>
 					</div>
 					<div>
-						<User user={$user} size=70 />
+						<img width="70" height="70" src="https://cdn-icons-png.flaticon.com/512/5956/5956503.png" alt="">
 					</div>
 				</div>
 				<button>Change your nickname</button>

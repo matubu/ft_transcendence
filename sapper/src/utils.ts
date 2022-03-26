@@ -9,7 +9,11 @@ export const getCookie = key => {
 }
 
 export const setCookie = (key, value) =>
-	getCookie(key) !== value && (document.cookie = `${key}=${value ? encodeURIComponent(value) : ''};`)
+{
+	if (getCookie(key) === value) return ;
+	if (value === undefined) document.cookie = `${key}=; expires=Thu, 01 Jan 1970 00:00:01 GMT`
+	else document.cookie = `${key}=${value ? encodeURIComponent(value) : ''};`
+}
 
 export const updateUser = () => {
 	let cookie = getCookie('user')

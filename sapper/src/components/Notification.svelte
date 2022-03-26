@@ -60,6 +60,10 @@
 		opacity: 0;
 		pointer-events: none;
 	}
+
+	p {
+		margin: 10px;
+	}
 </style>
 
 <div class="container" bind:this={container}>
@@ -74,13 +78,19 @@
 		<div class="bubble"></div>
 	</IconButton>
 	<div class="notif">
-		<!-- <a href="/invite/[uuid]">
-			<User user={{img: ''}} />
-			<span><strong>matubu</strong> invited you</span>
-		</a>
-		<a href="/invite/[uuid]">
-			<User user="test" />
-			<span><strong>test</strong> invited you</span>
-		</a> -->
+		<!-- {#if}
+			{#each notifs as notif}
+				<a href="/invite/[uuid]">
+					<User user={{img: ''}} />
+					<span><strong>matubu</strong> invited you</span>
+				</a>
+				<a href="/invite/[uuid]">
+					<User user="test" />
+					<span><strong>test</strong> invited you</span>
+				</a>
+			{/each}
+		{#else} -->
+		<p>No notification</p>
+		<!-- {/if} -->
 	</div>
 </div>
