@@ -5,19 +5,11 @@ export const getCookies = () =>
 
 export const getCookie = key => {
 	let value = getCookies()[key]
-	return (value && decodeURIComponent(value))
-}
-
-export const setCookie = (key, value) =>
-{
-	if (getCookie(key) === value) return ;
-	if (value === undefined) document.cookie = `${key}=; expires=Thu, 01 Jan 1970 00:00:01 GMT`
-	else document.cookie = `${key}=${value ? encodeURIComponent(value) : ''};`
+	return (value && decodeURIComponent(value.split('.').slice(0, -1).join('.')))
 }
 
 export const updateUser = () => {
 	let cookie = getCookie('user')
-	console.log
 	user.set(cookie ? JSON.parse(cookie) : undefined)
 }
 
@@ -28,10 +20,8 @@ export const logIn = () => {
 }
 export const logOut = () => {
 	user.set(undefined)
+	document.cookie = `user=; expires=Thu, 01 Jan 1970 00:00:01 GMT`
 }
 
 if (typeof document !== 'undefined')
-{
 	updateUser()
-	user.subscribe(value => setCookie('user', value ? JSON.stringify(value) : undefined))
-}

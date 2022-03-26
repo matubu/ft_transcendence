@@ -18,4 +18,4 @@ polka()
 		sirv('static', { dev }),
 		sapper.middleware({ ignore: '/api' })
 	)
-	.listen(SAPPER_PORT, '0.0.0.0')
+	.listen(SAPPER_PORT)
