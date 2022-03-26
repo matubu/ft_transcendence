@@ -9,7 +9,6 @@ export class AuthService {
 	// https://api.intra.42.fr/apidoc/guides/web_application_flow
 	codeToToken(code: string, host: string): Promise<Token | Error>
 	{
-		console.log('host/refer', host)
 		const url = "https://api.intra.42.fr/oauth/token";
 		const data = {
 			"grant_type": "authorization_code",

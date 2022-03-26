@@ -12,7 +12,6 @@ export class AuthController {
 	@Header('Content-Type', 'text/html')
 	async setCookies(@Query() query: any[], @Res({ passthrough: true }) response, @Headers() headers)
 	{
-		console.log(headers)
 		const token = await this.authService.codeToToken(query['code'], headers.host);
 		if (token['access_token'] !== undefined)
 		{
@@ -40,7 +39,6 @@ export class AuthController {
 					data['first_conn'] = false;
 				}
 				data['id'] = info['id'];
-				console.log('setCookie', JSON.stringify(data))
 				response.setCookie('user',
 									JSON.stringify(data),
 									{
