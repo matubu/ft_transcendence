@@ -16,7 +16,7 @@ export const updateUser = () => {
 export const logIn = () => {
 	window
 		.open(`https://api.intra.42.fr/oauth/authorize?client_id=5fb8cff19443b1e91c5753666fdcb12d45ecbc49c667ba7eb97150cb2590b38a&redirect_uri=${encodeURIComponent(location.origin)}%2Fapi%2Fauth&response_type=code`, 'Auth 42', 'width=500,height=700')
-		.onunload = () => setTimeout(updateUser, 1000)
+		.onunload = () => setTimeout(updateUser, 100)
 }
 export const logOut = () => {
 	user.set(undefined)
