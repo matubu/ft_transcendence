@@ -1,6 +1,6 @@
 db:
 	docker system prune -a
-	docker-compose up -d
+	docker-compose up
 sapper:
 	cd sapper && npm i && npm run dev
 nestjs:
