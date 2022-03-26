@@ -25,7 +25,7 @@
 {#if user}
 	<!-- <div> -->
 		<a on:click={() => dispatch('click')} style="--size: {size}px" href={href}>
-			<img src="{user.img}" alt="{user.fullname} profile picture">
+			<img src="{user.img}" alt="profile">
 		</a>
 	<!-- </div> -->
 {/if}

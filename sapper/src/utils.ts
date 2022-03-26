@@ -1,12 +1,15 @@
-import { user } from './store'
+import { user } from '@lib/store'
 
-export const getCookies = () => 
-	Object.fromEntries(document.cookie.split(';').map(s => s.split('=')))
+export const getCookiesFromString = s => s && Object.fromEntries(s.split?.(';').map(v => v.split('=')))
 
-export const getCookie = key => {
-	let value = getCookies()[key]
+export const getCookies = () => getCookiesFromString(document.cookie)
+
+export const getCookieFromString = (s, key) => {
+	let value = getCookiesFromString(s)?.[key]
 	return (value && decodeURIComponent(value.split('.').slice(0, -1).join('.')))
 }
+
+export const getCookie = key => getCookieFromString(document.cookie, key)
 
 export const updateUser = () => {
 	let cookie = getCookie('user')
@@ -22,6 +25,3 @@ export const logOut = () => {
 	user.set(undefined)
 	document.cookie = `user=; expires=Thu, 01 Jan 1970 00:00:01 GMT`
 }
-
-if (typeof document !== 'undefined')
-	updateUser()

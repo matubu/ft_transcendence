@@ -1,3 +1,15 @@
+<script context="module">
+	import { user } from '@lib/store'
+	import { updateUser } from '@lib/utils'
+
+	export async function preload(page, session) {
+		if (typeof document === 'undefined')
+			user.set(session.user)
+		else
+			updateUser()
+	}
+</script>
+
 <script lang="ts">
 	import Header from '@components/Header.svelte'
 	import { fly } from 'svelte/transition';

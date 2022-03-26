@@ -4,7 +4,7 @@
 	let container
 
 	onMount(() => document.body.append(container))
-	onDestroy(() => container.remove())
+	onDestroy(() => container?.remove?.())
 </script>
 
 <div bind:this={container}>
