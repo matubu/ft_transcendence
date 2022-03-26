@@ -14,6 +14,14 @@ export class UsersService {
 	async insert(user_interface: UsersInterface)
 	{
 		const user = new Users();
+		if (user_interface.id === undefined
+			|| user_interface.fullname == undefined
+			|| user_interface.twoauth == undefined
+			|| user_interface.img == undefined
+			|| user_interface.elo == undefined)
+			return ;
+		if ((await this.findOne(user_interface.id.toString())) !== undefined)
+			return ;
 		user.id42 = user_interface.id;
 		user.fullname = user_interface.fullname;
 		user.nickname = user_interface.nickname;
