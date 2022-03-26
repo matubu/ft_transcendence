@@ -39,7 +39,7 @@ export class AuthController {
 					data['first_conn'] = false;
 				}
 				data['id'] = info['id'];
-				response.setCookie('user', JSON.stringify(data), { path: '/' } );
+				response.setCookie('user', JSON.stringify(data), { path: '/' });
 			}
 		}
 		return ('<script>window.close()</script>');

@@ -1,0 +1,42 @@
+:root {
+	--whit: #F1F1F1;
+	--fore: #1a1a29;
+	--back: #010102;
+
+	--bhov: #f0f7ff09;
+	--hove: #f0f7ff07;
+	--acti: #f2f6ff0e;
+
+	--red : #ee4f4f;
+	--yelo: #eec44f;
+	--gree: #80e295;
+	--grey: #CBCBCB;
+	--prim: #A6CFD5;
+	--seco: #C2E7D9;
+}
+body {
+	font-family: Roboto, -apple-system, BlinkMacSystemFont, Segoe UI, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+	background: var(--back);
+	min-width: 350px;
+	padding: 50px;
+	display: flex;
+	flex-direction: column;
+	gap: 40px;
+	margin: 0;
+	box-sizing: border-box;
+}
+html, body {
+	min-height: 100vh;
+}
+body, button, a { color: var(--whit) }
+h1 { font-size: 4em }
+.dim { color: var(--grey) }
+
+::-moz-selection { background: #00a2ff49 }
+::selection { background: #00a2ff49 }
+
+@media (max-width: 800px) {
+	body {
+		padding: 10px;
+	}
+}
