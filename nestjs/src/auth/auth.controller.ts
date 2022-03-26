@@ -12,7 +12,8 @@ export class AuthController {
 	@Header('Content-Type', 'text/html')
 	async setCookies(@Query() query: any[], @Res({ passthrough: true }) response, @Headers() headers)
 	{
-		const token = await this.authService.codeToToken(query['code'], headers.referer);
+		console.log(headers)
+		const token = await this.authService.codeToToken(query['code'], headers.host);
 		if (token['access_token'] !== undefined)
 		{
 			const info = await this.authService.getInfo(token['access_token']);

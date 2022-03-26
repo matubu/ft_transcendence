@@ -9,14 +9,14 @@ export class AuthService {
 	// https://api.intra.42.fr/apidoc/guides/web_application_flow
 	codeToToken(code: string, host: string): Promise<Token | Error>
 	{
-		console.log(host)
+		console.log('host/refer', host)
 		const url = "https://api.intra.42.fr/oauth/token";
 		const data = {
 			"grant_type": "authorization_code",
 			"client_id": process.env.CLIENT_ID,
 			"client_secret": process.env.CLIENT_SECRET,
 			"code": code,
-			"redirect_uri": `${host}api/auth`
+			"redirect_uri": `http://${host}/api/auth`
 		}
 
 		return axios.post(url, data)
