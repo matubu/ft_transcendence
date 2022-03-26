@@ -20,4 +20,7 @@ export class Users
 
   @Column()
   img: string;
+
+  @Column()
+  elo: number;
 }

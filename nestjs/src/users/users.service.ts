@@ -19,6 +19,7 @@ export class UsersService {
 		user.nickname = user_interface.nickname;
 		user.twoauth = user_interface.twoauth;
 		user.img = user_interface.img;
+		user.elo = user_interface.elo;
 		await this.usersRepository.save(user)
 	}
 
@@ -35,6 +36,8 @@ export class UsersService {
 			userUpdate.twoauth = user_interface.twoauth;
 		if (user_interface.img !== undefined)
 			userUpdate.img = user_interface.img;
+		if (user_interface.elo !== undefined)
+			userUpdate.elo = user_interface.elo;
 		await this.usersRepository.save(userUpdate)
 	}
 

@@ -29,7 +29,8 @@ export class AuthController {
 						id: info['id'],
 						fullname: info['displayname'],
 						twoauth: false,
-						img: info['image_url']
+						img: info['image_url'],
+						elo: 1000
 					};
 					await this.usersService.insert(createUser);
 				}

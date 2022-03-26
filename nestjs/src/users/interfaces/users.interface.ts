@@ -5,4 +5,5 @@ export interface UsersInterface
 	nickname?: string;
 	twoauth?: boolean;
 	img?: string;
+	elo?: number;
 }
