@@ -6,9 +6,7 @@ import { createProxyMiddleware } from 'http-proxy-middleware';
 const { NODE_ENV, SAPPER_PORT, NESTJS_PORT } = process.env
 const dev = NODE_ENV === 'development'
 
-const server = polka()
-
-server
+polka()
 	.use(
 		'/api',
 		createProxyMiddleware({
@@ -20,6 +18,4 @@ server
 		sirv('static', { dev }),
 		sapper.middleware({ ignore: '/api' })
 	)
-
-server
-	.listen(SAPPER_PORT)
+	.listen(SAPPER_PORT, '0.0.0.0')

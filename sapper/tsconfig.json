@@ -3,7 +3,11 @@
     "allowSyntheticDefaultImports": true,
 	"compilerOptions": {
 		"lib": ["DOM", "ES2017", "WebWorker"],
-		"types": ["node"]
+		"types": ["node"],
+		"baseUrl": ".",
+		"paths": {
+			"@lib/*": ["src/*"]
+		}
 	},
 	"include": ["src/**/*", "src/node_modules/**/*"],
 	"exclude": ["node_modules/*", "__sapper__/*", "static/*"]
