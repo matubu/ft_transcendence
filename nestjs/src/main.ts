@@ -16,7 +16,9 @@ async function bootstrap() {
 		origin: "http://localhost",
 		credentials: true,
 	});
-	app.register(fastifyCookie);
+	app.register(fastifyCookie, {
+		secret: '12345'
+	});
 	await app.listen(port, () => console.log(`Server started on http://localhost:${port}`));
   }
   
