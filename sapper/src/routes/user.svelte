@@ -71,7 +71,7 @@
 	}
 	h1 {
 		overflow-wrap: anywhere;
-		font-size: clamp(40px, 10vw, 80px);
+		font-size: clamp(40px, 10vw, 60px);
 	}
 </style>
 
