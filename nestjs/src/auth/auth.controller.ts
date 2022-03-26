@@ -20,11 +20,8 @@ export class AuthController {
 			{
 				const users_value = await this.usersService.findOne(info['id'].toString());
 				let data = {};
-				data['id'] = info['id'];
 				if (users_value === undefined)
 				{
-					data['first_conn'] = true;
-					data['two_auth'] = false;
 					const createUser: UsersInterface = {
 						id: info['id'],
 						fullname: info['displayname'],
@@ -33,16 +30,16 @@ export class AuthController {
 						elo: 1000
 					};
 					await this.usersService.insert(createUser);
+					data = createUser
+					data['first_conn'] = true;
 				}
 				else
 				{
+					data = await this.usersService.findOne(info['id']);
 					data['first_conn'] = false;
-					const dataUser = await this.usersService.findOne(info['id']);
-					data['two_auth'] = dataUser['twoauth'];
 				}
-				response.setCookie('usersID', data['id'], { path: '/' });
-				response.setCookie('firstConn', data['first_conn'], { path: '/' });
-				response.setCookie('two_auth', data['two_auth'], { path: '/' });
+				data['id'] = info['id'];
+				response.setCookie('user', JSON.stringify(data), { path: '/' } );
 			}
 		}
 		return ('<script>window.close()</script>');

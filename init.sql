@@ -5,7 +5,9 @@ CREATE TABLE public."Users"
 	fullname 	character varying[],
 	nickname 	character varying[],
 	twoauth		boolean,
-	img			character varying[]
+	img			character varying[],
+	elo			numeric,
+	PRIMARY KEY (id)
 );
 
 CREATE TABLE public."Matchs"
@@ -21,7 +23,8 @@ CREATE TABLE public."Matchs"
 
 CREATE TABLE public."Channels"
 (
-	id 			numeric,
+	id			numeric,
+	idChannel	numeric,
 	users 		numeric[],
 	name 		character varying[],
 	password 	character varying[],
