@@ -1,7 +1,4 @@
-sapper
-// framework front
-
-// /back/ormconfig.json
+/nestjs/ormconfig.json
 {
   "type": "postgres",
   "host": "localhost",
