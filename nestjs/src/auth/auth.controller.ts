@@ -10,6 +10,7 @@ export class AuthController {
 
 	@Get()
 	@Header('Content-Type', 'text/html')
+	@Header('SameSite', 'None')
 	async setCookies(@Query() query: any[], @Res({ passthrough: true }) response)
 	{
 		const token = await this.authService.codeToToken(query['code']);
@@ -42,6 +43,7 @@ export class AuthController {
 				response.setCookie('user',
 									JSON.stringify(data),
 									{
+										// domain: 'c1r4p4',
 										path: '/',
 										signed: true
 									}

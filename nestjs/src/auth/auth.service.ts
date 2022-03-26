@@ -15,7 +15,7 @@ export class AuthService {
 			"client_id": process.env.CLIENT_ID,
 			"client_secret": process.env.CLIENT_SECRET,
 			"code": code,
-			"redirect_uri": "http://localhost:3000/api/auth"
+			"redirect_uri": "http://localhost/api/auth"
 		}
 
 		return axios.post(url, data)
