@@ -4,4 +4,5 @@ do
 	TMP={"\"id\"":"$c","\"fullname\"":"\"$c\"","\"twoauth\"":false,"\"img\"":"\"$c\"","\"elo\"":$RANDOM}
 	curl -X POST http://localhost:3000/api/users/insert -H \
 	"Content-Type: application/json" -d "$TMP"
+	echo -en "\t Generate users : $c\1000\r"
 done
