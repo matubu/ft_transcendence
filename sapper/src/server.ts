@@ -3,7 +3,7 @@ import polka from 'polka'
 import * as sapper from '@sapper/server'
 import { createProxyMiddleware } from 'http-proxy-middleware';
 
-const { NODE_ENV, SAPPER_PORT } = process.env
+const { NODE_ENV, SAPPER_PORT, NESTJS_PORT } = process.env
 const dev = NODE_ENV === 'development'
 
 const server = polka()
@@ -12,7 +12,7 @@ server
 	.use(
 		'/api',
 		createProxyMiddleware({
-			target: 'http://127.0.0.1:3000',
+			target: `http://127.0.0.1:${NESTJS_PORT}`,
 			changeOrigin: true
 		})
 	)
