@@ -24,7 +24,8 @@ export class UsersController {
 		const validUser = req.unsignCookie(req.cookies.user);
 		if (!validUser?.valid) return;
 		
-		return this.usersService.update(user_interface);}
+		return this.usersService.update(user_interface);
+	}
 
 	@Get(':id')
 	getOne(@Param('id') id: string) : Promise<Users>
@@ -88,7 +89,7 @@ export class UsersController {
 	
 	@Get("add_friend")
 	add_friend_no_error() {}
-	@Put("add_friend")
+	@Post("add_friend")
 	async add_friend(@Req() req: FastifyRequest, @Body() body: FriendInterface)
 	{
 		const validUser = req.unsignCookie(req.cookies.user);
@@ -103,7 +104,7 @@ export class UsersController {
 
 	@Get("remove_friend")
 	remove_friend_no_error() {}
-	@Put("remove_friend")
+	@Post("remove_friend")
 	async remove_friend(@Req() req: FastifyRequest, @Body() body: FriendInterface)
 	{
 		const validUser = req.unsignCookie(req.cookies.user);
