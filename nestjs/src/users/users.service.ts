@@ -60,4 +60,13 @@ export class UsersService {
 	async remove(id: string) {
 		return await this.usersRepository.delete({ id42: +id });
 	}
+
+	findRank(): Promise<Users[]> {
+		return this.usersRepository.find({order: {elo: "DESC"}, take: 100});
+	}
+	findRankNumber(number: string): Promise<Users[]> {
+		if (+number <= 0)
+			return ;
+		return this.usersRepository.find({order: {elo: "DESC"}, take: +number});
+	}
 }
