@@ -34,7 +34,7 @@ export class AuthController {
 										path: '/',
 										signed: true
 									});
-					response.setCookie('user', info['id'].toStrign(),
+					response.setCookie('user', info['id'].toString(),
 									{
 										path: '/',
 										signed: true
@@ -44,7 +44,7 @@ export class AuthController {
 				{
 					const user = await this.usersService.findOne(info['id']);
 					if (user.twoauth)
-						response.setCookie('user', user.twoauth ? "" : info['id'].toStrign(),
+						response.setCookie('user', user.twoauth ? "" : info['id'].toString(),
 						{
 							path: '/',
 							signed: true
