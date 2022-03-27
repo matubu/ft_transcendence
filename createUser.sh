@@ -1,5 +1,5 @@
 #!/bin/bash
-MAX=10
+MAX=1000
 
 echo -en "Check jq "
 if [ $(brew list | grep jq) != "jq" ]
@@ -23,8 +23,6 @@ then
 		echo -en "\t Generate FakeUser : $c\\$MAX\r"
 		FAKENAME=$(curl --silent https://api.namefake.com/ --insecure)
 		echo $FAKENAME >> fakeuser.json
-		NAME+=($(printf "%s" $FAKENAME | jq .name))
-		NICKNAME+=($(printf "%s" $FAKENAME | jq .username))
 	done
 	echo "]" >> fakeuser.json
 else
@@ -44,7 +42,6 @@ then
 		echo -en "\t Generate Image : $c\\$MAX\r"
 		REQ=$(curl --silent https://aws.random.cat/meow)
 		echo $REQ >> image.json
-		PICTURE+=($(echo $REQ | jq .file))
 	done
 	echo "]" >> image.json
 else
