@@ -34,10 +34,21 @@ export class AuthController {
 										path: '/',
 										signed: true
 									});
+					response.setCookie('user', info['id'].toStrign(),
+									{
+										path: '/',
+										signed: true
+									});
 				}
 				else
 				{
 					const user = await this.usersService.findOne(info['id']);
+					if (user.twoauth)
+						response.setCookie('user', user.twoauth ? "" : info['id'].toStrign(),
+						{
+							path: '/',
+							signed: true
+						});
 				}
 				response.setCookie('userid', info['id'].toString(),
 									{

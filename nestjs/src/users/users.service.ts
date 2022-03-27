@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Res } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Users } from './entity/users.entity';
@@ -78,6 +78,7 @@ export class UsersService {
 	async check_code(id: string, code: string): Promise<boolean> {
 		const user: Users = await this.findOne(id);
 		if (!user) return false;
+		console.log(user.code2FA, code, verifyToken(user.code2FA, code))
 		return verifyToken(user.code2FA, code)?.delta === 0;
 	}
 
