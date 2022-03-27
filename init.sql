@@ -13,20 +13,19 @@ CREATE TABLE public."Users"
 
 CREATE TABLE public."Matchs"
 (
-	id 				numeric,
-	player1 		numeric,
-	player2 		numeric,
-	player1_score	numeric,
-	player2_score	numeric,
+	id 				numeric UNIQUE NOT NULL,
+	player1 		numeric NOT NULL,
+	player2 		numeric NOT NULL,
+	player1_score	numeric NOT NULL,
+	player2_score	numeric NOT NULL,
 	victory			numeric,
 	PRIMARY KEY (id)
 );
 
 CREATE TABLE public."Channels"
 (
-	id			numeric,
-	idChannel	numeric,
-	users 		numeric[],
+	id			numeric UNIQUE NOT NULL,
+	users 		numeric[] NOT NULL,
 	name 		character varying[],
 	password 	character varying[],
 	grade 		character varying[],
@@ -35,9 +34,9 @@ CREATE TABLE public."Channels"
 
 CREATE TABLE public."Messages"
 (
-	id			numeric,
-	id_user 	numeric,
-	id_channel 	numeric,
-	msg 		character varying[],
+	id			numeric UNIQUE NOT NULL,
+	id_user 	numeric NOT NULL,
+	id_channel 	numeric NOT NULL,
+	msg 		character varying[] NOT NULL,
 	PRIMARY KEY (id)
 );
