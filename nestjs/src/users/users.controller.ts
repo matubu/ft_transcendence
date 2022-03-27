@@ -1,7 +1,8 @@
-import { Controller, Get, Param, Post, Body, Delete } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, Delete, Req, Put } from '@nestjs/common';
 import { UsersService } from './users.service'
 import { Users } from './entity/users.entity';
 import { UsersInterface } from './interfaces/users.interface';
+import { FastifyRequest } from 'fastify';
 
 @Controller('users')
 export class UsersController {
@@ -25,4 +26,39 @@ export class UsersController {
 	@Delete(':id')
 	remove(@Param('id') id: string)
 	{ return this.usersService.remove(id); }
+
+	@Post('check_code')
+	async check_code(@Body() code: string, @Req() req: FastifyRequest): Promise<boolean>
+	{
+		const cookie = req.unsignCookie(req.cookies.userid);
+		if (!cookie?.valid) return;
+		const id = cookie.value;
+		if (!id) return;
+		return await this.usersService.check_code(id, code)
+	}
+
+	@Get("activate_2fa")
+	activate_no_error() {}
+	@Put("activate_2fa")
+	async activate_2fa(@Req() req: FastifyRequest): Promise<string>
+	{
+		const cookie = req.unsignCookie(req.cookies.userid);
+		if (!cookie?.valid) return;
+		const id = cookie.value;
+		if (!id) return;
+		return await this.usersService.activate_2fa(id);
+	}
+
+	@Get("disable_2fa")
+	disable_no_error() {}
+	@Put("disable_2fa")
+	async disable_2fa(@Req() req: FastifyRequest)
+	{
+		const cookie = req.unsignCookie(req.cookies.userid);
+		if (!cookie?.valid) return;
+		const id = cookie.value;
+		if (!id) return;
+		return await this.usersService.disable_2fa(id);
+	}
+	
 }

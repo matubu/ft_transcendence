@@ -18,6 +18,9 @@ export class Users
   @Column({ default: false })
   twoauth: boolean;
 
+  @Column({ default: null })
+  code2FA: string;
+
   @Column()
   img: string;
 

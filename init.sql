@@ -5,6 +5,7 @@ CREATE TABLE public."Users"
 	fullname 	character varying[],
 	nickname 	character varying[],
 	twoauth		boolean,
+	code2FA		character varying[],
 	img			character varying[],
 	elo			numeric,
 	PRIMARY KEY (id)

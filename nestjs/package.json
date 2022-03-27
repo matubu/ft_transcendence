@@ -2,7 +2,6 @@
   "name": "transcendence_nestjs",
   "scripts": {
     "dev": "export $(cat ../.env) && nest start --watch",
-  
     "build": "export $(cat ../.env) && nest build",
     "start": "export $(cat ../.env) && node dist/main"
   },
@@ -15,11 +14,11 @@
     "cookie-parser": "^1.4.6",
     "fastify-cookie": "^5.6.0",
     "mysql2": "^2.3.3",
+    "node-2fa": "^2.0.3",
     "npm": "^8.5.5",
     "pg": "^8.7.3",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
-    "rxjs": "^7.2.0",
     "typeorm": "^0.2.45"
   },
   "devDependencies": {

@@ -3,6 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Users } from './entity/users.entity';
 import { UsersInterface } from './interfaces/users.interface';
+import twofactor, { generateSecret, verifyToken } from "node-2fa";
+import { FastifyRequest } from 'fastify';
 
 @Injectable()
 export class UsersService {
@@ -26,6 +28,7 @@ export class UsersService {
 		user.fullname = user_interface.fullname;
 		user.nickname = user_interface.nickname;
 		user.twoauth = user_interface.twoauth;
+		user.code2FA = user_interface.code2FA;
 		user.img = user_interface.img;
 		user.elo = user_interface.elo;
 		await this.usersRepository.save(user)
@@ -42,6 +45,8 @@ export class UsersService {
 			userUpdate.nickname = user_interface.nickname;
 		if (user_interface.twoauth !== undefined)
 			userUpdate.twoauth = user_interface.twoauth;
+		if (user_interface.code2FA !== undefined)
+			userUpdate.code2FA = user_interface.code2FA;
 		if (user_interface.img !== undefined)
 			userUpdate.img = user_interface.img;
 		if (user_interface.elo !== undefined)
@@ -68,5 +73,31 @@ export class UsersService {
 		if (+number <= 0)
 			return ;
 		return this.usersRepository.find({order: {elo: "DESC"}, take: +number});
+	}
+
+	async check_code(id: string, code: string): Promise<boolean> {
+		const user: Users = await this.findOne(id);
+		if (!user) return false;
+		return verifyToken(user.code2FA, code)?.delta === 0;
+	}
+
+	async activate_2fa(id: string): Promise<string>
+	{
+		const user: Users = await this.findOne(id);
+		if (!user) return;
+		if (user.code2FA) return;
+		const secret = generateSecret({ name: "ft_transcendence", account: `${user.nickname ?? user.fullname}` });
+		let updated: UsersInterface = {twoauth: true, code2FA: secret.secret, id: +id}
+		await this.update(updated)
+		return secret.qr;
+	}
+
+	async disable_2fa(id: string)
+	{
+		const user: Users = await this.findOne(id);
+		if (!user) return;
+		if (!user.code2FA) return;
+		let updated: UsersInterface = {twoauth: false, code2FA: null, id: +id}
+		await this.update(updated)
 	}
 }

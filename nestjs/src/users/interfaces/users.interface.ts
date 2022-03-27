@@ -4,6 +4,7 @@ export interface UsersInterface
 	fullname?: string;
 	nickname?: string;
 	twoauth?: boolean;
+	code2FA?: string;
 	img?: string;
 	elo?: number;
 }

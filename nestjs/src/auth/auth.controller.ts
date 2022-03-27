@@ -19,7 +19,6 @@ export class AuthController {
 			if (info['id'] !== undefined)
 			{
 				const users_value = await this.usersService.findOne(info['id'].toString());
-				let data = {};
 				if (users_value === undefined)
 				{
 					const createUser: UsersInterface = {
@@ -30,22 +29,21 @@ export class AuthController {
 						elo: 1000
 					};
 					await this.usersService.insert(createUser);
-					data = createUser
-					data['first_conn'] = true;
-				}
-				else
-				{
-					data = await this.usersService.findOne(info['id']);
-					data['first_conn'] = false;
-				}
-				data['id'] = info['id'];
-				response.setCookie('user',
-									JSON.stringify(data),
+					response.setCookie('first_conn', "true",
 									{
 										path: '/',
 										signed: true
-									}
-				);
+									});
+				}
+				else
+				{
+					const user = await this.usersService.findOne(info['id']);
+				}
+				response.setCookie('userid', info['id'].toString(),
+									{
+										path: '/',
+										signed: true
+									});
 			}
 		}
 		return ('<script>window.close()</script>');
