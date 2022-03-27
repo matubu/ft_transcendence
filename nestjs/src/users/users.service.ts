@@ -39,18 +39,23 @@ export class UsersService {
 		if (user_interface?.id === undefined)
 			return ;
 		const userUpdate = await this.usersRepository.findOne({ id42: +user_interface.id })
-		if (user_interface.fullname !== undefined)
-			userUpdate.fullname = user_interface.fullname;
-		if (user_interface.nickname !== undefined)
-			userUpdate.nickname = user_interface.nickname;
-		if (user_interface.twoauth !== undefined)
-			userUpdate.twoauth = user_interface.twoauth;
-		if (user_interface.code2FA !== undefined)
-			userUpdate.code2FA = user_interface.code2FA;
-		if (user_interface.img !== undefined)
-			userUpdate.img = user_interface.img;
-		if (user_interface.elo !== undefined)
-			userUpdate.elo = user_interface.elo;
+		// if (user_interface.fullname !== undefined)
+		// 	userUpdate.fullname = user_interface.fullname;
+		// if (user_interface.nickname !== undefined)
+		// 	userUpdate.nickname = user_interface.nickname;
+		// if (user_interface.twoauth !== undefined)
+		// 	userUpdate.twoauth = user_interface.twoauth;
+		// if (user_interface.code2FA !== undefined)
+		// 	userUpdate.code2FA = user_interface.code2FA;
+		// if (user_interface.img !== undefined)
+		// 	userUpdate.img = user_interface.img;
+		// if (user_interface.elo !== undefined)
+		// 	userUpdate.elo = user_interface.elo;
+		for (const key in userUpdate)
+		{
+			if (key !== "id" && key !== "id42" && key in user_interface)
+				userUpdate[key] = user_interface[key];
+		}
 		await this.usersRepository.save(userUpdate)
 	}
 
@@ -78,7 +83,6 @@ export class UsersService {
 	async check_code(id: string, code: string): Promise<boolean> {
 		const user: Users = await this.findOne(id);
 		if (!user) return false;
-		console.log(user.code2FA, code, verifyToken(user.code2FA, code))
 		return verifyToken(user.code2FA, code)?.delta === 0;
 	}
 
