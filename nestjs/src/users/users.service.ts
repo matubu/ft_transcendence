@@ -16,10 +16,10 @@ export class UsersService {
 	{
 		const user = new Users();
 		if (user_interface.id === undefined
-			|| user_interface.fullname == undefined
-			|| user_interface.twoauth == undefined
-			|| user_interface.img == undefined
-			|| user_interface.elo == undefined)
+			|| user_interface.fullname === undefined
+			|| user_interface.twoauth === undefined
+			|| user_interface.img === undefined
+			|| user_interface.elo === undefined)
 			return ;
 		if ((await this.findOne(user_interface.id.toString())) !== undefined)
 			return ;
@@ -57,6 +57,7 @@ export class UsersService {
 				return (false);
 		return (true);
 	}
+
 	findOne(id: string): Promise<Users> {
 		if (id === undefined || !this.strisdigit(id))
 			return ;
@@ -70,6 +71,7 @@ export class UsersService {
 	findRank(): Promise<Users[]> {
 		return this.usersRepository.find({order: {elo: "DESC"}, take: 100});
 	}
+
 	findRankNumber(number: string): Promise<Users[]> {
 		if (+number <= 0)
 			return ;
@@ -99,6 +101,36 @@ export class UsersService {
 		if (!user) return;
 		if (!user.code2FA) return;
 		let updated: UsersInterface = {twoauth: false, code2FA: null, id: +id}
+		await this.update(updated)
+	}
+
+	async add_friend(id_user: string, id_friend: number)
+	{
+		const user: Users = await this.findOne(id_user);
+		if (!user) return;
+		let updated: UsersInterface = {
+			id: +id_user,
+			friends: user.friends
+		}
+		updated.friends.push(id_friend);
+		await this.update(updated)
+	}
+
+	RemoveElementFromIntArray(tab: number[], element: number): number[]{
+		tab.forEach((value,index)=>{
+			if(value==element) tab.splice(index,1);
+		});
+		return (tab)
+	}
+
+	async remove_friend(id_user: string, id_friend: number)
+	{
+		const user: Users = await this.findOne(id_user);
+		if (!user) return;
+		let updated: UsersInterface = {
+			id: +id_user,
+			friends: this.RemoveElementFromIntArray(user.friends, id_friend)
+		}
 		await this.update(updated)
 	}
 }

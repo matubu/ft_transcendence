@@ -3,6 +3,7 @@ import { UsersService } from './users.service'
 import { Users } from './entity/users.entity';
 import { UsersInterface } from './interfaces/users.interface';
 import { CodeInterface } from './interfaces/code.interface';
+import { FriendInterface } from './interfaces/friend.interface';
 import { FastifyRequest } from 'fastify';
 
 @Controller('users')
@@ -85,4 +86,33 @@ export class UsersController {
 		return await this.usersService.disable_2fa(id);
 	}
 	
+	@Get("add_friend")
+	add_friend_no_error() {}
+	@Put("add_friend")
+	async add_friend(@Req() req: FastifyRequest, @Body() body: FriendInterface)
+	{
+		const validUser = req.unsignCookie(req.cookies.user);
+		if (!validUser?.valid) return;
+
+		const cookie = req.unsignCookie(req.cookies.userid);
+		if (!cookie?.valid) return;
+		const id = cookie.value;
+		if (!id) return;
+		await this.usersService.add_friend(id, body.friend);
+	}
+
+	@Get("remove_friend")
+	remove_friend_no_error() {}
+	@Put("remove_friend")
+	async remove_friend(@Req() req: FastifyRequest, @Body() body: FriendInterface)
+	{
+		const validUser = req.unsignCookie(req.cookies.user);
+		if (!validUser?.valid) return;
+
+		const cookie = req.unsignCookie(req.cookies.userid);
+		if (!cookie?.valid) return;
+		const id = cookie.value;
+		if (!id) return;
+		await this.usersService.remove_friend(id, body.friend);
+	}
 }
