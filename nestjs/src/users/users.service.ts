@@ -24,7 +24,7 @@ export class UsersService {
 			return ;
 		if ((await this.findOne(user_interface.id.toString())) !== undefined)
 			return ;
-		user.id42 = user_interface.id;
+		user.id = user_interface.id;
 		user.fullname = user_interface.fullname;
 		user.nickname = user_interface.nickname;
 		user.twoauth = user_interface.twoauth;
@@ -38,7 +38,7 @@ export class UsersService {
 	{
 		if (user_interface?.id === undefined)
 			return ;
-		const userUpdate = await this.usersRepository.findOne({ id42: +user_interface.id })
+		const userUpdate = await this.usersRepository.findOne({ id: +user_interface.id })
 		// if (user_interface.fullname !== undefined)
 		// 	userUpdate.fullname = user_interface.fullname;
 		// if (user_interface.nickname !== undefined)
@@ -53,7 +53,7 @@ export class UsersService {
 		// 	userUpdate.elo = user_interface.elo;
 		for (const key in userUpdate)
 		{
-			if (key !== "id" && key !== "id42" && key in user_interface)
+			if (key !== "id" && key in user_interface)
 				userUpdate[key] = user_interface[key];
 		}
 		await this.usersRepository.save(userUpdate)
@@ -64,11 +64,11 @@ export class UsersService {
 	}
 
 	findOne(id: string): Promise<Users> {
-		return this.usersRepository.findOne({ id42: +id });
+		return this.usersRepository.findOne({ id: +id });
 	}
 
 	async remove(id: string) {
-		return await this.usersRepository.delete({ id42: +id });
+		return await this.usersRepository.delete({ id: +id });
 	}
 
 	findRank(): Promise<Users[]> {

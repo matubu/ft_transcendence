@@ -1,13 +1,13 @@
 CREATE TABLE public."Users"
 (
-	id 			numeric,
-	id42 		numeric,
-	fullname 	character varying[],
+	id 			numeric UNIQUE NOT NULL,
+	fullname 	character varying[] NOT NULL,
 	nickname 	character varying[],
-	twoauth		boolean,
+	twoauth		boolean NOT NULL,
 	code2FA		character varying[],
-	img			character varying[],
-	elo			numeric,
+	img			character varying[] NOT NULL,
+	elo			numeric NOT NULL,
+	friends		numeric[],
 	PRIMARY KEY (id)
 );
 

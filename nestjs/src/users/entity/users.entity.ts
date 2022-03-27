@@ -1,29 +1,29 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn } from 'typeorm';
 
 @Entity()
 export class Users
 {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn()
   id: number;
-
-  @Column()
-  id42: number;
 
   @Column()
   fullname: string;
 
   @Column({ default: null })
-  nickname: string;
+  nickname?: string;
 
   @Column({ default: false })
   twoauth: boolean;
 
   @Column({ default: null })
-  code2FA: string;
+  code2FA?: string;
 
   @Column()
   img: string;
 
   @Column()
   elo: number;
+
+  @Column("int", { array: true, default: {} })
+  friends?: number[];
 }

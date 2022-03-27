@@ -7,4 +7,5 @@ export interface UsersInterface
 	code2FA?: string;
 	img?: string;
 	elo?: number;
+	friends?: number[];
 }
