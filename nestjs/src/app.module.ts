@@ -8,6 +8,7 @@ import { RankModule } from './rank/rank.module';
 import { MatchsModule } from './matchs/matchs.module';
 import { MessagesModule } from './messages/messages.module';
 import { ChannelsModule } from './channels/channels.module';
+import { ChatGateway } from './chat.gateway';
 
 @Module({
   imports: [UsersModule,
@@ -18,6 +19,6 @@ import { ChannelsModule } from './channels/channels.module';
 			MessagesModule,
 			ChannelsModule],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, ChatGateway],
 })
 export class AppModule {}
