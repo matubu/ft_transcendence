@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Layout from '@components/Layout.svelte'
 	import Head from '@components/Head.svelte'
 	import Button from '@components/Button.svelte'
 
@@ -42,21 +43,23 @@
 
 <Head title="Error {status}" />
 
-<div class="container">
-	<div>
-		<h1>{status}</h1>
-		
-		<p>
-		Ooops!<br>
-		{error.message}
-		</p>
-		
-		<span>
-			<Button primary href="/">Back to home</Button>
-		</span>
-		
-		{#if dev && error.stack}
-			<pre>{error.stack}</pre>
-		{/if}
+<Layout>
+	<div class="container">
+		<div>
+			<h1>{status}</h1>
+			
+			<p>
+			Ooops!<br>
+			{error.message}
+			</p>
+			
+			<span>
+				<Button primary href="/">Back to home</Button>
+			</span>
+			
+			{#if dev && error.stack}
+				<pre>{error.stack}</pre>
+			{/if}
+		</div>
 	</div>
-</div>
+</Layout>

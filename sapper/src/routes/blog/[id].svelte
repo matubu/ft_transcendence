@@ -14,6 +14,7 @@
 </script>
 
 <script lang="ts">
+	import Layout from '@components/Layout.svelte'
 	import Head from '../../components/Head.svelte'
 	export let post: { slug: string; title: string, html: any };
 </script>
@@ -56,8 +57,10 @@
 
 <Head title="{post.title}" />
 
-<h1>{post.title}</h1>
+<Layout>
+	<h1>{post.title}</h1>
 
-<div class="content">
-	{@html post.html}
-</div>
+	<div class="content">
+		{@html post.html}
+	</div>
+</Layout>

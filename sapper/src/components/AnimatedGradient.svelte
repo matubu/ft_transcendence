@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onDestroy, onMount } from "svelte";
+	import { onMount } from "svelte";
 
 	let container: HTMLDivElement
 
@@ -13,9 +13,6 @@
 	let pos = (): number[] => [Math.random() * window.innerWidth, Math.random() * window.innerHeight]
 
 	onMount(() => {
-		container = document.createElement('div')
-		container.className = 'animated-gradient'
-
 		let balls: HTMLDivElement[] = [ball('#c55273'), ball('#424db3')]
 		let velocity = [vel(), vel()]
 		let position = [pos(), pos()]
@@ -35,16 +32,11 @@
 		anim()
 
 		container.append(...balls)
-
-		document.body.append(container)
-	})
-	onDestroy(() => {
-		container?.remove?.()
 	})
 </script>
 
 <style>
-	:global(.animated-gradient) {
+	.animated-gradient {
 		position: fixed;
 		top: 0;
 		left: 0;
@@ -53,7 +45,7 @@
 		z-index: -1;
 		filter: blur(50px);
 	}
-	:global(.animated-gradient div) {
+	.animated-gradient :global(div) {
 		position: fixed;
 		top: -50vmax;
 		left: -50vmax;
@@ -63,3 +55,5 @@
 		background: radial-gradient(var(--color), #0000);
 	}
 </style>
+
+<div class="animated-gradient" bind:this={container}></div>

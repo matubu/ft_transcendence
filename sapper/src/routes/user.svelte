@@ -6,6 +6,8 @@
 </script>
 
 <script lang="ts">
+	import Layout from '@components/Layout.svelte'
+	import Head from '../components/Head.svelte'
 	import { goto } from '@sapper/app'
 	import Button from '../components/Button.svelte'
 	import User from '../components/User.svelte'
@@ -77,43 +79,47 @@
 	}
 </style>
 
-{#if $user}
-	<div class="container">
-		<div class="profile">
-			<User user={$user} size=150 />
-		</div>
-		<h1>Welcome, {$user.nickname ?? $user.fullname}</h1>
+<Head title="User" />
 
-		<div class="card-container">
-			<div class="card">
-				<div>
-					<div>
-						<h2>2FA</h2>
-						<p>Each time you sign in to your Transcendence, you'll need your password and a verification code.</p>
-					</div>
-					<div>
-						<img width="70" height="70" src="https://cdn-icons-png.flaticon.com/512/3643/3643948.png" alt="">
-					</div>
-				</div>
-				<button>Enable 2fa</button>
+<Layout>
+	{#if $user}
+		<div class="container">
+			<div class="profile">
+				<User user={$user} size=150 />
 			</div>
-			<div class="card">
-				<div>
-					<div>
-						<h2>Personal information</h2>
-						<p>Change your nickname</p>
-					</div>
-					<div>
-						<img width="70" height="70" src="https://cdn-icons-png.flaticon.com/512/5956/5956503.png" alt="">
-					</div>
-				</div>
-				<button>Change your nickname</button>
-			</div>
-		</div>
+			<h1>Welcome, {$user.nickname ?? $user.fullname}</h1>
 
-		<Button primary on:click={() => {
-			logOut()
-			goto('/')
-		}}>Logout</Button>
-	</div>
-{/if}
+			<div class="card-container">
+				<div class="card">
+					<div>
+						<div>
+							<h2>2FA</h2>
+							<p>Each time you sign in to your Transcendence, you'll need your password and a verification code.</p>
+						</div>
+						<div>
+							<img width="70" height="70" src="https://cdn-icons-png.flaticon.com/512/3643/3643948.png" alt="">
+						</div>
+					</div>
+					<button>Enable 2fa</button>
+				</div>
+				<div class="card">
+					<div>
+						<div>
+							<h2>Personal information</h2>
+							<p>Change your nickname</p>
+						</div>
+						<div>
+							<img width="70" height="70" src="https://cdn-icons-png.flaticon.com/512/5956/5956503.png" alt="">
+						</div>
+					</div>
+					<button>Change your nickname</button>
+				</div>
+			</div>
+
+			<Button primary on:click={() => {
+				logOut()
+				goto('/')
+			}}>Logout</Button>
+		</div>
+	{/if}
+</Layout>
