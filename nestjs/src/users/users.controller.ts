@@ -2,10 +2,15 @@ import { Controller, Get, Param, Post, Body, Delete, Req, Put, Res } from '@nest
 import { UsersService } from './users.service'
 import { Users } from './entity/users.entity';
 import { UsersInterface } from './interfaces/users.interface';
+import { UploadPicture } from './interfaces/uploadPicture.interface';
 import { CodeInterface } from './interfaces/code.interface';
 import { FriendInterface } from './interfaces/friend.interface';
 import { FastifyRequest } from 'fastify';
 import { DeleteResult } from 'typeorm';
+const util = require('util')
+const { pipeline } = require('stream')
+const pump = util.promisify(pipeline)
+const fs = require('fs');
 
 @Controller('users')
 export class UsersController {
@@ -40,10 +45,9 @@ export class UsersController {
 	@Delete(':id')
 	remove(@Param('id') id: string, @Req() req: FastifyRequest): Promise<DeleteResult>
 	{
-		// TODO reactivate for prod
-		// if (!req.cookies.user) return ;
-		// const validUser = req.unsignCookie(req.cookies.user);
-		// if (!validUser?.valid) return;
+		if (!req.cookies.user) return ;
+		const validUser = req.unsignCookie(req.cookies.user);
+		if (!validUser?.valid) return;
 
 		return this.usersService.remove(id);
 	}
@@ -54,6 +58,7 @@ export class UsersController {
 		if (!req.cookies.userid) return ;
 		const cookie = req.unsignCookie(req.cookies.userid);
 		if (!cookie?.valid) return;
+	
 		const id = cookie.value;
 		if (!id) return;
 		const val = await this.usersService.check_code(id, body.code)
@@ -75,10 +80,7 @@ export class UsersController {
 		const validUser = req.unsignCookie(req.cookies.user);
 		if (!validUser?.valid) return;
 
-		if (!req.cookies.userid) return ;
-		const cookie = req.unsignCookie(req.cookies.userid);
-		if (!cookie?.valid) return;
-		const id = cookie.value;
+		const id = validUser.value;
 		if (!id) return;
 		return await this.usersService.activate_2fa(id);
 	}
@@ -92,16 +94,11 @@ export class UsersController {
 		const validUser = req.unsignCookie(req.cookies.user);
 		if (!validUser?.valid) return;
 
-		if (!req.cookies.userid) return ;
-		const cookie = req.unsignCookie(req.cookies.userid);
-		if (!cookie?.valid) return;
-		const id = cookie.value;
+		const id = validUser.value;
 		if (!id) return;
 		return await this.usersService.disable_2fa(id);
 	}
 	
-	@Get("add_friend")
-	add_friend_no_error() {}
 	@Post("add_friend")
 	async add_friend(@Req() req: FastifyRequest, @Body() body: FriendInterface)
 	{
@@ -109,16 +106,11 @@ export class UsersController {
 		const validUser = req.unsignCookie(req.cookies.user);
 		if (!validUser?.valid) return;
 
-		if (!req.cookies.userid) return ;
-		const cookie = req.unsignCookie(req.cookies.userid);
-		if (!cookie?.valid) return;
-		const id = cookie.value;
+		const id = validUser.value;
 		if (!id) return;
 		await this.usersService.add_friend(id, body.friend);
 	}
 
-	@Get("remove_friend")
-	remove_friend_no_error() {}
 	@Post("remove_friend")
 	async remove_friend(@Req() req: FastifyRequest, @Body() body: FriendInterface)
 	{
@@ -126,20 +118,50 @@ export class UsersController {
 		const validUser = req.unsignCookie(req.cookies.user);
 		if (!validUser?.valid) return;
 
-		if (!req.cookies.userid) return ;
-		const cookie = req.unsignCookie(req.cookies.userid);
-		if (!cookie?.valid) return;
-		const id = cookie.value;
+		const id = validUser.value;
 		if (!id) return;
 		await this.usersService.remove_friend(id, body.friend);
 	}
 
-	@Get('picture')
-	uploadFile(@Req() req: FastifyRequest): string {
+	@Post('picture')
+	async uploadPicture(@Req() req: FastifyRequest) : Promise<UploadPicture>
+	{
 		if (!req.cookies.user) return ;
 		const validUser = req.unsignCookie(req.cookies.user);
 		if (!validUser?.valid) return;
 
-		return ("ok");
+		const data = await req.file();
+		/*
+			Format gerer for resize img
+			@jimp/jpeg
+			@jimp/png
+			@jimp/bmp
+			@jimp/tiff
+			@jimp/gif
+		*/
+		const valid_mime: string[] = [ "image/gif", "image/jpeg", "image/png", "image/bmp", "image/tiff" ];
+		for (let i = 0; i < valid_mime.length; i++)
+		{
+			if (valid_mime[i] === data.mimetype)
+			{
+				await pump(data.file, fs.createWriteStream(process.cwd() + "/upload/tmp/" + data.filename));
+				const url_img = await this.usersService.convert(data.filename);
+				const user: UsersInterface = {
+					id: +req.cookies.userid,
+					img: url_img
+				}
+				await this.usersService.update(user);
+				const succes: UploadPicture = {
+					status: "succes",
+					content: url_img
+				}
+				return (succes);
+			}
+		}
+		const error: UploadPicture = {
+			status: "error",
+			content: "Format is not valid"
+		}
+		return (error);
 	}
 }

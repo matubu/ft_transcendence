@@ -6,7 +6,7 @@ import { UsersInterface } from './interfaces/users.interface';
 import twofactor, { generateSecret, verifyToken } from "node-2fa";
 const download = require('image-downloader');
 const Jimp = require("jimp")
-var md5 = require('md5');
+const md5 = require('md5');
 const fs = require('fs');
 
 @Injectable()
@@ -158,9 +158,25 @@ export class UsersService {
 			dest: process.cwd() + "/upload/tmp"
 		}
 
-		let file = await download.image(options).then(({ filename }) => { return filename })
-		let img_name = md5(Date.now()) + ".jpg";
-		Jimp.read(file)
+		const file = await download.image(options).then(({ filename }) => { return filename })
+		const img_name = md5(Date.now()) + ".jpg";
+		await Jimp.read(file)
+		  .then(image => {
+			return image
+				.resize(256, Jimp.AUTO)
+				.quality(60)
+				.write(process.cwd() + "/upload/images/" + img_name)
+		})
+		const final_url = "/api/images/" + img_name;
+		fs.unlinkSync(file);
+		return (final_url);
+	}
+
+	async convert(filename: string) : Promise<string>
+	{
+		const file = process.cwd() + "/upload/tmp/" + filename;
+		const img_name = md5(Date.now()) + ".jpg";
+		await Jimp.read(file)
 		  .then(image => {
 			return image
 				.resize(256, Jimp.AUTO)
