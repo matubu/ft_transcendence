@@ -1,6 +1,6 @@
 import { Injectable, Res } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, ILike } from 'typeorm';
 import { Users } from './entity/users.entity';
 import { UsersInterface } from './interfaces/users.interface';
 import twofactor, { generateSecret, verifyToken } from "node-2fa";
@@ -132,5 +132,15 @@ export class UsersService {
 			friends: this.RemoveElementFromIntArray(user.friends, id_friend)
 		}
 		await this.update(updated)
+	}
+
+	async findByContent(str: string) : Promise<Users[]>
+	{
+		if (str.length < 3)
+			return ;
+		return await this.usersRepository.find( {
+												where: [{ fullname: ILike(`%${str}%`) },
+														{ nickname: ILike(`%${str}%`) }]
+												});
 	}
 }

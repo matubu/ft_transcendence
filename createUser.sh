@@ -1,5 +1,5 @@
 #!/bin/bash
-MAX=100
+MAX=1000
 
 echo -en "Check jq "
 if [ $(brew list | grep jq) != "jq" ]

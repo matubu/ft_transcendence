@@ -31,6 +31,10 @@ export class UsersController {
 	getOne(@Param('id') id: string) : Promise<Users>
 	{ return this.usersService.findOne(id); }
 
+	@Get('content/:str')
+	getByContent(@Param('str') str: string) : Promise<Users[]>
+	{ return this.usersService.findByContent(str); }
+
 	@Delete(':id')
 	remove(@Param('id') id: string, @Req() req: FastifyRequest)
 	{
