@@ -26,9 +26,10 @@
 </style>
 
 <button
-	on:click={() => dispatch('click')}
-	on:mousedown={() => dispatch('mousedown')}
-	on:focus={() => dispatch('focus')}
+	on:click={e => dispatch('click', e)}
+	on:mousedown={e => dispatch('mousedown', e)}
+	on:mouseup={e => dispatch('mouseup', e)}
+	on:focus={e => dispatch('focus', e)}
 >
 	<slot />
 </button>

@@ -30,7 +30,7 @@
 		border-radius: 12px;
 		font-size: 20px;
 		border: 2px solid var(--seco);
-		transition: .2s, border-radius .3s;
+		transition: border-radius .3s;
 		text-decoration: none;
 		user-select: none;
 		font-weight: 500;

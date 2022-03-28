@@ -13,6 +13,8 @@
 	import User from '../components/User.svelte'
 	import { logOut } from '../utils'
 	import { user } from '../store'
+
+	user.subscribe(data => data === undefined && goto('/'))
 </script>
 
 <style>
@@ -87,7 +89,7 @@
 			<div class="profile">
 				<User user={$user} size=150 />
 			</div>
-			<h1>Welcome, {$user.nickname ?? $user.fullname}</h1>
+			<h1>Hi, {$user.nickname ?? $user.fullname.split(' ')[0]}</h1>
 
 			<div class="card-container">
 				<div class="card">
