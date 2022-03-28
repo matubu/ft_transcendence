@@ -5,6 +5,7 @@ import { UsersInterface } from './interfaces/users.interface';
 import { CodeInterface } from './interfaces/code.interface';
 import { FriendInterface } from './interfaces/friend.interface';
 import { FastifyRequest } from 'fastify';
+import { DeleteResult } from 'typeorm';
 
 @Controller('users')
 export class UsersController {
@@ -36,7 +37,7 @@ export class UsersController {
 	{ return this.usersService.findByContent(str); }
 
 	@Delete(':id')
-	remove(@Param('id') id: string, @Req() req: FastifyRequest)
+	remove(@Param('id') id: string, @Req() req: FastifyRequest): Promise<DeleteResult>
 	{
 		const validUser = req.unsignCookie(req.cookies.user);
 		if (!validUser?.valid) return;

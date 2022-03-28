@@ -1,6 +1,6 @@
 import { Injectable, Res } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, ILike } from 'typeorm';
+import { Repository, ILike, DeleteResult } from 'typeorm';
 import { Users } from './entity/users.entity';
 import { UsersInterface } from './interfaces/users.interface';
 import twofactor, { generateSecret, verifyToken } from "node-2fa";
@@ -64,7 +64,7 @@ export class UsersService {
 		return this.usersRepository.findOne({ id: +id });
 	}
 
-	async remove(id: string) {
+	async remove(id: string): Promise<DeleteResult> {
 		return await this.usersRepository.delete({ id: +id });
 	}
 
