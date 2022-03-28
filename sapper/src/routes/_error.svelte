@@ -38,6 +38,7 @@
 		text-align: left;
 		width: fit-content;
 		margin: 0 auto;
+    	white-space: break-spaces;
 	}
 </style>
 

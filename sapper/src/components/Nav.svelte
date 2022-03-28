@@ -34,6 +34,9 @@
 	}
 	[aria-current] { color: var(--whit) }
 	[aria-current]:before { background: var(--whit) }
+	:not(.vertical) > ul {
+		gap: 15px;
+	}
 	.vertical a:before {
 		display: none;
 	}
