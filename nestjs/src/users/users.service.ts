@@ -37,17 +37,18 @@ export class UsersService {
 		await this.usersRepository.save(user)
 	}
 
-	async update(user_interface: UsersInterface)
+	async update(user_interface: UsersInterface) : Promise<boolean>
 	{
 		if (user_interface?.id === undefined)
-			return ;
-		const userUpdate = await this.usersRepository.findOne({ id: +user_interface.id })
+			return false;
+		let userUpdate = await this.usersRepository.findOne({ id: +user_interface.id })
 		for (const key in userUpdate)
 		{
 			if (key !== "id" && key in user_interface)
 				userUpdate[key] = user_interface[key];
 		}
-		await this.usersRepository.save(userUpdate)
+		const checkUser = await this.usersRepository.save(userUpdate)
+		return (checkUser === userUpdate)
 	}
 
 	findAll(): Promise<Users[]> {

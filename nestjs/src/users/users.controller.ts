@@ -25,13 +25,13 @@ export class UsersController {
 	{ return this.usersService.insert(user_interface); }
 
 	@Post('update')
-	update(@Body() user_interface: UsersInterface, @Req() req: FastifyRequest)
+	async update(@Body() user_interface: UsersInterface, @Req() req: FastifyRequest): Promise<boolean>
 	{
-		if (!req.cookies.user) return ;
+		if (!req.cookies.user) return false;
 		const validUser = req.unsignCookie(req.cookies.user);
-		if (!validUser?.valid) return;
+		if (!validUser?.valid) return false;
 		
-		return this.usersService.update(user_interface);
+		return await this.usersService.update(user_interface);
 	}
 
 	@Get(':id')
