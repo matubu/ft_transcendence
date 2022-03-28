@@ -22,6 +22,7 @@ export class UsersController {
 	@Post('update')
 	update(@Body() user_interface: UsersInterface, @Req() req: FastifyRequest)
 	{
+		if (!req.cookies.user) return ;
 		const validUser = req.unsignCookie(req.cookies.user);
 		if (!validUser?.valid) return;
 		
@@ -40,6 +41,7 @@ export class UsersController {
 	remove(@Param('id') id: string, @Req() req: FastifyRequest): Promise<DeleteResult>
 	{
 		// TODO reactivate for prod
+		// if (!req.cookies.user) return ;
 		// const validUser = req.unsignCookie(req.cookies.user);
 		// if (!validUser?.valid) return;
 
@@ -49,6 +51,7 @@ export class UsersController {
 	@Post('check_code')
 	async check_code(@Body() body: CodeInterface, @Req() req: FastifyRequest, @Res({ passthrough: true }) response): Promise<boolean>
 	{
+		if (!req.cookies.userid) return ;
 		const cookie = req.unsignCookie(req.cookies.userid);
 		if (!cookie?.valid) return;
 		const id = cookie.value;
@@ -68,9 +71,11 @@ export class UsersController {
 	@Put("activate_2fa")
 	async activate_2fa(@Req() req: FastifyRequest): Promise<string>
 	{
+		if (!req.cookies.user) return ;
 		const validUser = req.unsignCookie(req.cookies.user);
 		if (!validUser?.valid) return;
 
+		if (!req.cookies.userid) return ;
 		const cookie = req.unsignCookie(req.cookies.userid);
 		if (!cookie?.valid) return;
 		const id = cookie.value;
@@ -83,9 +88,11 @@ export class UsersController {
 	@Put("disable_2fa")
 	async disable_2fa(@Req() req: FastifyRequest)
 	{
+		if (!req.cookies.user) return ;
 		const validUser = req.unsignCookie(req.cookies.user);
 		if (!validUser?.valid) return;
 
+		if (!req.cookies.userid) return ;
 		const cookie = req.unsignCookie(req.cookies.userid);
 		if (!cookie?.valid) return;
 		const id = cookie.value;
@@ -98,9 +105,11 @@ export class UsersController {
 	@Post("add_friend")
 	async add_friend(@Req() req: FastifyRequest, @Body() body: FriendInterface)
 	{
+		if (!req.cookies.user) return ;
 		const validUser = req.unsignCookie(req.cookies.user);
 		if (!validUser?.valid) return;
 
+		if (!req.cookies.userid) return ;
 		const cookie = req.unsignCookie(req.cookies.userid);
 		if (!cookie?.valid) return;
 		const id = cookie.value;
@@ -113,13 +122,24 @@ export class UsersController {
 	@Post("remove_friend")
 	async remove_friend(@Req() req: FastifyRequest, @Body() body: FriendInterface)
 	{
+		if (!req.cookies.user) return ;
 		const validUser = req.unsignCookie(req.cookies.user);
 		if (!validUser?.valid) return;
 
+		if (!req.cookies.userid) return ;
 		const cookie = req.unsignCookie(req.cookies.userid);
 		if (!cookie?.valid) return;
 		const id = cookie.value;
 		if (!id) return;
 		await this.usersService.remove_friend(id, body.friend);
+	}
+
+	@Get('picture')
+	uploadFile(@Req() req: FastifyRequest): string {
+		if (!req.cookies.user) return ;
+		const validUser = req.unsignCookie(req.cookies.user);
+		if (!validUser?.valid) return;
+
+		return ("ok");
 	}
 }

@@ -69,6 +69,9 @@ export class UsersService {
 	}
 
 	async remove(id: string): Promise<DeleteResult> {
+		const user: Users = await this.findOne(id);
+		if (!user) return;
+		fs.unlinkSync(process.cwd() + "/upload/images/" + user.img.substr(12));
 		return await this.usersRepository.delete({ id: +id });
 	}
 
