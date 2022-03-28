@@ -2,7 +2,7 @@ CREATE TABLE public."Users"
 (
 	id 			numeric UNIQUE NOT NULL,
 	fullname 	character varying[] NOT NULL,
-	nickname 	character varying[],
+	nickname 	character varying[] UNIQUE,
 	twoauth		boolean NOT NULL,
 	code2FA		character varying[],
 	img			character varying[] NOT NULL,
