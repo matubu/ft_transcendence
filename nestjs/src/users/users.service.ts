@@ -4,6 +4,10 @@ import { Repository, ILike, DeleteResult } from 'typeorm';
 import { Users } from './entity/users.entity';
 import { UsersInterface } from './interfaces/users.interface';
 import twofactor, { generateSecret, verifyToken } from "node-2fa";
+const download = require('image-downloader');
+const Jimp = require("jimp")
+var md5 = require('md5');
+const fs = require('fs');
 
 @Injectable()
 export class UsersService {
@@ -142,5 +146,26 @@ export class UsersService {
 												where: [{ fullname: ILike(`%${str}%`) },
 														{ nickname: ILike(`%${str}%`) }]
 												});
+	}
+
+	async downloadImgByUrl(url_img: string): Promise<string>
+	{
+		const options = {
+			url: url_img,
+			dest: process.cwd() + "/upload/tmp"
+		}
+
+		let file = await download.image(options).then(({ filename }) => { return filename })
+		let img_name = md5(Date.now()) + ".jpg";
+		Jimp.read(file)
+		  .then(image => {
+			return image
+				.resize(256, Jimp.AUTO)
+				.quality(60)
+				.write(process.cwd() + "/upload/images/" + img_name)
+		})
+		const final_url = "/api/images/" + img_name;
+		fs.unlinkSync(file);
+		return (final_url);
 	}
 }

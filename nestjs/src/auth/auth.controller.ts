@@ -21,11 +21,12 @@ export class AuthController {
 				const users_value = await this.usersService.findOne(info['id'].toString());
 				if (users_value === undefined)
 				{
+					const new_image = await this.usersService.downloadImgByUrl(info['image_url']);
 					const createUser: UsersInterface = {
 						id: info['id'],
 						fullname: info['displayname'],
 						twoauth: false,
-						img: info['image_url'],
+						img: new_image,
 						elo: 1000
 					};
 					await this.usersService.insert(createUser);

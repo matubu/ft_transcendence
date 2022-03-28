@@ -9,6 +9,7 @@ import { MatchsModule } from './matchs/matchs.module';
 import { MessagesModule } from './messages/messages.module';
 import { ChannelsModule } from './channels/channels.module';
 import { ChatGateway } from './chat.gateway';
+import { ImagesModule } from './images/images.module';
 
 @Module({
   imports: [UsersModule,
@@ -17,7 +18,8 @@ import { ChatGateway } from './chat.gateway';
 			RankModule,
 			MatchsModule,
 			MessagesModule,
-			ChannelsModule],
+			ChannelsModule,
+			ImagesModule],
   controllers: [AppController],
   providers: [AppService, ChatGateway],
 })

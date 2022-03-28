@@ -11,7 +11,9 @@ polka()
 	.use(
 		'/api',
 		createProxyMiddleware({
-			target: `http://localhost:${NESTJS_PORT}`
+			target: `http://localhost:${NESTJS_PORT}`,
+			"secure": false,
+			"changeOrigin": false
 		})
 	)
 	.use(

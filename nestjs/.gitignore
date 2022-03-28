@@ -32,3 +32,4 @@ lerna-debug.log*
 
 # CUSTOM
 ormconfig.json
+upload/*/*.jpg

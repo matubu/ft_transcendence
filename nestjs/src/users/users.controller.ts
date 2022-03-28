@@ -39,8 +39,9 @@ export class UsersController {
 	@Delete(':id')
 	remove(@Param('id') id: string, @Req() req: FastifyRequest): Promise<DeleteResult>
 	{
-		const validUser = req.unsignCookie(req.cookies.user);
-		if (!validUser?.valid) return;
+		// TODO reactivate for prod
+		// const validUser = req.unsignCookie(req.cookies.user);
+		// if (!validUser?.valid) return;
 
 		return this.usersService.remove(id);
 	}
