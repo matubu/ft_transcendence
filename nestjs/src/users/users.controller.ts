@@ -152,7 +152,7 @@ export class UsersController {
 				}
 				await this.usersService.update(user);
 				const succes: UploadPicture = {
-					status: "succes",
+					status: "success",
 					content: url_img
 				}
 				return (succes);
