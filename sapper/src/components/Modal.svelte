@@ -1,8 +1,16 @@
 <script>
+	import { createEventDispatcher, onMount } from 'svelte'
+
+	const dispatch = createEventDispatcher()
+
 	export let opened = false
 
 	export function toggle(_opened = !opened) {
-		opened = _opened
+		dispatch('toggle')
+		if (opened = _opened)
+			dispatch('open')
+		else
+			dispatch('close')
 	}
 	export function close() { toggle(false) }
 	export function open() { toggle(true) }

@@ -2,6 +2,7 @@
 	--whit: #F1F1F1;
 	--fore: #1a1a29;
 	--back: #010102;
+	--bord: #5d5d6d;
 
 	--bhov: #f0f7ff09;
 	--hove: #f0f7ff07;
@@ -33,6 +34,7 @@ h1 {
 	margin: 0 0 30px 0;
 	font-size: 4em
 }
+::placeholder,
 .dim { color: var(--grey) }
 
 ::-moz-selection { background: #00a2ff49 }
@@ -42,4 +44,21 @@ h1 {
 	body {
 		padding: 2em;
 	}
+}
+
+input[type="text"], input[type="password"] {
+	height: 50px;
+	font-size: 17px;
+	margin: 0;
+	padding: 10px;
+	box-sizing: border-box;
+	background: #0000;
+	border-radius: 5px;
+	border: 1px solid var(--bord);
+	outline: none;
+	color: var(--whit);
+	transition: .3s;
+}
+:is(input[type="text"], input[type="password"]):focus {
+	border-color: var(--whit);
 }

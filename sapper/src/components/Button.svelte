@@ -27,10 +27,10 @@
 		padding: 15px 20px;
 		border: none;
 		cursor: pointer;
-		border-radius: 12px;
+		border-radius: 8px;
 		font-size: 20px;
 		border: 2px solid var(--seco);
-		transition: border-radius .3s;
+		transition: background-color .3s;
 		text-decoration: none;
 		user-select: none;
 		font-weight: 500;
@@ -40,7 +40,6 @@
 	}
 	a:hover {
 		background: #A6CFD508;
-		border-radius: 5px;
 	}
 	a.primary {
 		background-image: linear-gradient(90deg, var(--seco), var(--prim), var(--seco));

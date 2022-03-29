@@ -1,5 +1,6 @@
 import { user, twoauth } from '@lib/store'
 import { get } from 'svelte/store'
+import { goto } from '@sapper/app'
 
 export const getCookiesFromString = s => s && Object.fromEntries(s.split?.('; ').map(v => v.split('=')))
 
@@ -12,14 +13,21 @@ export const getCookieFromString = (s, key) => {
 
 export const getCookie = key => getCookieFromString(document.cookie, key)
 
+export const removeCookie = key => (document.cookie = `${key}=; expires=Thu, 01 Jan 1970 00:00:01 GMT`)
+
 export const logIn = () => {
+	removeCookie('userid')
 	window
 		.open(`https://api.intra.42.fr/oauth/authorize?client_id=5fb8cff19443b1e91c5753666fdcb12d45ecbc49c667ba7eb97150cb2590b38a&redirect_uri=${encodeURIComponent(location.origin)}%2Fapi%2Fauth&response_type=code`, 'Auth 42', 'width=500,height=700')
 		.onunload = () => {
 			setTimeout(() => {
-				console.log(get(twoauth))
 				if (getCookie('user') === '')
 					get(twoauth).open()
+				else if (getCookie('first_conn'))
+				{
+					removeCookie('first_conn')
+					goto('/user')
+				}
 				else
 					fetchUser()
 			}, 100)
@@ -29,7 +37,7 @@ export const logOut = () => {
 	user.set(undefined)
 	localStorage.removeItem('user')
 	for (let key of Object.keys(getCookies()))
-		document.cookie = `${key}=; expires=Thu, 01 Jan 1970 00:00:01 GMT`
+		removeCookie(key)
 }
 
 export const resolve = async (promise) => new Promise<any[]>(resolve =>
@@ -56,7 +64,6 @@ export const fetchUser = async (id = getCookie('user'), req = fetch) => {
 }
 
 export const localStorageUser = () => {
-	console.log('localStorage', localStorage.getItem('user'))
 	if (localStorage.getItem('user'))
 		user.set(JSON.parse(localStorage.getItem('user')))
 	else
