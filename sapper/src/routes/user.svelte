@@ -12,13 +12,15 @@
 	import { goto } from '@sapper/app'
 	import Button from '@components/Button.svelte'
 	import User from '@components/User.svelte'
-	import { logOut, fetchUser } from '../utils'
+	import { logOut, fetchUser, getCookie } from '../utils'
 	import { user } from '../store'
 
 	user.subscribe(data => data === undefined && goto('/'))
 
 	let avatarModal
 	let avatarFile
+	let nicknameModal
+	let nicknameInput
 </script>
 
 <style>
@@ -138,7 +140,7 @@
 							<img width="70" height="70" src="https://cdn-icons-png.flaticon.com/512/5956/5956503.png" alt="">
 						</div>
 					</div>
-					<button>Change your nickname</button>
+					<button on:click={() => nicknameModal.open()}>Change your nickname</button>
 				</div>
 			</div>
 
@@ -152,12 +154,12 @@
 
 <Modal bind:this={avatarModal}>
 	<h1>Change avatar</h1>
-	<input bind:this={avatarFile} type="file">
+	<input bind:this={avatarFile} type="file" accept="image/png, image/jpeg, image/jpg, image/bmp, image/tiff, image/gif">
 	<div style="text-align: right;">
 		<Button on:click={() => avatarModal.close()}>Cancel</Button>
 		<Button primary on:click={async () => {
 			avatarModal.close()
-			let formData = new FormData();           
+			let formData = new FormData();
 			formData.append("file", avatarFile.files[0]);
 			await fetch('/api/users/picture', {
 				method: "POST", 
@@ -165,5 +167,26 @@
 			})
 			fetchUser()
 		}}>Change avatar</Button>
+	</div>
+</Modal>
+
+<Modal bind:this={nicknameModal}>
+	<h1>Change nickname</h1>
+	<input bind:this={nicknameInput} type="text">
+	<div style="text-align: right;">
+		<Button on:click={() => nicknameModal.close()}>Cancel</Button>
+		<Button primary on:click={async () => {
+			nicknameModal.close()
+			await fetch('/api/users/update', {
+				method: "POST",
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					nickname: nicknameInput.value
+				})
+			})
+			fetchUser()
+		}}>Change nickname</Button>
 	</div>
 </Modal>
