@@ -146,7 +146,7 @@ export class UsersController {
 				await pump(data.file, fs.createWriteStream(process.cwd() + "/upload/tmp/" + data.filename));
 				const url_img = await this.usersService.convert(data.filename);
 				const user: UsersInterface = {
-					id: +req.unsignCookie(req.cookies.user).value,
+					id: +validUser.value,
 					img: url_img
 				}
 				await this.usersService.update(user);
