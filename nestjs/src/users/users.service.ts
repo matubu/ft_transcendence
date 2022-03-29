@@ -42,11 +42,14 @@ export class UsersService {
 		if (user_interface?.id === undefined)
 			return false;
 		let userUpdate = await this.usersRepository.findOne({ id: +user_interface.id })
+		const img = userUpdate.img;
 		for (const key in userUpdate)
 		{
 			if (key !== "id" && key in user_interface)
 				userUpdate[key] = user_interface[key];
 		}
+		if (img !== userUpdate.img)
+			fs.unlinkSync(process.cwd() + "/upload/images/" + img.substr(12));
 		const checkUser = await this.usersRepository.save(userUpdate)
 		return (checkUser === userUpdate)
 	}
