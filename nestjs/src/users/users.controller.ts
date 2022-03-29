@@ -62,11 +62,11 @@ export class UsersController {
 		if (!id) return;
 		const val = await this.usersService.check_code(id, body.code)
 		if (val)
-		response.setCookie('user', id,
-						{
-							path: '/',
-							signed: true
-						});
+			response.setCookie('user', id,
+							{
+								path: '/',
+								signed: true
+							});
 		return val
 	}
 

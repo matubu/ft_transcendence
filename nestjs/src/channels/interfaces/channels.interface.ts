@@ -4,5 +4,6 @@ export interface ChannelsInterface
 	users?: number[];
 	name?: string;
 	password?: string;
-	grade?: string;
+	description?: string;
+	private?: boolean;
 }

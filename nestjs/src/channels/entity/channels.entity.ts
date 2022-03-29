@@ -16,5 +16,8 @@ export class Channels
   password?: string;
 
   @Column()
-  grade?: string;
+  description?: string;
+
+  @Column()
+  private?: boolean;
 }
