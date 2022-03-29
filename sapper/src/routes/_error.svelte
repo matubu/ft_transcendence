@@ -1,4 +1,4 @@
-<script lang="ts">
+<script>
 	import Layout from '@components/Layout.svelte'
 	import Head from '@components/Head.svelte'
 	import Button from '@components/Button.svelte'

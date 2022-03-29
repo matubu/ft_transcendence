@@ -1,22 +1,23 @@
-<script lang="ts" context="module">
+<script context="module">
 	export async function preload(page, session) {
 		if (typeof document === 'undefined' && session.user === undefined)
 			this.redirect(307, '/')
 	}
 </script>
 
-<script lang="ts">
+<script>
 	import Layout from '@components/Layout.svelte'
 	import Modal from '@components/Modal.svelte'
 	import Head from '@components/Head.svelte'
 	import { goto } from '@sapper/app'
 	import Button from '@components/Button.svelte'
 	import User from '@components/User.svelte'
-	import { logOut, fetchUser } from '../utils'
-	import { user } from '../store'
-    import { get } from 'svelte/store';
+	import { logOut, fetchUser } from '@lib/utils'
+	import { user } from '@lib/store'
+	import { get } from 'svelte/store';
 
-	user.subscribe(data => data === undefined && goto('/'))
+	typeof document !== 'undefined'
+		&& user.subscribe(data => data === undefined && goto('/'))
 
 	let modalAvatar
 	let fileAvatar
@@ -25,7 +26,7 @@
 	let inputNickname
 
 	let modal2FA
-	let qrCode2FA
+	let qrCode2FA: string
 </script>
 
 <style>
@@ -136,7 +137,7 @@
 					<button on:click={() => {
 						qrCode2FA = undefined
 						modal2FA.open()
-					}}>{$user.twoauth ? "Disable" : "Enable"} 2fa</button>
+					}}>{$user?.twoauth ? "Disable" : "Enable"} 2fa</button>
 				</div>
 				<div class="card">
 					<div>
@@ -163,7 +164,7 @@
 <Modal bind:this={modalAvatar}>
 	<h2>Change avatar</h2>
 	<input bind:this={fileAvatar} type="file" accept="image/png, image/jpeg, image/jpg, image/bmp, image/tiff, image/gif">
-	<div style="text-align: right;">
+	<div style="text-align: right">
 		<Button on:click={() => modalAvatar.close()}>Cancel</Button>
 		<Button primary on:click={async () => {
 			modalAvatar.close()
@@ -181,7 +182,7 @@
 <Modal bind:this={modalNickname}>
 	<h2>Change nickname</h2>
 	<input bind:this={inputNickname} type="text">
-	<div style="text-align: right;">
+	<div style="text-align: right">
 		<Button on:click={() => modalNickname.close()}>Cancel</Button>
 		<Button primary on:click={async () => {
 			modalNickname.close()
@@ -201,26 +202,26 @@
 
 
 <Modal bind:this={modal2FA}>
-	<h2>{$user.twoauth ? "Disable" : "Enable"} 2fA</h2>
+	<h2>{$user?.twoauth ? "Disable" : "Enable"} 2fA</h2>
 	{#if qrCode2FA}
 	<p>You will never see the qr code again, please scan it</p>
 	<img width="150" height="150" src="{qrCode2FA}" alt="">
 	{/if}
-	<div style="text-align: right;">
-		<Button on:click={() => modal2FA.close()}>Cancel</Button>
+	<div style="text-align: right">
 		{#if qrCode2FA}
 		<Button primary on:click={() => modal2FA.close()}>Close</Button>
 		{:else}
+		<Button on:click={() => modal2FA.close()}>Cancel</Button>
 		<Button primary on:click={async () => {
-			let res = await fetch(`/api/users/${get(user).twoauth ? "disable" : "activate"}_2fa`, {
+			let res = await fetch(`/api/users/${get(user)?.twoauth ? "disable" : "activate"}_2fa`, {
 				method: "PUT"
 			})
-			if (get(user).twoauth)
+			if (get(user)?.twoauth)
 				modal2FA.close()
 			qrCode2FA = await res.text()
 			console.log(res, qrCode2FA)
 			fetchUser()
-		}}>{$user.twoauth ? "Disable" : "Enable"}</Button>
+		}}>{$user?.twoauth ? "Disable" : "Enable"}</Button>
 		{/if}
 	</div>
 </Modal>

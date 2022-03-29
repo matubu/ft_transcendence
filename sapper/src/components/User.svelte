@@ -1,4 +1,4 @@
-<script lang="ts">
+<script>
 	import { createEventDispatcher } from 'svelte'
 
 	export let user = undefined

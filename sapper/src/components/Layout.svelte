@@ -1,4 +1,4 @@
-<script lang="ts">
+<script>
 	import { fly } from 'svelte/transition';
 	import { stores } from '@sapper/app'
 	const { page } = stores()

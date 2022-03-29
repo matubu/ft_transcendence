@@ -1,9 +1,9 @@
-<script lang="ts">
+<script>
 	import Layout from '@components/Layout.svelte'
-	import Head from '../components/Head.svelte'
-	import Button from '../components/Button.svelte'
-	import { user } from '../store'
-	import { logIn } from '../utils'
+	import Head from '@components/Head.svelte'
+	import Button from '@components/Button.svelte'
+	import { user } from '@lib/store'
+	import { logIn } from '@lib/utils'
 </script>
 
 <style>

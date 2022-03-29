@@ -1,4 +1,4 @@
-<script lang="ts">
+<script>
 	export let opened = false
 
 	export function toggle(_opened = !opened) {

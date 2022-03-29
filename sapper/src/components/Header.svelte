@@ -1,11 +1,11 @@
-<script lang="ts">
-	import Button from './Button.svelte'
-	import IconButton from './IconButton.svelte'
-	import Notification from './Notification.svelte'
-	import User from './User.svelte'
-	import Nav from './Nav.svelte'
-	import { user, useMediaQuery } from '../store'
-	import { logIn } from '../utils';
+<script>
+	import Button from '@components/Button.svelte'
+	import IconButton from '@components/IconButton.svelte'
+	import Notification from '@components/Notification.svelte'
+	import User from '@components/User.svelte'
+	import Nav from '@components/Nav.svelte'
+	import { user, useMediaQuery } from '@lib/store'
+	import { logIn } from '@lib/utils';
 	import { onMount } from 'svelte'
 
 	export let segment: string

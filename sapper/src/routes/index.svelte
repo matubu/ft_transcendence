@@ -1,11 +1,11 @@
-<script lang="ts">
+<script>
 	import Layout from '@components/Layout.svelte'
 	import Head from '@components/Head.svelte'
 	import AnimatedGradient from '@components/AnimatedGradient.svelte'
 	import { fly } from 'svelte/transition';
 	import { onMount } from 'svelte';
-	import { user } from '../store'
-	import { logIn } from '../utils';
+	import { user } from '@lib/store'
+	import { logIn } from '@lib/utils';
 
 	let mounted = false
 	onMount(() => mounted = true)

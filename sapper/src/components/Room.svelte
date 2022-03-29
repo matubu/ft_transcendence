@@ -1,5 +1,5 @@
-<script lang="ts">
-	import Button from './Button.svelte'
+<script>
+	import Button from '@components/Button.svelte'
 
 	export let name: string
 	export let desc: string

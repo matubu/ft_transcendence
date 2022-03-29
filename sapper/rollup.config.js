@@ -3,15 +3,22 @@ import replace from '@rollup/plugin-replace'
 import commonjs from '@rollup/plugin-commonjs'
 import svelte from 'rollup-plugin-svelte'
 import { terser } from 'rollup-plugin-terser'
-import sveltePreprocess from 'svelte-preprocess'
 import typescript from '@rollup/plugin-typescript'
 import config from 'sapper/config/rollup.js'
 import pkg from './package.json'
 import alias from '@rollup/plugin-alias'
 import path from 'path'
+import sveltePreprocess from 'svelte-preprocess'
 
 const mode = process.env.NODE_ENV;
 const dev = mode === 'development';
+
+const preprocess = sveltePreprocess({
+	sourceMap: dev,
+	defaults: {
+		script: "typescript"
+	}
+})
 
 const onwarn = (warning, onwarn) =>
 	(warning.code === 'MISSING_EXPORT' && /'preload'/.test(warning.message)) ||
@@ -39,7 +46,7 @@ export default {
 				},
 			}),
 			svelte({
-				preprocess: sveltePreprocess({ sourceMap: dev }),
+				preprocess,
 				compilerOptions: {
 					dev,
 					hydratable: true
@@ -79,7 +86,7 @@ export default {
 				},
 			}),
 			svelte({
-				preprocess: sveltePreprocess({ sourceMap: dev }),
+				preprocess,
 				compilerOptions: {
 					dev,
 					generate: 'ssr',

@@ -1,6 +1,6 @@
-<script lang="ts">
-	import IconButton from "./IconButton.svelte"
-	import User from './User.svelte'
+<script>
+	import IconButton from "@components/IconButton.svelte"
+	import User from '@components/User.svelte'
 
 	let container
 	let blur: Boolean

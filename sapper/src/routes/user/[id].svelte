@@ -1,4 +1,4 @@
-<script context="module" lang="ts">
+<script context="module">
 	export async function preload({ params }) {
 		// the `id` parameter is available because
 		// this file is called [id].svelte
@@ -13,9 +13,9 @@
 	}
 </script>
 
-<script lang="ts">
+<script>
 	import Layout from '@components/Layout.svelte'
-	import Head from '../../components/Head.svelte'
+	import Head from '@components/Head.svelte'
 	export let post: { slug: string; title: string, html: any };
 </script>
 
