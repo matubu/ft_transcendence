@@ -12,15 +12,20 @@
 	import { goto } from '@sapper/app'
 	import Button from '@components/Button.svelte'
 	import User from '@components/User.svelte'
-	import { logOut, fetchUser, getCookie } from '../utils'
+	import { logOut, fetchUser } from '../utils'
 	import { user } from '../store'
+    import { get } from 'svelte/store';
 
 	user.subscribe(data => data === undefined && goto('/'))
 
-	let avatarModal
-	let avatarFile
-	let nicknameModal
-	let nicknameInput
+	let modalAvatar
+	let fileAvatar
+
+	let modalNickname
+	let inputNickname
+
+	let modal2FA
+	let qrCode2FA
 </script>
 
 <style>
@@ -109,7 +114,7 @@
 <Layout>
 	{#if $user}
 		<div class="container">
-			<div class="profile" on:click={() => avatarModal.open()}>
+			<div class="profile" on:click={() => modalAvatar.open()}>
 				<User user={$user} size=150 />
 				<div>
 					<svg height="30" width="30" viewBox="0 0 24 24" fill="currentColor"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M14.12 4l1.83 2H20v12H4V6h4.05l1.83-2h4.24M15 2H9L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2zm-3 7c1.65 0 3 1.35 3 3s-1.35 3-3 3-3-1.35-3-3 1.35-3 3-3m0-2c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5z"/></svg>
@@ -128,7 +133,10 @@
 							<img width="70" height="70" src="https://cdn-icons-png.flaticon.com/512/3643/3643948.png" alt="">
 						</div>
 					</div>
-					<button>Enable 2fa</button>
+					<button on:click={() => {
+						qrCode2FA = undefined
+						modal2FA.open()
+					}}>{$user.twoauth ? "Disable" : "Enable"} 2fa</button>
 				</div>
 				<div class="card">
 					<div>
@@ -140,7 +148,7 @@
 							<img width="70" height="70" src="https://cdn-icons-png.flaticon.com/512/5956/5956503.png" alt="">
 						</div>
 					</div>
-					<button on:click={() => nicknameModal.open()}>Change your nickname</button>
+					<button on:click={() => modalNickname.open()}>Change your nickname</button>
 				</div>
 			</div>
 
@@ -152,15 +160,15 @@
 	{/if}
 </Layout>
 
-<Modal bind:this={avatarModal}>
-	<h1>Change avatar</h1>
-	<input bind:this={avatarFile} type="file" accept="image/png, image/jpeg, image/jpg, image/bmp, image/tiff, image/gif">
+<Modal bind:this={modalAvatar}>
+	<h2>Change avatar</h2>
+	<input bind:this={fileAvatar} type="file" accept="image/png, image/jpeg, image/jpg, image/bmp, image/tiff, image/gif">
 	<div style="text-align: right;">
-		<Button on:click={() => avatarModal.close()}>Cancel</Button>
+		<Button on:click={() => modalAvatar.close()}>Cancel</Button>
 		<Button primary on:click={async () => {
-			avatarModal.close()
+			modalAvatar.close()
 			let formData = new FormData();
-			formData.append("file", avatarFile.files[0]);
+			formData.append("file", fileAvatar.files[0]);
 			await fetch('/api/users/picture', {
 				method: "POST", 
 				body: formData
@@ -170,23 +178,49 @@
 	</div>
 </Modal>
 
-<Modal bind:this={nicknameModal}>
-	<h1>Change nickname</h1>
-	<input bind:this={nicknameInput} type="text">
+<Modal bind:this={modalNickname}>
+	<h2>Change nickname</h2>
+	<input bind:this={inputNickname} type="text">
 	<div style="text-align: right;">
-		<Button on:click={() => nicknameModal.close()}>Cancel</Button>
+		<Button on:click={() => modalNickname.close()}>Cancel</Button>
 		<Button primary on:click={async () => {
-			nicknameModal.close()
+			modalNickname.close()
 			await fetch('/api/users/update', {
 				method: "POST",
 				headers: {
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
-					nickname: nicknameInput.value
+					nickname: inputNickname.value
 				})
 			})
 			fetchUser()
 		}}>Change nickname</Button>
+	</div>
+</Modal>
+
+
+<Modal bind:this={modal2FA}>
+	<h2>{$user.twoauth ? "Disable" : "Enable"} 2fA</h2>
+	{#if qrCode2FA}
+	<p>You will never see the qr code again, please scan it</p>
+	<img width="150" height="150" src="{qrCode2FA}" alt="">
+	{/if}
+	<div style="text-align: right;">
+		<Button on:click={() => modal2FA.close()}>Cancel</Button>
+		{#if qrCode2FA}
+		<Button primary on:click={() => modal2FA.close()}>Close</Button>
+		{:else}
+		<Button primary on:click={async () => {
+			let res = await fetch(`/api/users/${get(user).twoauth ? "disable" : "activate"}_2fa`, {
+				method: "PUT"
+			})
+			if (get(user).twoauth)
+				modal2FA.close()
+			qrCode2FA = await res.text()
+			console.log(res, qrCode2FA)
+			fetchUser()
+		}}>{$user.twoauth ? "Disable" : "Enable"}</Button>
+		{/if}
 	</div>
 </Modal>
