@@ -1,5 +1,5 @@
 <script context="module">
-	import { fetchUser } from '@lib/utils'
+	import { fetchUser, getCookie } from '@lib/utils'
 
 	export async function preload(page, session) {
 		if (typeof document === 'undefined')
@@ -16,7 +16,7 @@
 	import Header from '@components/Header.svelte'
 	import Modal from '@components/Modal.svelte'
 	import Button from '@components/Button.svelte'
-	import { user, twoauth } from '@lib/store';
+	import { user, twoauth } from '@lib/store'
 
 	export let segment: string
 	let input
@@ -50,7 +50,7 @@
 					code: [...input.children].reduce((acc, num) => acc + num, '')
 				})
 			})
-			if (!res.ok)
+			if (!getCookie('user'))
 				return ;
 			$twoauth.close()
 			fetchUser()
