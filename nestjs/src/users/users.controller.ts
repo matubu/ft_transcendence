@@ -30,7 +30,6 @@ export class UsersController {
 		if (!req.cookies.user) return false;
 		const validUser = req.unsignCookie(req.cookies.user);
 		if (!validUser?.valid) return false;
-		console.log('user_interface before', user_interface)
 		return await this.usersService.update({ ...user_interface, id: +validUser.value });
 	}
 

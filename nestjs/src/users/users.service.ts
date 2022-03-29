@@ -50,8 +50,14 @@ export class UsersService {
 		}
 		if (img !== userUpdate.img)
 			fs.unlinkSync(process.cwd() + "/upload/images/" + img.substr(12));
-		const checkUser = await this.usersRepository.save(userUpdate)
-		return (checkUser === userUpdate)
+		if (user_interface.nickname !== null && user_interface.nickname !== undefined)
+		{
+			const checkNickname = await this.usersRepository.findOne({ where: {nickname: user_interface.nickname} });
+			if (checkNickname != undefined && checkNickname.id != user_interface.id)
+				return false;
+		}
+		await this.usersRepository.save(userUpdate)
+		return true;
 	}
 
 	findAll(): Promise<Users[]> {
