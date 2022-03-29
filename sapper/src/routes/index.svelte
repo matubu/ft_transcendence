@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Layout from '@components/Layout.svelte'
-	import Head from '../components/Head.svelte'
-	import AnimatedGradient from '../components/AnimatedGradient.svelte'
+	import Head from '@components/Head.svelte'
+	import AnimatedGradient from '@components/AnimatedGradient.svelte'
 	import { fly } from 'svelte/transition';
 	import { onMount } from 'svelte';
 	import { user } from '../store'

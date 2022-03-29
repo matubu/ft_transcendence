@@ -3,7 +3,7 @@
     "allowSyntheticDefaultImports": true,
 	"compilerOptions": {
 		"lib": ["DOM", "ES2017", "WebWorker"],
-		"types": ["node"],
+		"types": ["node", "svelte"],
 		"baseUrl": ".",
 		"paths": {
 			"@lib/*": ["src/*"]
