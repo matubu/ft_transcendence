@@ -82,3 +82,15 @@ CREATE TABLE IF NOT EXISTS public."Match"
 	PRIMARY KEY (id),
 	FOREIGN KEY(player1, player2, victory) REFERENCES "User"(id)
 );
+
+CREATE TABLE IF NOT EXISTS public."Notification"
+(
+	id 				numeric UNIQUE NOT NULL,
+	id_receiver		numeric UNIQUE NOT NULL,
+	msg				character varying[] NOT NULL,
+	id_sender		numeric UNIQUE,
+	seen			boolean,
+	PRIMARY KEY (id),
+	FOREIGN KEY(id_receiver, id_sender) REFERENCES "User"(id)
+);
+

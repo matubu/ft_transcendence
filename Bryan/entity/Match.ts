@@ -23,5 +23,5 @@ export class Message
 
 	@OneToOne(() => User)
     @JoinColumn()
-    victory: User;
+    victory?: User;
 }

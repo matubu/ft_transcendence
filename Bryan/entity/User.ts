@@ -25,11 +25,11 @@ export class User
 
 	@OneToOne(() => MFA)
     @JoinColumn()
-    MFA: MFA;
+    MFA?: MFA;
 
 	@OneToOne(() => Picture)
     @JoinColumn()
-    picture: Picture;
+    picture?: Picture;
 
 	@OneToMany(() => Friend, friend => friend.user)
     friends: Friend[];

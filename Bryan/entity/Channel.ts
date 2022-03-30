@@ -13,17 +13,17 @@ export class Channel
     admin: User;
 
 	@Column({ default: null })
-	name: string;
+	name?: string;
 
 	@Column({ default: null })
-	password: string;
+	password?: string;
 
 	@Column({ default: null })
-	description: string;
+	description?: string;
 
 	@Column({ default: false })
-	private: boolean;
+	private?: boolean;
 
 	@OneToMany(() => Message, message => message.channel)
-    messages: Message[];
+    messages?: Message[];
 }
