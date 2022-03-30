@@ -17,10 +17,13 @@ export class ChannelsService {
 
 	async getChannelUser(idUser: number) : Promise<Channels[]>
 	{
-		return await this.channelsRepository
+		const joinChannel = await this.channelsRepository
 		.createQueryBuilder("Channels")
 		.where(":users = ANY(Channels.users)", { users: idUser })
+		.where("private = false")
 		.getMany();
+
+		return joinChannel;
 	}
 
 	async createChannel(idAdmin: number, channel: ChannelsInterface): Promise<Channels>

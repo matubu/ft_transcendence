@@ -49,7 +49,7 @@
 				<Room name="test" desc="wow" type="private" joined={true}/> -->
 
 				{#each $rooms as {id, name, description, password, private: mode}}
-					<Room id={+id} name="{name}" desc="{description ?? ''}" type="{password ? 'protected' : (mode ? 'public' : 'private')}" joined={true}/>
+					<Room id={+id} name="{name}" desc="{description ?? ''}" type="{password ? 'protected' : (mode ? 'private' : 'public')}" joined={true}/>
 				{/each}
 			</div>
 		{:else}

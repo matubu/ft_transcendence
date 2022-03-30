@@ -8,7 +8,7 @@
 	export let loading: boolean = false
 	const dispatch = createEventDispatcher()
 
-	let button: HTMLAnchorElement
+	let button
 
 	onMount(() => {
 		if (primary !== false)
@@ -22,7 +22,7 @@
 </script>
 
 <style>
-	a {
+	* {
 		display: inline-block;
 		position: relative;
 		padding: 15px 20px;
@@ -39,10 +39,10 @@
 		background: #0000;
 		box-sizing: border-box;
 	}
-	a:hover {
+	*:hover {
 		background: #A6CFD508;
 	}
-	a.primary {
+	*.primary {
 		background-image: linear-gradient(90deg, var(--seco), var(--prim), var(--seco));
 		background-position: var(--x, 0px) 0px;
 		border: #0000;
@@ -53,7 +53,7 @@
 		bottom: 50px;
 		right: 50px;
 	}
-	a.loading {
+	*.loading {
 		color: #0000
 	}
 	@keyframes loader {
@@ -76,7 +76,7 @@
 		border-radius: 50%;
 	}
 </style>
-
+{#if href}
 <a
 	class="{primary !== false && 'primary'} {float !== false && 'float'} {loading !== false && 'loading'}"
 	style="{full !== false && 'width: 100%; text-align: center'}"
@@ -87,3 +87,13 @@
 >
 	<slot />
 </a>
+{:else}
+<button
+	class="{primary !== false && 'primary'} {float !== false && 'float'} {loading !== false && 'loading'}"
+	style="{full !== false && 'width: 100%; text-align: center'}"
+	on:click={() => dispatch('click')}
+	bind:this={button}
+>
+	<slot />
+</button>
+{/if}

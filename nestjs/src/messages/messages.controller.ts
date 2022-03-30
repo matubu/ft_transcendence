@@ -11,7 +11,6 @@ export class MessagesController {
 	@Get(':idChannel')
 	async getMessageChannel(@Param('idChannel') idChannel: string) : Promise<Messages[]>
 	{
-		console.log("COUCOCU", idChannel)
 		return await this.messagesService.getMessageChannel(+idChannel);
 	}
 
