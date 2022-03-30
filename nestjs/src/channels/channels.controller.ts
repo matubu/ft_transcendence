@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Req, Get } from '@nestjs/common';
+import { Controller, Post, Body, Req, Get, Param } from '@nestjs/common';
 import { ChannelsService } from './channels.service';
 import { FastifyRequest } from 'fastify';
 import { Channels } from  './entity/channels.entity'
@@ -19,8 +19,12 @@ export class ChannelsController {
 	}
 
 	@Get()
-	async getAll() : Promise<Channels[]>
+	async getAll(@Req() req: FastifyRequest) : Promise<Channels[]>
 	{
-		return await this.channelsService.getAll();
+		if (!req.cookies.user) return ;
+		const validUser = req.unsignCookie(req.cookies.user);
+		if (!validUser?.valid) return;
+
+		return await this.channelsService.getChannelUser(+validUser.value);
 	}
 }

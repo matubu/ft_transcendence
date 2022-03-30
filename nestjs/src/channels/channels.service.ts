@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Channels } from './entity/channels.entity'
 import { ChannelsInterface } from './interfaces/channels.interface'
 import * as bcrypt from 'bcrypt';
@@ -14,6 +14,11 @@ export class ChannelsService {
 
 	async getAll() : Promise<Channels[]>
 	{ return this.channelsRepository.find(); }
+
+	async getChannelUser(idUser: number) : Promise<Channels[]>
+	{
+		return this.channelsRepository.find({ where: { users: In([idUser]) } });
+	}
 
 	async createChannel(idAdmin: number, channel: ChannelsInterface): Promise<Channels>
 	{
