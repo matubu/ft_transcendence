@@ -4,7 +4,7 @@
 	import Button from '@components/Button.svelte'
 	import Room from '@components/Room.svelte'
 	import Modal from '@components/Modal.svelte'
-	import { user, useMediaQuery } from '@lib/store'
+	import { user, useMediaQuery, waitingLogin } from '@lib/store'
 	import { logIn } from '@lib/utils'
 	import { onMount } from 'svelte'
 	import { writable } from 'svelte/store';
@@ -21,6 +21,7 @@
 
 	const reloadChatList = async () => {
 		let res = await fetch('/api/channels')
+		if (!res.ok) return ;
 		let json = await res.json()
 		rooms.set(json)
 	}
@@ -50,7 +51,7 @@
 			</div>
 		{:else}
 			<p>You need to login first</p>
-			<Button primary on:click={logIn}>Login</Button>
+			<Button primary loading={$waitingLogin} on:click={logIn}>Login</Button>
 		{/if}
 	</div>
 </Layout>
