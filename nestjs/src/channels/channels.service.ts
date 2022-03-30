@@ -19,8 +19,7 @@ export class ChannelsService {
 	{
 		const joinChannel = await this.channelsRepository
 		.createQueryBuilder("Channels")
-		.where(":users = ANY(Channels.users)", { users: idUser })
-		.where("private = false")
+		.where(":users = ANY(Channels.users) OR private = false", { users: idUser })
 		.getMany();
 
 		return joinChannel;

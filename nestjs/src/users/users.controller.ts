@@ -7,9 +7,9 @@ import { CodeInterface } from './interfaces/code.interface';
 import { FriendInterface } from './interfaces/friend.interface';
 import { FastifyRequest } from 'fastify';
 import { DeleteResult } from 'typeorm';
-import util from 'util';
+import { promisify } from 'util';
 import { pipeline } from 'stream';
-const pump = util.promisify(pipeline)
+const pump = promisify(pipeline)
 import fs from 'fs';
 
 @Controller('users')
