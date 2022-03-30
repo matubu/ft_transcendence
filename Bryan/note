@@ -1,0 +1,3 @@
+Check for Unique, in @Column({ unique: true })
+Check @entity({ name: "balbla" })
+Check event change value in bdd for notification
