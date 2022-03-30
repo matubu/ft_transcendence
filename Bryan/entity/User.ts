@@ -4,6 +4,7 @@ import { Picture } from "./Picture";
 import { Friend } from "./Friend";
 import { Channel } from "./Channel";
 import { Access } from "./Access";
+import { Notification } from "./Notification";
 
 @Entity()
 export class User
@@ -39,4 +40,7 @@ export class User
 
 	@OneToMany(() => Access, access => access.user)
     accessChannels: Access[];
+
+	@OneToMany(() => Notification, notification => notification.receiver)
+    notifications: Notification[];
 }

@@ -7,8 +7,7 @@ export class Notification
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@OneToOne(() => User)
-    @JoinColumn()
+	@ManyToOne(() => User, user => user.notifications)
     receiver: User;
 
 	@Column()
