@@ -14,7 +14,7 @@
 	import User from '@components/User.svelte'
 	import { logOut, fetchUser } from '@lib/utils'
 	import { user } from '@lib/store'
-	import { get } from 'svelte/store';
+	import { get } from 'svelte/store'
 
 	typeof document !== 'undefined'
 		&& user.subscribe(data => data === undefined && goto('/'))
@@ -181,7 +181,7 @@
 
 <Modal bind:this={modalNickname}>
 	<h2>Change nickname</h2>
-	<input bind:this={inputNickname} type="text">
+	<input bind:this={inputNickname} type="text" required>
 	<div style="text-align: right">
 		<Button on:click={() => modalNickname.close()}>Cancel</Button>
 		<Button primary on:click={async () => {
@@ -202,9 +202,9 @@
 
 
 <Modal bind:this={modal2FA}>
-	<h2>{$user?.twoauth ? "Disable" : "Enable"} 2fA</h2>
+	<h2>{$user?.twoauth ? "Disable" : "Enable"} 2FA</h2>
 	{#if qrCode2FA}
-	<p>You will never see the qr code again, please scan it</p>
+	<p>You will never see the QR code again, please scan it</p>
 	<img width="150" height="150" src="{qrCode2FA}" alt="">
 	{/if}
 	<div style="text-align: right">
@@ -219,7 +219,6 @@
 			if (get(user)?.twoauth)
 				modal2FA.close()
 			qrCode2FA = await res.text()
-			console.log(res, qrCode2FA)
 			fetchUser()
 		}}>{$user?.twoauth ? "Disable" : "Enable"}</Button>
 		{/if}

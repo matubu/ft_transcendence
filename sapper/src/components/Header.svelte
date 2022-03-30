@@ -20,7 +20,7 @@
 	header, header > div {
 		display: flex;
 		align-items: center;
-		gap: 30px;
+		gap: 20px;
 	}
 	header {
 		justify-content: space-between;
