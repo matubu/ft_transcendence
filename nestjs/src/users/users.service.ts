@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository, ILike, DeleteResult } from 'typeorm'
 import { Users } from './entity/users.entity'
@@ -72,10 +72,13 @@ export class UsersService {
 	// 	return (true);
 	// }
 
-	findOne(id: number): Promise<Users> {
+	async findOne(id: number): Promise<Users> {
 		if (id === undefined)
 			return ;
-		return this.usersRepository.findOne({ id });
+		let user = await this.usersRepository.findOne({ id })
+		if (user === undefined)
+			throw new NotFoundException('Cannot find user');
+		return (user);
 	}
 
 	async remove(id: number): Promise<DeleteResult> {

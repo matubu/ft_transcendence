@@ -10,6 +10,7 @@
 
 	const reloadChat = async () => {
 		let res = await fetch(`/api/messages/${id_channel}`)
+		if (!res.ok) return ;
 		let json = await res.json()
 		messages.set(json)
 	}

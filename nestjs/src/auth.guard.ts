@@ -7,7 +7,7 @@ export const Autorization = createParamDecorator((_, ctx: ExecutionContext): num
 		throw new UnauthorizedException()
 
 	const user = req.unsignCookie(req.cookies.user)
-	if (!user?.valid || user.value === '')
+	if (!user?.valid || user.value === '' || +user.value === NaN)
 		throw new UnauthorizedException()
 
 	return (+user.value)
