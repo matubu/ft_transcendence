@@ -76,6 +76,7 @@ export class UsersService {
 		if (id === undefined)
 			return ;
 		let user = await this.usersRepository.findOne({ id })
+		console.log('find user', id, "=", user)
 		if (user === undefined)
 			throw new NotFoundException('Cannot find user');
 		return (user);
