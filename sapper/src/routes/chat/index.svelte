@@ -104,7 +104,7 @@
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ password, private: mode === 'on', ...args })
+				body: JSON.stringify({ password, private: mode, ...args })
 			})
 			modalNewChat.close()
 			reloadChatList()
