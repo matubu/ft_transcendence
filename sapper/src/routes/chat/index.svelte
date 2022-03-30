@@ -81,7 +81,7 @@
 	<div style="text-align: right">
 		<Button on:click={() => modalNewChat.close()}>Cancel</Button>
 		<Button primary on:click={async () => {
-			const { password, repeatPassword, ...args } = Object.fromEntries([...formNewChat.querySelectorAll('input, textarea')].map(elm => [elm.name, elm.value]))
+			const { password, repeatPassword, private, ...args } = Object.fromEntries([...formNewChat.querySelectorAll('input, textarea')].map(elm => [elm.name, elm.value]))
 			if (password !== repeatPassword)
 			{
 				console.log('wrong password')
@@ -93,7 +93,7 @@
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ password, ...args })
+				body: JSON.stringify({ password, private: private === 'on', ...args })
 			})
 		}}>Create</Button>
 	</div>
