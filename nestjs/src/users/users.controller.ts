@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Body, Delete, Req, Put, Res } from '@nestjs/common'
+import { Controller, Get, Param, Post, Body, Delete, Req, Put, Res, UnauthorizedException } from '@nestjs/common'
 import { UsersService } from './users.service'
 import { Users } from './entity/users.entity'
 import { UsersInterface } from './interfaces/users.interface'
@@ -7,6 +7,7 @@ import { CodeInterface } from './interfaces/code.interface'
 import { FriendInterface } from './interfaces/friend.interface'
 import { FastifyRequest } from 'fastify'
 import { DeleteResult } from 'typeorm'
+import { Autorization } from '../auth.guard';
 const { promisify } = require('util')
 const { pipeline } = require('stream')
 const pump = promisify(pipeline)
@@ -20,49 +21,46 @@ export class UsersController {
 	{ return this.usersService.findAll(); }
 
 	// TODO: remove for prod
-	@Post('insert')
-	insert(@Body() user_interface: UsersInterface)
-	{ return this.usersService.insert(user_interface); }
+	// @Post('insert')
+	// insert(@Body() user_interface: UsersInterface)
+	// { return this.usersService.insert(user_interface); }
 
 	@Post('update')
-	async update(@Body() user_interface: UsersInterface, @Req() req: FastifyRequest): Promise<boolean>
+	async update(@Autorization() userId: number, @Body() user_interface: UsersInterface): Promise<boolean>
 	{
-		if (!req.cookies.user) return false;
-		const validUser = req.unsignCookie(req.cookies.user);
-		if (!validUser?.valid) return false;
-		return await this.usersService.update({ ...user_interface, id: +validUser.value });
+		return await this.usersService.update({ ...user_interface, id: userId });
 	}
 
 	@Get(':id')
 	getOne(@Param('id') id: string) : Promise<Users>
-	{ return this.usersService.findOne(id); }
+	{ return this.usersService.findOne(+id); }
 
 	@Get('content/:str')
 	getByContent(@Param('str') str: string) : Promise<Users[]>
 	{ return this.usersService.findByContent(str); }
 
 	@Delete(':id')
-	remove(@Param('id') id: string, @Req() req: FastifyRequest): Promise<DeleteResult>
+	remove(@Autorization() userId: number, @Param('id') id: string): Promise<DeleteResult>
 	{
-		if (!req.cookies.user) return ;
-		const validUser = req.unsignCookie(req.cookies.user);
-		if (!validUser?.valid) return;
-
-		return this.usersService.remove(id);
+		if (userId.toString() === id)
+			return this.usersService.remove(userId);
 	}
 
 	@Post('check_code')
 	async check_code(@Body() body: CodeInterface, @Req() req: FastifyRequest, @Res({ passthrough: true }) response): Promise<boolean>
 	{
-		if (!req.cookies.userid) return ;
-		const cookie = req.unsignCookie(req.cookies.userid);
-		if (!cookie?.valid) return;
-	
-		const id = cookie.value;
-		if (!id) return;
-		const val = await this.usersService.check_code(id, body.code)
+		if (!req.cookies.userid)
+			throw new UnauthorizedException()
+
+		const user = req.unsignCookie(req.cookies.userid);
+		if (!user?.valid || user.value === '')
+			throw new UnauthorizedException()
+
+		const userId: number = +user.value;
+
+		const val = await this.usersService.check_code(userId, body.code)
 		if (val)
-			response.setCookie('user', id,
+			response.setCookie('user', userId,
 							{
 								path: '/',
 								signed: true
@@ -70,65 +68,33 @@ export class UsersController {
 		return val
 	}
 
-	@Get("activate_2fa")
-	activate_no_error() {}
 	@Put("activate_2fa")
-	async activate_2fa(@Req() req: FastifyRequest): Promise<string>
+	async activate_2fa(@Autorization() userId: number): Promise<string>
 	{
-		if (!req.cookies.user) return ;
-		const validUser = req.unsignCookie(req.cookies.user);
-		if (!validUser?.valid) return;
-
-		const id = validUser.value;
-		if (!id) return;
-		return await this.usersService.activate_2fa(id);
+		return await this.usersService.activate_2fa(userId);
 	}
 
-	@Get("disable_2fa")
-	disable_no_error() {}
 	@Put("disable_2fa")
-	async disable_2fa(@Req() req: FastifyRequest)
+	async disable_2fa(@Autorization() userId: number)
 	{
-		if (!req.cookies.user) return ;
-		const validUser = req.unsignCookie(req.cookies.user);
-		if (!validUser?.valid) return;
-
-		const id = validUser.value;
-		if (!id) return;
-		return await this.usersService.disable_2fa(id);
+		return await this.usersService.disable_2fa(userId);
 	}
 	
 	@Post("add_friend")
-	async add_friend(@Req() req: FastifyRequest, @Body() body: FriendInterface)
+	async add_friend(@Autorization() userId: number, @Body() body: FriendInterface)
 	{
-		if (!req.cookies.user) return ;
-		const validUser = req.unsignCookie(req.cookies.user);
-		if (!validUser?.valid) return;
-
-		const id = validUser.value;
-		if (!id) return;
-		await this.usersService.add_friend(id, body.friend);
+		await this.usersService.add_friend(userId, body.friend);
 	}
 
 	@Post("remove_friend")
-	async remove_friend(@Req() req: FastifyRequest, @Body() body: FriendInterface)
+	async remove_friend(@Autorization() userId: number, @Body() body: FriendInterface)
 	{
-		if (!req.cookies.user) return ;
-		const validUser = req.unsignCookie(req.cookies.user);
-		if (!validUser?.valid) return;
-
-		const id = validUser.value;
-		if (!id) return;
-		await this.usersService.remove_friend(id, body.friend);
+		await this.usersService.remove_friend(userId, body.friend);
 	}
 
 	@Post('picture')
-	async uploadPicture(@Req() req: FastifyRequest) : Promise<UploadPicture>
+	async uploadPicture(@Autorization() userId: number, @Req() req: FastifyRequest) : Promise<UploadPicture>
 	{
-		if (!req.cookies.user) return ;
-		const validUser = req.unsignCookie(req.cookies.user);
-		if (!validUser?.valid) return;
-
 		const data = await req.file();
 		/*
 			Format gerer for resize img
@@ -146,7 +112,7 @@ export class UsersController {
 				await pump(data.file, fs.createWriteStream(process.cwd() + "/upload/tmp/" + data.filename));
 				const url_img = await this.usersService.convert(data.filename);
 				const user: UsersInterface = {
-					id: +validUser.value,
+					id: userId,
 					img: url_img
 				}
 				await this.usersService.update(user);

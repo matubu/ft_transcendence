@@ -1,7 +1,7 @@
-import { Controller, Get, Query, Header, Res, Headers} from '@nestjs/common';
+import { Controller, Get, Query, Header, Res, Headers} from '@nestjs/common'
 import { AuthService } from './auth.service'
-import { UsersService } from 'src/users/users.service';
-import { UsersInterface } from 'src/users/interfaces/users.interface';
+import { UsersService } from 'src/users/users.service'
+import { UsersInterface } from 'src/users/interfaces/users.interface'
 
 @Controller('auth')
 export class AuthController {
@@ -10,7 +10,7 @@ export class AuthController {
 
 	@Get()
 	@Header('Content-Type', 'text/html')
-	async setCookies(@Query() query: any[], @Res({ passthrough: true }) response, @Headers() headers)
+	async setCookies(@Query() query: any[], @Res({ passthrough: true }) response, @Headers() headers): Promise<string>
 	{
 		const token = await this.authService.codeToToken(query['code'], headers.host);
 		if (token['access_token'] !== undefined)
@@ -21,7 +21,7 @@ export class AuthController {
 				const users_value = await this.usersService.findOne(info['id'].toString());
 				if (users_value === undefined)
 				{
-					const new_image = await this.usersService.downloadImgByUrl(info['image_url']);
+					const new_image = await this.usersService.downloadImgByUrl(info['image_url'])
 					const createUser: UsersInterface = {
 						id: info['id'],
 						fullname: info['displayname'],

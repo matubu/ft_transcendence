@@ -19,14 +19,8 @@ export class AuthService {
 		}
 
 		return axios.post(url, data)
-		.then(res => {
-			// console.log(res['data'])
-			return res['data']
-		})
-		.catch(error => {
-			// console.error(error['response']['data'])
-			return error['response']['data']
-		})
+		.then(res => res['data'])
+		.catch(error => error['response']['data'])
 	}
 
 	getInfo(token: string) : Promise<Users42 | Error>
@@ -35,13 +29,7 @@ export class AuthService {
 		const data = { headers: { Authorization: `Bearer ${token}` } }
 
 		return axios.get(url, data)
-		.then(res => {
-			// console.log(res['data'])
-			return res['data']
-		})
-		.catch(error => {
-			// console.error(error['response']['data'])
-			return error['response']['data']
-		})
+		.then(res => res['data'])
+		.catch(error => error['response']['data'])
 	}
 }

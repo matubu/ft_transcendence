@@ -4,7 +4,7 @@ import { Repository, ILike, DeleteResult } from 'typeorm'
 import { Users } from './entity/users.entity'
 import { UsersInterface } from './interfaces/users.interface'
 import { generateSecret, verifyToken } from "node-2fa"
-import download from 'image-downloader'
+const download = require('image-downloader')
 const Jimp = require('jimp')
 const md5 = require('md5')
 const fs = require('fs')
@@ -25,7 +25,7 @@ export class UsersService {
 			|| user_interface.img === undefined
 			|| user_interface.elo === undefined)
 			return ;
-		if ((await this.findOne(user_interface.id.toString())) !== undefined)
+		if ((await this.findOne(user_interface.id)) !== undefined)
 			return ;
 		user.id = user_interface.id;
 		user.fullname = user_interface.fullname;
@@ -64,21 +64,21 @@ export class UsersService {
 		return this.usersRepository.find();
 	}
 
-	strisdigit(id: string) : boolean
-	{
-		for (let i = 0; i < id.length; i++)
-			if (id[i] < '0' || id[i] > '9')
-				return (false);
-		return (true);
-	}
+	// strisdigit(id: string) : boolean
+	// {
+	// 	for (let i = 0; i < id.length; i++)
+	// 		if (id[i] < '0' || id[i] > '9')
+	// 			return (false);
+	// 	return (true);
+	// }
 
-	findOne(id: string): Promise<Users> {
-		if (id === undefined || !this.strisdigit(id))
+	findOne(id: number): Promise<Users> {
+		if (id === undefined)
 			return ;
-		return this.usersRepository.findOne({ id: +id });
+		return this.usersRepository.findOne({ id });
 	}
 
-	async remove(id: string): Promise<DeleteResult> {
+	async remove(id: number): Promise<DeleteResult> {
 		const user: Users = await this.findOne(id);
 		if (!user) return;
 		fs.unlinkSync(process.cwd() + "/upload/images/" + user.img.substr(12));
@@ -95,13 +95,13 @@ export class UsersService {
 		return this.usersRepository.find({order: {elo: "DESC"}, take: +number});
 	}
 
-	async check_code(id: string, code: string): Promise<boolean> {
+	async check_code(id: number, code: string): Promise<boolean> {
 		const user: Users = await this.findOne(id);
 		if (!user) return false;
 		return verifyToken(user.code2FA, code)?.delta === 0;
 	}
 
-	async activate_2fa(id: string): Promise<string>
+	async activate_2fa(id: number): Promise<string>
 	{
 		const user: Users = await this.findOne(id);
 		if (!user) return;
@@ -112,7 +112,7 @@ export class UsersService {
 		return secret.qr;
 	}
 
-	async disable_2fa(id: string)
+	async disable_2fa(id: number)
 	{
 		const user: Users = await this.findOne(id);
 		if (!user) return;
@@ -121,12 +121,12 @@ export class UsersService {
 		await this.update(updated)
 	}
 
-	async add_friend(id_user: string, id_friend: number)
+	async add_friend(userId: number, id_friend: number)
 	{
-		const user: Users = await this.findOne(id_user);
+		const user: Users = await this.findOne(userId);
 		if (!user) return;
 		let updated: UsersInterface = {
-			id: +id_user,
+			id: +userId,
 			friends: user.friends
 		}
 		updated.friends.push(id_friend);
@@ -140,12 +140,12 @@ export class UsersService {
 		return (tab)
 	}
 
-	async remove_friend(id_user: string, id_friend: number)
+	async remove_friend(userId: number, id_friend: number)
 	{
-		const user: Users = await this.findOne(id_user);
+		const user: Users = await this.findOne(userId);
 		if (!user) return;
 		let updated: UsersInterface = {
-			id: +id_user,
+			id: +userId,
 			friends: this.RemoveElementFromIntArray(user.friends, id_friend)
 		}
 		await this.update(updated)

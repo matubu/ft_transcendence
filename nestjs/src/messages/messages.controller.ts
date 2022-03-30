@@ -2,7 +2,7 @@ import { Controller, Get, Param, Post, Body, Req } from '@nestjs/common';
 import { MessagesService } from './messages.service';
 import { Messages } from './entity/messages.entity'
 import { MessagesInterface } from './interfaces/messages.interface'
-import { FastifyRequest } from 'fastify';
+import { Autorization } from '../auth.guard';
 
 @Controller('messages')
 export class MessagesController {
@@ -22,12 +22,8 @@ export class MessagesController {
 	}
 
 	@Post('send')
-	async insert(@Body() message: MessagesInterface, @Req() req: FastifyRequest): Promise<void>
+	async insert(@Autorization() userId: number, @Body() message: MessagesInterface): Promise<void>
 	{
-		if (!req.cookies.user) return ;
-		const validUser = req.unsignCookie(req.cookies.user);
-		if (!validUser?.valid) return;
-
-		await this.messagesService.insert(+validUser.value, message);
+		await this.messagesService.insert(userId, message);
 	}
 }

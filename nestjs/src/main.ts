@@ -14,9 +14,7 @@ async function bootstrap() {
 	app.setGlobalPrefix('api');
 	const port = NESTJS_PORT;
 	const secret = SECRET_COOKIES;
-	app.register(fastifyCookie, {
-		secret: `${secret}`
-	});
+	app.register(fastifyCookie, { secret: `${secret}` });
 	app.register(fastifyMultipart)
 	await app.listen(port);
 	console.log(`Application is running on: ${await app.getUrl()}`);

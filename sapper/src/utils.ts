@@ -35,8 +35,9 @@ export const logIn = () => {
 				else
 					fetchUser()
 			}
-			for (let time of [10, 50, 100, 1000, 2000, 10000])
+			for (let time of [10, 50, 100, 1000, 2000])
 				setTimeout(update, time)
+			setTimeout(() => waitingLogin.set(false), 2000)
 		}
 }
 export const logOut = () => {

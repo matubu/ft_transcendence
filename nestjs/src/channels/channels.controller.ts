@@ -1,30 +1,22 @@
-import { Controller, Post, Body, Req, Get, Param } from '@nestjs/common';
-import { ChannelsService } from './channels.service';
-import { FastifyRequest } from 'fastify';
+import { Controller, Post, Body, Get } from '@nestjs/common'
+import { ChannelsService } from './channels.service'
 import { Channels } from  './entity/channels.entity'
-import { ChannelsInterface } from './interfaces/channels.interface';
+import { ChannelsInterface } from './interfaces/channels.interface'
+import { Autorization } from '../auth.guard'
 
 @Controller('channels')
 export class ChannelsController {
 	constructor(private readonly channelsService: ChannelsService) {}
 
 	@Post()
-	async createChannel(@Body() channel: ChannelsInterface, @Req() req: FastifyRequest) : Promise<Channels>
+	async createChannel(@Autorization() userId: number, @Body() channel: ChannelsInterface) : Promise<Channels>
 	{
-		if (!req.cookies.user) return ;
-		const validUser = req.unsignCookie(req.cookies.user);
-		if (!validUser?.valid) return;
-
-		return await this.channelsService.createChannel(+validUser.value, channel);
+		return await this.channelsService.createChannel(userId, channel);
 	}
 
 	@Get()
-	async getAll(@Req() req: FastifyRequest) : Promise<Channels[]>
+	async getAll(@Autorization() userId: number) : Promise<Channels[]>
 	{
-		if (!req.cookies.user) return ;
-		const validUser = req.unsignCookie(req.cookies.user);
-		if (!validUser?.valid) return ;
-
-		return await this.channelsService.getChannelUser(+validUser.value);
+		return await this.channelsService.getChannelUser(userId);
 	}
 }
