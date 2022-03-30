@@ -14,6 +14,7 @@ CREATE TABLE public."Users"
 CREATE TABLE public."Channels"
 (
 	id			numeric UNIQUE NOT NULL,
+	id_admin	numeric UNIQUE NOT NULL,
 	users 		numeric[] NOT NULL,
 	name 		character varying[],
 	password 	character varying[],

@@ -6,6 +6,9 @@ export class Channels
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column()
+  id_admin: number;
+
   @Column("int", { array: true, default: {} })
   users: number[];
 
