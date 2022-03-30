@@ -4,10 +4,10 @@ import { Repository, ILike, DeleteResult } from 'typeorm';
 import { Users } from './entity/users.entity';
 import { UsersInterface } from './interfaces/users.interface';
 import twofactor, { generateSecret, verifyToken } from "node-2fa";
-const download = require('image-downloader');
-const Jimp = require("jimp")
-const md5 = require('md5');
-const fs = require('fs');
+import download from 'image-downloader';
+import Jimp from "jimp";
+import md5 from 'md5';
+import fs from 'fs';
 
 @Injectable()
 export class UsersService {

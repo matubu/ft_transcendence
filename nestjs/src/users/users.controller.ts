@@ -7,10 +7,10 @@ import { CodeInterface } from './interfaces/code.interface';
 import { FriendInterface } from './interfaces/friend.interface';
 import { FastifyRequest } from 'fastify';
 import { DeleteResult } from 'typeorm';
-const util = require('util')
-const { pipeline } = require('stream')
+import util from 'util';
+import { pipeline } from 'stream';
 const pump = util.promisify(pipeline)
-const fs = require('fs');
+import fs from 'fs';
 
 @Controller('users')
 export class UsersController {

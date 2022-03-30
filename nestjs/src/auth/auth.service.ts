@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Token } from './interfaces/token.interface';
 import { Error } from './interfaces/error.interface';
 import { Users42 } from './interfaces/users42.interface';
-const axios = require('axios');
+import axios from 'axios';
 
 @Injectable()
 export class AuthService {
