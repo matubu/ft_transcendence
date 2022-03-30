@@ -1,13 +1,13 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, ILike, DeleteResult } from 'typeorm';
-import { Users } from './entity/users.entity';
-import { UsersInterface } from './interfaces/users.interface';
-import twofactor, { generateSecret, verifyToken } from "node-2fa";
-import download from 'image-downloader';
-import Jimp from "jimp";
-import md5 from 'md5';
-import fs from 'fs';
+import { Injectable } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
+import { Repository, ILike, DeleteResult } from 'typeorm'
+import { Users } from './entity/users.entity'
+import { UsersInterface } from './interfaces/users.interface'
+import { generateSecret, verifyToken } from "node-2fa"
+import download from 'image-downloader'
+const Jimp = require('jimp')
+const md5 = require('md5')
+const fs = require('fs')
 
 @Injectable()
 export class UsersService {

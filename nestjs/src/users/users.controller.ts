@@ -1,16 +1,16 @@
-import { Controller, Get, Param, Post, Body, Delete, Req, Put, Res } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, Delete, Req, Put, Res } from '@nestjs/common'
 import { UsersService } from './users.service'
-import { Users } from './entity/users.entity';
-import { UsersInterface } from './interfaces/users.interface';
-import { UploadPicture } from './interfaces/uploadPicture.interface';
-import { CodeInterface } from './interfaces/code.interface';
-import { FriendInterface } from './interfaces/friend.interface';
-import { FastifyRequest } from 'fastify';
-import { DeleteResult } from 'typeorm';
-import { promisify } from 'util';
-import { pipeline } from 'stream';
+import { Users } from './entity/users.entity'
+import { UsersInterface } from './interfaces/users.interface'
+import { UploadPicture } from './interfaces/uploadPicture.interface'
+import { CodeInterface } from './interfaces/code.interface'
+import { FriendInterface } from './interfaces/friend.interface'
+import { FastifyRequest } from 'fastify'
+import { DeleteResult } from 'typeorm'
+const { promisify } = require('util')
+const { pipeline } = require('stream')
 const pump = promisify(pipeline)
-import fs from 'fs';
+const fs = require('fs')
 
 @Controller('users')
 export class UsersController {

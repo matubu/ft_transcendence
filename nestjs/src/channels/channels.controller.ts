@@ -23,7 +23,7 @@ export class ChannelsController {
 	{
 		if (!req.cookies.user) return ;
 		const validUser = req.unsignCookie(req.cookies.user);
-		if (!validUser?.valid) return;
+		if (!validUser?.valid) return ;
 
 		return await this.channelsService.getChannelUser(+validUser.value);
 	}

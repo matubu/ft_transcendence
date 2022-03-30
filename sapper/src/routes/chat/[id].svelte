@@ -6,8 +6,6 @@
 	let msg
 	let id_channel
 
-	let form
-
 	let messages = writable([])
 
 	const reloadChat = async () => {
@@ -28,7 +26,7 @@
 		<p>{id_user}: {msg}</p>
 	{/each}
 
-	<form bind:this={form} on:submit={async e => {
+	<form on:submit={async e => {
 		e.preventDefault()
 		await fetch('/api/messages/send', {
 			method: "POST",

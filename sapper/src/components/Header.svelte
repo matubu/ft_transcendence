@@ -113,7 +113,7 @@
 				<User user={$user} href="/user" />
 			{/if}
 		{:else}
-			<Button primary loading="{$waitingLogin}" on:click={logIn}>Login</Button>
+			<Button primary loading={$waitingLogin} on:click={logIn}>Login</Button>
 		{/if}
 	</div>
 </header>
