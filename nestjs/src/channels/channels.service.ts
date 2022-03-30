@@ -12,6 +12,9 @@ export class ChannelsService {
 		private channelsRepository: Repository<Channels>,
 	) {}
 
+	async getAll() : Promise<Channels[]>
+	{ return this.channelsRepository.find(); }
+
 	async createChannel(idAdmin: number, channel: ChannelsInterface): Promise<Channels>
 	{
 		const newChannels = new Channels();
