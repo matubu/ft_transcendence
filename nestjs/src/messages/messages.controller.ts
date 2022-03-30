@@ -8,17 +8,18 @@ import { FastifyRequest } from 'fastify';
 export class MessagesController {
 	constructor(private readonly messagesService: MessagesService) {}
 
-	@Get(':id_channel')
-	async getMessageChannel(@Param(':id_channel') id_channel: string) : Promise<Messages[]>
+	@Get(':idChannel')
+	async getMessageChannel(@Param('idChannel') idChannel: string) : Promise<Messages[]>
 	{
-		return await this.messagesService.getMessageChannel(+id_channel);
+		console.log("COUCOCU", idChannel)
+		return await this.messagesService.getMessageChannel(+idChannel);
 	}
 
-	@Get(':id_channel/:page')
-	async getMessageChannelPage(@Param(':id_channel') id_channel: string,
-								@Param(':page') page: string) : Promise<Messages[]>
+	@Get(':idChannel/:page')
+	async getMessageChannelPage(@Param('idChannel') idChannel: string,
+								@Param('page') page: string) : Promise<Messages[]>
 	{
-		return await this.messagesService.getMessageChannelPage(+id_channel, +page);
+		return await this.messagesService.getMessageChannelPage(+idChannel, +page);
 	}
 
 	@Post('send')

@@ -5,6 +5,7 @@
 	export let full: boolean = false
 	export let float: boolean = false
 	export let href: string = undefined
+	export let loading: boolean = false
 	const dispatch = createEventDispatcher()
 
 	let button: HTMLAnchorElement
@@ -52,10 +53,32 @@
 		bottom: 50px;
 		right: 50px;
 	}
+	a.loading {
+		color: #0000
+	}
+	@keyframes loader {
+		0% { transform: translate(-50%, -50%) rotate(0deg); }
+		to { transform: translate(-50%, -50%) rotate(360deg); }
+	}
+	.loading:before {
+		content: '';
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform-origin: center;
+		animation: loader .5s linear infinite;
+		width: 20px;
+		height: 20px;
+		box-sizing: border-box;
+		border: 3px solid #0000;
+		border-top-color: var(--back);
+		border-right-color: var(--back);
+		border-radius: 50%;
+	}
 </style>
 
 <a
-	class="{primary !== false && 'primary'} {float !== false && 'float'}"
+	class="{primary !== false && 'primary'} {float !== false && 'float'} {loading !== false && 'loading'}"
 	style="{full !== false && 'width: 100%; text-align: center'}"
 	rel=prefetch
 	href="{href}"

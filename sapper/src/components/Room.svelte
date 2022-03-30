@@ -1,6 +1,7 @@
 <script>
 	import Button from '@components/Button.svelte'
 
+	export let id: number
 	export let name: string
 	export let desc: string
 	export let type: string
@@ -9,6 +10,7 @@
 
 <style>
 	.card {
+		text-decoration: none;
 		padding: 30px;
 		border: 1px solid var(--fore);
 		border-radius: 10px;
@@ -31,7 +33,7 @@
 	}
 </style>
 
-<div class="card">
+<a class="card" href="/chat/{id}">
 	<h2>{name}
 		{#if type == 'public'}
 			<svg viewBox="0 0 80 80" fill="none"><path d="M40 6.66669C21.6 6.66669 6.66666 21.6 6.66666 40C6.66666 58.4 21.6 73.3334 40 73.3334C58.4 73.3334 73.3333 58.4 73.3333 40C73.3333 21.6 58.4 6.66669 40 6.66669ZM36.6667 66.4334C23.5 64.8 13.3333 53.6 13.3333 40C13.3333 37.9334 13.6 35.9667 14.0333 34.0334L30 50V53.3334C30 57 33 60 36.6667 60V66.4334ZM59.6667 57.9667C58.8 55.2667 56.3333 53.3334 53.3333 53.3334H50V43.3334C50 41.5 48.5 40 46.6667 40H26.6667V33.3334H33.3333C35.1667 33.3334 36.6667 31.8334 36.6667 30V23.3334H43.3333C47 23.3334 50 20.3334 50 16.6667V15.3C59.7667 19.2667 66.6667 28.8334 66.6667 40C66.6667 46.9334 64 53.2334 59.6667 57.9667Z" fill="#42ACE8"/></svg>
@@ -47,4 +49,4 @@
 	{:else}
 		<Button full>Chat</Button>
 	{/if}
-</div>
+</a>

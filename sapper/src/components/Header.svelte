@@ -4,7 +4,7 @@
 	import Notification from '@components/Notification.svelte'
 	import User from '@components/User.svelte'
 	import Nav from '@components/Nav.svelte'
-	import { user, useMediaQuery } from '@lib/store'
+	import { user, useMediaQuery, waitingLogin } from '@lib/store'
 	import { logIn } from '@lib/utils';
 	import { onMount } from 'svelte'
 
@@ -113,7 +113,7 @@
 				<User user={$user} href="/user" />
 			{/if}
 		{:else}
-			<Button primary on:click={logIn}>Login</Button>
+			<Button primary loading="{$waitingLogin}" on:click={logIn}>Login</Button>
 		{/if}
 	</div>
 </header>

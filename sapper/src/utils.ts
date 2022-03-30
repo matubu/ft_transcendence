@@ -1,4 +1,4 @@
-import { user, twoauth } from '@lib/store'
+import { user, twoauth, waitingLogin } from '@lib/store'
 import { get } from 'svelte/store'
 import { goto } from '@sapper/app'
 
@@ -16,14 +16,15 @@ export const getCookie = key => getCookieFromString(document.cookie, key)
 export const removeCookie = key => (document.cookie = `${key}=; expires=Thu, 01 Jan 1970 00:00:01 GMT`)
 
 export const logIn = () => {
+	waitingLogin.set(true)
 	removeCookie('userid')
 	window
 		.open(`https://api.intra.42.fr/oauth/authorize?client_id=5fb8cff19443b1e91c5753666fdcb12d45ecbc49c667ba7eb97150cb2590b38a&redirect_uri=${encodeURIComponent(location.origin)}%2Fapi%2Fauth&response_type=code`, 'Auth 42', 'width=500,height=700')
 		.onunload = () => {
-			let interval = setInterval(() => {
+			let update = () => {
 				if (getCookie('user') === undefined)
 					return ;
-				clearInterval(interval);
+				waitingLogin.set(false)
 				if (getCookie('user') === '')
 					get(twoauth).open()
 				else if (getCookie('first_conn'))
@@ -33,7 +34,9 @@ export const logIn = () => {
 				}
 				else
 					fetchUser()
-			}, 100)
+			}
+			for (let time of [10, 50, 100, 1000, 2000, 10000])
+				setTimeout(update, time)
 		}
 }
 export const logOut = () => {

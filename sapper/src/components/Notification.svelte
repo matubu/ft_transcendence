@@ -18,6 +18,9 @@
 			var(--red);
 		border-radius: 50%;
 	}
+	.bubble:not(.active) {
+		display: none;
+	}
 	.notif {
 		position: absolute;
 		background: var(--fore);

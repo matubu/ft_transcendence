@@ -7,6 +7,7 @@
 	import { user, useMediaQuery } from '@lib/store'
 	import { logIn } from '@lib/utils'
 	import { onMount } from 'svelte'
+	import { writable } from 'svelte/store';
 
 	let modalNewChat
 	let formNewChat
@@ -15,6 +16,16 @@
 	onMount(() => {
 		mediaQuery = useMediaQuery('(max-width: 800px)')
 	})
+
+	let rooms = writable([])
+
+	const reloadChatList = async () => {
+		let res = await fetch('/api/channels')
+		let json = await res.json()
+		rooms.set(json)
+	}
+	if (typeof document !== 'undefined')
+		reloadChatList()
 </script>
 
 <style>
@@ -33,9 +44,13 @@
 
 		{#if ($user)}
 			<div class="container">
-				<Room name="hello world" desc="description." type="public"/>
+				<!-- <Room name="hello world" desc="description." type="public"/>
 				<Room name="test2" desc="description: hello world" type="protected" joined={true}/>
-				<Room name="test" desc="wow" type="private" joined={true}/>
+				<Room name="test" desc="wow" type="private" joined={true}/> -->
+
+				{#each $rooms as {id, name, description, password, private: mode}}
+					<Room id={+id} name="{name}" desc="{description ?? ''}" type="{password ? 'protected' : (mode ? 'public' : 'private')}" joined={true}/>
+				{/each}
 			</div>
 		{:else}
 			<p>You need to login first</p>
@@ -87,7 +102,6 @@
 				console.log('wrong password')
 				return ;
 			}
-			console.log(mode)
 			await fetch('/api/channels', {
 				method: "POST",
 				headers: {
@@ -96,6 +110,7 @@
 				body: JSON.stringify({ password, private: mode === 'on', ...args })
 			})
 			modalNewChat.close()
+			reloadChatList()
 		}}>Create</Button>
 	</div>
 </Modal>
