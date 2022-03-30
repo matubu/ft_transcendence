@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Any, In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Channels } from './entity/channels.entity'
 import { ChannelsInterface } from './interfaces/channels.interface'
 import * as bcrypt from 'bcrypt';
