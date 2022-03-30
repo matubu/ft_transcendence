@@ -17,7 +17,7 @@ export class ChannelsService {
 
 	async getChannelUser(idUser: number) : Promise<Channels[]>
 	{
-		return this.channelsRepository.find({ where: { users: In([idUser]) } });
+		return this.channelsRepository.find({ where: { users: In({ users: idUser }) } });
 	}
 
 	async createChannel(idAdmin: number, channel: ChannelsInterface): Promise<Channels>

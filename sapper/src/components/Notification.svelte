@@ -12,12 +12,11 @@
 		width: 10px;
 		height: 10px;
 		right: 18px;
-		top: 16px;
-		background: var(--red);
+		top: 18px;
+		background:
+			radial-gradient(#fff0, #fff1),
+			var(--red);
 		border-radius: 50%;
-	}
-	.bubble:not(.active) {
-		display: none;
 	}
 	.notif {
 		position: absolute;

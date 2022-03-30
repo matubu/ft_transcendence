@@ -75,26 +75,27 @@
 		</label>
 		<label>
 			Private<br>
-			<input type="checkbox" name="private">
+			<input type="checkbox" name="mode">
 		</label>
 	</form>
 	<div style="text-align: right">
 		<Button on:click={() => modalNewChat.close()}>Cancel</Button>
 		<Button primary on:click={async () => {
-			const { password, repeatPassword, private, ...args } = Object.fromEntries([...formNewChat.querySelectorAll('input, textarea')].map(elm => [elm.name, elm.value]))
+			const { password, repeatPassword, mode, ...args } = Object.fromEntries([...formNewChat.querySelectorAll('input, textarea')].map(elm => [elm.name, elm.name === 'mode' ? elm.checked : elm.value]))
 			if (password !== repeatPassword)
 			{
 				console.log('wrong password')
 				return ;
 			}
-			console.log({ password, ...args })
+			console.log(mode)
 			await fetch('/api/channels', {
 				method: "POST",
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ password, private: private === 'on', ...args })
+				body: JSON.stringify({ password, private: mode === 'on', ...args })
 			})
+			modalNewChat.close()
 		}}>Create</Button>
 	</div>
 </Modal>
