@@ -2,7 +2,7 @@
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher();
 
-	export let vertical: Boolean = false
+	export let vertical: boolean = false
 	export let segment: string
 </script>
 

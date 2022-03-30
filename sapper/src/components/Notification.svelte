@@ -3,7 +3,7 @@
 	import User from '@components/User.svelte'
 
 	let container
-	let blur: Boolean
+	let blur: boolean
 </script>
 
 <style>

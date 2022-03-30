@@ -12,15 +12,15 @@ export class Channels
   @Column("int", { array: true, default: {} })
   users: number[];
 
-  @Column()
+  @Column({default: null})
   name?: string;
 
-  @Column()
+  @Column({default: null})
   password?: string;
 
-  @Column()
+  @Column({default: null})
   description?: string;
 
-  @Column()
+  @Column({default: false})
   private?: boolean;
 }

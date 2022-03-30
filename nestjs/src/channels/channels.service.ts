@@ -16,15 +16,15 @@ export class ChannelsService {
 	{
 		const newChannels = new Channels();
 		newChannels.id_admin = idAdmin;
-		newChannels.users.push(idAdmin);
-		if (channel.name !== undefined)
+		newChannels.users= [idAdmin];
+		if (channel.name?.length)
 			newChannels.name = channel.name;
-		if (channel.password !== undefined)
+		if (channel.password?.length)
 			newChannels.password = await bcrypt.hash(channel.password, await bcrypt.genSalt());
 		// for decrypt
 		// const isMatch = await bcrypt.compare(password, hash);
 		
-		if (channel.description !== undefined)
+		if (channel.description?.length)
 			newChannels.description = channel.description;
 		newChannels.private = channel.private;
 		return await this.channelsRepository.save(newChannels)

@@ -1,9 +1,9 @@
 <script>
 	import { createEventDispatcher, onMount } from 'svelte'
 
-	export let primary: Boolean = false
-	export let full: Boolean = false
-	export let float: Boolean = false
+	export let primary: boolean = false
+	export let full: boolean = false
+	export let float: boolean = false
 	export let href: string = undefined
 	const dispatch = createEventDispatcher()
 

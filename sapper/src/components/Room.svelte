@@ -4,7 +4,7 @@
 	export let name: string
 	export let desc: string
 	export let type: string
-	export let joined: Boolean = false
+	export let joined: boolean = false
 </script>
 
 <style>

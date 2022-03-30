@@ -83,7 +83,7 @@
 				<div id="top">
 					{#if ($user)}
 						<a id="user" href="/user" rel=prefetch  on:mouseup={e => e.target.blur()}>
-							<User user={$user} href="/user" size="50" />
+							<User user={$user} href="/user" size=50 />
 							{$user.nickname ?? $user.fullname.split(' ')[0]}
 						</a>
 					{/if}
@@ -99,7 +99,7 @@
 	{/if}
 	<div id="logo">
 		<a href="/" rel="prefetch">
-			<img src="./logo.svg" alt="Transcendence logo">
+			<img src="./logo.svg" alt="logo">
 			<span>Transcendence</span>
 		</a>
 	</div>

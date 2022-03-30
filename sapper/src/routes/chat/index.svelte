@@ -63,7 +63,7 @@
 		</label>
 		<label>
 			Description<br>
-			<textarea cols="30" rows="10" name="desc"></textarea>
+			<textarea cols="30" rows="10" name="description"></textarea>
 		</label>
 		<label>
 			Password<br>
