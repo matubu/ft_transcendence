@@ -35,7 +35,8 @@ CREATE TABLE IF NOT EXISTS public."Friend"
 	id_user 	numeric UNIQUE NOT NULL,
 	id_friend	numeric UNIQUE NOT NULL,
 	PRIMARY KEY (id),
-	FOREIGN KEY(id_users, id_friend) REFERENCES "User"(id)
+	FOREIGN KEY(id_user) REFERENCES "User"(id),
+	FOREIGN KEY(id_friend) REFERENCES "User"(id)
 );
 
 CREATE TABLE IF NOT EXISTS public."Channel"
@@ -80,7 +81,9 @@ CREATE TABLE IF NOT EXISTS public."Match"
 	player2_score	numeric NOT NULL,
 	victory			numeric,
 	PRIMARY KEY (id),
-	FOREIGN KEY(player1, player2, victory) REFERENCES "User"(id)
+	FOREIGN KEY(player1) REFERENCES "User"(id),
+	FOREIGN KEY(player2) REFERENCES "User"(id),
+	FOREIGN KEY(victory) REFERENCES "User"(id)
 );
 
 CREATE TABLE IF NOT EXISTS public."Notification"
@@ -91,6 +94,7 @@ CREATE TABLE IF NOT EXISTS public."Notification"
 	id_sender		numeric UNIQUE,
 	seen			boolean,
 	PRIMARY KEY (id),
-	FOREIGN KEY(id_receiver, id_sender) REFERENCES "User"(id)
+	FOREIGN KEY(id_receiver) REFERENCES "User"(id),
+	FOREIGN KEY(id_sender) REFERENCES "User"(id)
 );
 

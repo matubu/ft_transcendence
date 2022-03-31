@@ -1,0 +1,8 @@
+FROM 	node
+
+RUN		mkdir /var/nestjs
+WORKDIR /var/nestjs
+COPY	.env ./
+EXPOSE 	3000
+
+CMD		npm run start
