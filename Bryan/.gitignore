@@ -1,3 +1,2 @@
 .env
-nestjs/back/ormconfig.json
-nestjs/back/.env
+nestjs/ormconfig.json
