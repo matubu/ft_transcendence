@@ -5,4 +5,4 @@ WORKDIR /var/nestjs
 COPY	.env ./
 EXPOSE 	3000
 
-CMD		npm run start
+CMD		npm run start:dev

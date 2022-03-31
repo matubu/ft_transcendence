@@ -13,17 +13,16 @@ services:
       - "3000:3000"
     volumes:
       - ./nestjs/back:/var/nestjs
+    restart: always
 
   PostGresSQL:
     container_name: PostGresSQL
     image: postgres
-    restart: always
     env_file:
       - .env
     environment:
       POSTGRES_PASSWORD: ${PASSWORD_DB}
       POSTGRES_DB: fttrans
-    volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "5432:5432"
+    restart: always
