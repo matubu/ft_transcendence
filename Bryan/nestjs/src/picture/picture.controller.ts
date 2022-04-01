@@ -20,19 +20,12 @@ export class PictureController {
 		return new StreamableFile(file);
 	}
 
-	@Get()
-	async getAll(): Promise<Picture[]>
-	{
-		return await this.pictureService.view();
-	}
-
 	@Post()
 	async uploadPicture(@Req() req: FastifyRequest): Promise<Picture>
 	{
 		const data = await req.file();
 		const valid_mime: string[] = [ "image/gif", "image/jpeg", "image/png", "image/bmp", "image/tiff" ];
-		const found = valid_mime.find(element => element == data.mimetype);
-		if (found === data.mimetype)
+		if (valid_mime.includes(data.mimetype))
 			return await this.pictureService.insertByData(data.file);
 		throw new HttpException('Internal Server Error', HttpStatus.INTERNAL_SERVER_ERROR);
 	}

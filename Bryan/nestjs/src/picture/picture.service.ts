@@ -75,11 +75,6 @@ export class PictureService {
 		return this.pictureRepository.findOne({where: {name: name}});
 	}
 
-	async view(): Promise<Picture[]>
-	{
-		return this.pictureRepository.find();
-	}
-
 	async removeByName(name: string): Promise<DeleteResult>
 	{
 		fs.unlinkSync(process.cwd() + "/upload/images/" + name);
