@@ -29,23 +29,23 @@
 		border: none;
 		cursor: pointer;
 		border-radius: 8px;
-		font-size: 20px;
-		border: 2px solid var(--seco);
-		transition: background-color .3s;
+		font-size: 18px;
+		border: 4px solid rgba(255, 255, 255, 0.3);
+		transition: background-color .3s, background-image .1s .1s;
 		text-decoration: none;
 		user-select: none;
-		font-weight: 500;
-		color: var(--seco);
-		background: #0000;
+		color: var(--prim);
+		background: rgba(255, 255, 255, 0.3);
+		background-clip: padding-box;
 		box-sizing: border-box;
+		font-weight: 500;
 	}
 	*:hover {
-		background: #A6CFD508;
+		background-color: rgba(255, 255, 255, 0.4);
 	}
 	*.primary {
-		background-image: linear-gradient(90deg, var(--seco), var(--prim), var(--seco));
+    	background-image: linear-gradient(90deg, var(--prim), var(--seco), var(--prim));
 		background-position: var(--x, 0px) 0px;
-		border: #0000;
 		color: var(--back);
 	}
 	.float {

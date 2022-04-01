@@ -6,16 +6,12 @@
 	import Modal from '@components/Modal.svelte'
 	import { user, useMediaQuery, waitingLogin } from '@lib/store'
 	import { logIn } from '@lib/utils'
-	import { onMount } from 'svelte'
 	import { writable } from 'svelte/store';
 
 	let modalNewChat
 	let formNewChat
 
-	let mediaQuery
-	onMount(() => {
-		mediaQuery = useMediaQuery('(max-width: 800px)')
-	})
+	let mediaQuery = useMediaQuery('(max-width: 800px)')
 
 	let rooms = writable([])
 
@@ -68,7 +64,25 @@
 
 <Modal bind:this={modalNewChat}>
 	<h2>New chat</h2>
-	<form bind:this={formNewChat}>
+	<form bind:this={formNewChat} on:submit={async e => {
+		e.preventDefault()
+		console.log('submit')
+		const { password, repeatPassword, mode, ...args } = Object.fromEntries([...formNewChat.querySelectorAll('input, textarea')].map(elm => [elm.name, elm.name === 'mode' ? elm.checked : elm.value]))
+		if (password !== repeatPassword)
+		{
+			console.log('wrong password')
+			return ;
+		}
+		await fetch('/api/channels', {
+			method: "POST",
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ password, private: mode, ...args })
+		})
+		modalNewChat.close()
+		reloadChatList()
+	}}>
 		<label>
 			Chat name<br>
 			<input type="text" placeholder="Chat name" required name="name">
@@ -89,25 +103,13 @@
 			Private<br>
 			<input type="checkbox" name="mode">
 		</label>
+		<div style="text-align: right">
+			<Button on:click={e => {
+				console.log(e)
+				e.preventDefault()
+				modalNewChat.close()
+			}}>Cancel</Button>
+			<Button primary>Create</Button>
+		</div>
 	</form>
-	<div style="text-align: right">
-		<Button on:click={() => modalNewChat.close()}>Cancel</Button>
-		<Button primary on:click={async () => {
-			const { password, repeatPassword, mode, ...args } = Object.fromEntries([...formNewChat.querySelectorAll('input, textarea')].map(elm => [elm.name, elm.name === 'mode' ? elm.checked : elm.value]))
-			if (password !== repeatPassword)
-			{
-				console.log('wrong password')
-				return ;
-			}
-			await fetch('/api/channels', {
-				method: "POST",
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({ password, private: mode, ...args })
-			})
-			modalNewChat.close()
-			reloadChatList()
-		}}>Create</Button>
-	</div>
 </Modal>

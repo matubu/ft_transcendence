@@ -25,8 +25,6 @@ export class UsersService {
 			|| user_interface.img === undefined
 			|| user_interface.elo === undefined)
 			return ;
-		if ((await this.findOne(user_interface.id)) !== undefined)
-			return ;
 		user.id = user_interface.id;
 		user.fullname = user_interface.fullname;
 		user.nickname = user_interface.nickname;
@@ -34,7 +32,7 @@ export class UsersService {
 		user.code2FA = user_interface.code2FA;
 		user.img = user_interface.img;
 		user.elo = user_interface.elo;
-		await this.usersRepository.save(user)
+		await this.usersRepository.insert(user)
 	}
 
 	async update(user_interface: UsersInterface) : Promise<boolean>
@@ -72,12 +70,11 @@ export class UsersService {
 	// 	return (true);
 	// }
 
-	async findOne(id: number): Promise<Users> {
+	async findOne(id: number, throws: boolean = true): Promise<Users> {
 		if (id === undefined)
 			return ;
 		let user = await this.usersRepository.findOne({ id })
-		console.log('find user', id, "=", user)
-		if (user === undefined)
+		if (throws && user === undefined)
 			throw new NotFoundException('Cannot find user');
 		return (user);
 	}

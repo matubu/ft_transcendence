@@ -1,14 +1,19 @@
+import { onMount } from 'svelte'
 import { writable, readable } from 'svelte/store'
 
 export let user = writable(undefined)
 export let waitingLogin = writable(false)
 export let twoauth = writable(undefined)
+export let sock = writable(undefined)
 
 export const useMediaQuery = query =>
 	readable(null, (set) => {
-		const match = window.matchMedia(query)
-		set(match.matches)
+		let match
 		const change = e => set(e.matches)
-		match.addEventListener("change", change)
-		return () => { match.removeEventListener("change", change) }
+		onMount(() => {
+			const match = window.matchMedia(query)
+			set(match.matches)
+			match.addEventListener("change", change)
+		})
+		return () => { match?.removeEventListener?.("change", change) }
 	})

@@ -18,43 +18,45 @@ export class AuthController {
 			const info = await this.authService.getInfo(token['access_token']);
 			if (info['id'] !== undefined)
 			{
-				const users_value = await this.usersService.findOne(info['id'].toString());
-				if (users_value === undefined)
+				const user = await this.usersService.findOne(info['id'], false);
+				console.log(user, info['id'])
+				if (user !== undefined)
 				{
-					const new_image = await this.usersService.downloadImgByUrl(info['image_url'])
+					console.log('not first')
+					response.setCookie('user', user.twoauth ? '' : info['id'].toString(),
+					{
+						path: '/',
+						signed: true
+					});
+				}
+				else
+				{
+					console.log('first')
+					//const new_image = await this.usersService.downloadImgByUrl(info['image_url'])
 					const createUser: UsersInterface = {
 						id: info['id'],
 						fullname: info['displayname'],
 						twoauth: false,
-						img: new_image,
+						img: info['image_url'], //new_image,
 						elo: 1000
 					};
 					await this.usersService.insert(createUser);
 					response.setCookie('first_conn', "true",
-									{
-										path: '/',
-										signed: true
-									});
+					{
+						path: '/',
+						signed: true
+					});
 					response.setCookie('user', info['id'].toString(),
-									{
-										path: '/',
-										signed: true
-									});
-				}
-				else
-				{
-					const user = await this.usersService.findOne(info['id']);
-					response.setCookie('user', user.twoauth ? "" : info['id'].toString(),
 					{
 						path: '/',
 						signed: true
 					});
 				}
 				response.setCookie('userid', info['id'].toString(),
-									{
-										path: '/',
-										signed: true
-									});
+				{
+					path: '/',
+					signed: true
+				});
 			}
 		}
 		return ('<script>window.close()</script>');

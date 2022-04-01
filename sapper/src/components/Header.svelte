@@ -6,14 +6,10 @@
 	import Nav from '@components/Nav.svelte'
 	import { user, useMediaQuery, waitingLogin } from '@lib/store'
 	import { logIn } from '@lib/utils';
-	import { onMount } from 'svelte'
 
 	export let segment: string
 
-	let mediaQuery
-	onMount(() => {
-		mediaQuery = useMediaQuery('(max-width: 800px)')
-	})
+	let mediaQuery = useMediaQuery('(max-width: 800px)')
 </script>
 
 <style>
@@ -37,16 +33,12 @@
 		font-size: 25px;
 	}
 
-	@media (max-width: 800px) {
-		#logo span { display: none }
-	}
-
 	#inner {
 		position: fixed;
 		top: 0;
 		left: 0;
-		width: 100vw;
-		height: 100vh;
+		width: 100%;
+		height: 100%;
 		padding: 50px;
 		box-sizing: border-box;
 		background: var(--fore);
@@ -68,6 +60,21 @@
 	#top {
 		display: flex;
 		align-items: center;
+		margin-bottom: 40px;
+	}
+
+	@media (max-width: 800px) {
+		#logo span { display: none }
+	}
+	@media (max-width: 450px) {
+		#top {
+			flex-direction: column-reverse;
+			align-items: start;
+			gap: 20px;
+		}
+	}
+	@media (max-width: 350px) {
+		#logo { display: none }
 	}
 </style>
 

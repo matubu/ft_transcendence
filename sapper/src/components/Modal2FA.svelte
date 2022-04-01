@@ -1,13 +1,15 @@
 <script>
 	import { fetchUser, getCookie } from '@lib/utils'
-
 	import Modal from '@components/Modal.svelte'
 	import { twoauth } from '@lib/store'
+	import { useMediaQuery } from '@lib/store'
+
+	let mediaQuery = useMediaQuery('(max-width: 600px)')
 
 	let input
 
 	let reset = () => {
-		for (let elm of input.children)
+		for (let elm of input.querySelectorAll('input'))
 			elm.value = ''
 	}
 	let submit = async () => {
@@ -49,13 +51,14 @@
 <style>
 	.input {
 		display: flex;
-		gap: 10px;
+		gap: 5px;
 		font-size: 35px;
 		align-items: center;
 	}
-	input {
+	.input input {
 		width: 50px;
-	text-align: center;
+		padding: 10px;
+		text-align: center;
 	}
 </style>
 
@@ -64,12 +67,24 @@
 		input.firstChild.focus()
 	}}>
 	<h2>Two auth code</h2>
-	<div class="input" bind:this={input}>
-		<input type="text" on:keydown={backspace} on:input={listener}>
-		<input type="text" on:keydown={backspace} on:input={listener}>
-		<input type="text" on:keydown={backspace} on:input={listener}>
-		<input type="text" on:keydown={backspace} on:input={listener}>
-		<input type="text" on:keydown={backspace} on:input={listener}>
-		<input type="text" on:keydown={backspace} on:input={listener}>
+	<div bind:this={input}>
+		{#if ($mediaQuery)}
+		<input
+			type="text"
+			inputmode="numeric"
+			pattern="[0-9]{6}"
+			autocomplete="one-time-code"
+			on:input={e => e.target.value.length === 6 && submit()}
+		/>
+		{:else}
+		<div class="input">
+			<input type="text" on:keydown={backspace} on:input={listener}>
+			<input type="text" on:keydown={backspace} on:input={listener}>
+			<input type="text" on:keydown={backspace} on:input={listener}>
+			<input type="text" on:keydown={backspace} on:input={listener}>
+			<input type="text" on:keydown={backspace} on:input={listener}>
+			<input type="text" on:keydown={backspace} on:input={listener}>
+		</div>
+		{/if}
 	</div>
 </Modal>
