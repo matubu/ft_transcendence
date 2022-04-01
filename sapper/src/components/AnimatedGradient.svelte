@@ -37,16 +37,17 @@
 
 <style>
 	.animated-gradient {
-		position: fixed;
+		position: absolute;
 		top: 0;
 		left: 0;
-		width: 100vw;
-		height: 100vh;
+		width: 100%;
+		height: 100%;
 		z-index: -1;
 		filter: blur(50px);
+		overflow: hidden;
 	}
 	.animated-gradient :global(div) {
-		position: fixed;
+		position: absolute;
 		top: -50vmax;
 		left: -50vmax;
 		width: 100vmax;

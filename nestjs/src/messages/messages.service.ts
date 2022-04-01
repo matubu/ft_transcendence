@@ -10,18 +10,10 @@ export class MessagesService {
 		@InjectRepository(Messages)
 		private messagesRepository: Repository<Messages>,
 	) {}
-	
-	getMessageChannel(idChanel: number): Promise<Messages[]>
-	{
-		return this.messagesRepository.find({
-						order: {id: "DESC"},
-						where: {id_channel: idChanel},
-						take: 100 }
-		); 
-	}
 
-	getMessageChannelPage(idChanel: number, page: number): Promise<Messages[]>
+	getMessageChannelPage(userId: number, idChanel: number, page: number): Promise<Messages[]>
 	{
+		//TODO check if is channel
 		return this.messagesRepository.find({
 						order: {id: "DESC"},
 						where: {id_channel: idChanel},
@@ -32,6 +24,7 @@ export class MessagesService {
 
 	async insert(idUser: number, message: MessagesInterface)
 	{
+		//TODO check if is channel
 		const newMessage = new Messages();
 		newMessage.id_user = idUser;
 		newMessage.id_channel = message.id_channel;

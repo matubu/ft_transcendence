@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { Token } from './interfaces/token.interface';
-import { Error } from './interfaces/error.interface';
-import { Users42 } from './interfaces/users42.interface';
-import axios from 'axios';
+import { Injectable } from '@nestjs/common'
+import { Token } from './interfaces/token.interface'
+import { Error } from './interfaces/error.interface'
+import { Users42 } from './interfaces/users42.interface'
+const axios = require('axios')
 
 @Injectable()
 export class AuthService {
@@ -19,8 +19,8 @@ export class AuthService {
 		}
 
 		return axios.post(url, data)
-		.then(res => res['data'])
-		.catch(error => error['response']['data'])
+			.then(res => res['data'])
+			.catch(error => error['response']['data'])
 	}
 
 	getInfo(token: string) : Promise<Users42 | Error>
@@ -29,7 +29,7 @@ export class AuthService {
 		const data = { headers: { Authorization: `Bearer ${token}` } }
 
 		return axios.get(url, data)
-		.then(res => res['data'])
-		.catch(error => error['response']['data'])
+			.then(res => res['data'])
+			.catch(error => error['response']['data'])
 	}
 }

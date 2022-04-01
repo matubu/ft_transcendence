@@ -1,7 +1,7 @@
 :root {
 	--whit: #F1F1F1;
-	--fore: #18181e;
-	--back: #010102;
+	--back: hsl(240, 33%, 1%);
+	--fore: hsl(240, 33%, 6%);
 	--bord: #5d5d6d;
 
 	--bhov: #f0f7ff09;
@@ -12,14 +12,13 @@
 	--yelo: #eec44f;
 	--gree: #80e295;
 	--grey: #CBCBCB;
-	--prim: #A6CFD5;
-	--seco: #C2E7D9;
+	--prim: #f2f4f8;
+	--seco: #d8dee9;
 }
 body {
 	font-family: Roboto, -apple-system, BlinkMacSystemFont, Segoe UI, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 	background: var(--back);
-	min-width: 350px;
-	padding: 50px;
+	padding: 2em;
 	display: flex;
 	flex-direction: column;
 	gap: 40px;
@@ -27,12 +26,16 @@ body {
 	box-sizing: border-box;
 }
 html, body {
-	height: 100vh;
+	min-height: 100vh;
+}
+html {
+	min-width: 250px;
+	position: relative;
 }
 body, button, a { color: var(--whit) }
 h1 {
 	margin: 0 0 30px 0;
-	font-size: 4em
+	font-size: 4rem
 }
 ::placeholder,
 .dim { color: var(--grey) }
@@ -40,29 +43,25 @@ h1 {
 ::-moz-selection { background: #00a2ff49 }
 ::selection { background: #00a2ff49 }
 
-@media (max-width: 800px) {
-	body {
-		padding: 2em;
-	}
-}
-
 label {
 	display: block;
 }
 
-input[type="text"], input[type="password"] {
-	height: 50px;
-	font-size: 17px;
+textarea, input[type="text"], input[type="password"] {
+	width: 100%;
+	max-width: 400px;
+	font-size: 25px;
 	margin: 0;
-	padding: 10px;
+	padding: 10px 20px;
 	box-sizing: border-box;
-	background: #0000;
+	background: #ffffff13;
 	border-radius: 5px;
-	border: 1px solid var(--bord);
+	border: 1px solid rgb(142 140 144 / 5%);
+	box-shadow: inset 1px 1px 0 hsl(0deg 0% 100% / 11%);
 	outline: none;
 	color: var(--whit);
 	transition: .3s;
 }
-:is(input[type="text"], input[type="password"]):focus {
-	border-color: var(--whit);
+input[type="text"], input[type="password"] {
+	height: 50px;
 }

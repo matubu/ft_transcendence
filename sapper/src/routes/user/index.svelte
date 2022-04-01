@@ -66,6 +66,7 @@
 		flex: 1;
 		border: 1px solid var(--fore);
 		border-radius: 5px;
+		padding: 20px;
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
@@ -75,34 +76,17 @@
 		margin: 0;
 		margin-bottom: 15px;
 	}
-	.card p {
-		color: var(--grey);
-		margin: 0;
-	}
 	.card > div {
 		display: flex;
 		justify-content: space-between;
-		padding: 20px;
+		align-items: center;
 		gap: 20px;
 		flex: 1;
 	}
-	.card > div > :last-child {
-		display: flex;
-		align-items: center;
-		flex-shrink: 0;
-	}
-	.card button {
-		background: none;
-		border: none;
-		color: var(--prim);
-		text-align: left;
-		cursor: pointer;
-		padding: 15px 20px;
-		border-top: 1px solid var(--fore);
-		transition: .5s;
-	}
-	.card button:hover {
-		background: var(--bhov);
+	@media (max-width: 800px) {
+		.card > div {
+			flex-direction: column-reverse;
+		}
 	}
 	h1 {
 		overflow-wrap: anywhere;
@@ -124,7 +108,7 @@
 			<h1>Hi, {$user.nickname ?? $user.fullname.split(' ')[0]}</h1>
 
 			<div class="card-container">
-				<div class="card">
+				<div class="card" style="background: linear-gradient(107.56deg,#74cabe,#1d9dba,#0d214e)">
 					<div>
 						<div>
 							<h2>2FA</h2>
@@ -134,12 +118,12 @@
 							<img width="70" height="70" src="https://cdn-icons-png.flaticon.com/512/3643/3643948.png" alt="">
 						</div>
 					</div>
-					<button on:click={() => {
+					<Button on:click={() => {
 						qrCode2FA = undefined
 						modal2FA.open()
-					}}>{$user?.twoauth ? "Disable" : "Enable"} 2fa</button>
+					}}>{$user?.twoauth ? "Disable" : "Enable"} 2fa</Button>
 				</div>
-				<div class="card">
+				<div class="card" style="background: linear-gradient(107.56deg,#ca748c,#ba1d65,#7e092a)">
 					<div>
 						<div>
 							<h2>Personal information</h2>
@@ -149,7 +133,7 @@
 							<img width="70" height="70" src="https://cdn-icons-png.flaticon.com/512/5956/5956503.png" alt="">
 						</div>
 					</div>
-					<button on:click={() => modalNickname.open()}>Change your nickname</button>
+					<Button on:click={() => modalNickname.open()}>Change your nickname</Button>
 				</div>
 			</div>
 

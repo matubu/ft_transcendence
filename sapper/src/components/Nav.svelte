@@ -1,6 +1,9 @@
 <script>
-	import { createEventDispatcher } from 'svelte';
-	const dispatch = createEventDispatcher();
+	import { createEventDispatcher } from 'svelte'
+	import { useMediaQuery } from '@lib/store'
+	const dispatch = createEventDispatcher()
+
+	let mediaQuery = useMediaQuery('(max-width: 350px)')
 
 	export let vertical: boolean = false
 	export let segment: string
@@ -50,6 +53,9 @@
 
 <nav>
 	<ul class="{vertical !== false && 'vertical'}">
+		{#if ($mediaQuery)}
+		<li><a on:mouseup={e => dispatch('mouseup', e)} rel=prefetch aria-current="{undefined}" href="/">Home</a></li>
+		{/if}
 		<li><a on:mouseup={e => dispatch('mouseup', e)} rel=prefetch aria-current="{segment == 'play' ? 'page' : undefined}" href="/play">Play</a></li>
 		<li><a on:mouseup={e => dispatch('mouseup', e)} rel=prefetch aria-current="{segment == 'chat' ? 'page' : undefined}" href="/chat">Chat</a></li>
 		<li><a on:mouseup={e => dispatch('mouseup', e)} rel=prefetch aria-current="{segment == 'watch' ? 'page' : undefined}" href="/watch">Watch</a></li>

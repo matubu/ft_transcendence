@@ -2,11 +2,9 @@
 	import Layout from '@components/Layout.svelte'
 	import User from '@components/User.svelte'
 	import Button from '@components/Button.svelte'
-import Error from '../_error.svelte';
 
 	async function load() {
 		const res = await fetch(`/api/users/${+location.pathname.split('/')[2]}`)
-		console.log(res)
 		if (!res.ok)
 			throw 'cannot fetch'
 		return await res.json()

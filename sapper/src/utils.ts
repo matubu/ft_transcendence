@@ -1,4 +1,4 @@
-import { user, twoauth, waitingLogin } from '@lib/store'
+import { user, twoauth, waitingLogin, sock } from '@lib/store'
 import { get } from 'svelte/store'
 import { goto } from '@sapper/app'
 
@@ -28,6 +28,7 @@ export const logIn = () => {
 	window
 		.open(`https://api.intra.42.fr/oauth/authorize?client_id=5fb8cff19443b1e91c5753666fdcb12d45ecbc49c667ba7eb97150cb2590b38a&redirect_uri=${encodeURIComponent(location.origin)}%2Fapi%2Fauth&response_type=code`, 'Auth 42', 'width=500,height=700')
 		.onunload = () => {
+			console.log('onunload')
 			let update = () => {
 				if (treated || getCookie('user') === undefined)
 					return ;
@@ -43,7 +44,7 @@ export const logIn = () => {
 				else
 					fetchUser()
 			}
-			for (let time of [10, 50, 100, 1000, 2000])
+			for (let time of [10, 50, 100, 1000, 2000, 5000])
 				setTimeout(update, time)
 			setTimeout(() => waitingLogin.set(false), 2000)
 		}
@@ -97,4 +98,22 @@ if (typeof document !== 'undefined')
 	}
 
 	window.onstorage = localStorageUser
+	user.subscribe(data => {
+		get(sock)?.close?.()
+		let ws
+		if (data)
+		{
+			// ws = new WebSocket(`${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}`)
+			ws = new WebSocket(`ws://localhost:3000`)
+			ws.onmessage = data => console.log(data)
+			ws.onopen = () => {
+				console.log('send')
+				ws.send(JSON.stringify({
+					event: 'events',
+					data: 'test',
+				}))
+			}
+		}
+		sock.set(ws)
+	})
 }
