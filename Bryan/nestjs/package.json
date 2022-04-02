@@ -27,6 +27,7 @@
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/platform-fastify": "^8.4.3",
     "@nestjs/typeorm": "^8.0.3",
+    "fastify-cookie": "^5.6.0",
     "fastify-multipart": "^5.3.1",
     "image-downloader": "^4.1.0",
     "jimp": "^0.16.1",

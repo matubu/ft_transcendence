@@ -10,5 +10,6 @@ import { PictureModule } from 'src/picture/picture.module';
 	imports: [TypeOrmModule.forFeature([User]), DfaModule, PictureModule],
 	controllers: [UserController],
 	providers: [UserService],
+	exports: [UserService]
 })
 export class UserModule {}

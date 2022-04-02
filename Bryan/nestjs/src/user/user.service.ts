@@ -21,9 +21,10 @@ export class UserService {
 		return this.userRepository.findOne({ where: {id: id}, relations: relations});
 	}
 
-	async create(id: number, fullname: string, picture: Picture): Promise<User>
+	async create(id: number, fullname: string, urlImage: string): Promise<User>
 	{
-		await this.userRepository.save({id: id, fullname: fullname, picture: picture});
+		let img = await this.pictureService.insertByURL(urlImage);
+		await this.userRepository.save({id: id, fullname: fullname, picture: img});
 		return this.get(id, ["picture"]);
 	}
 

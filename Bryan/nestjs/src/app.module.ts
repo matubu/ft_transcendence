@@ -11,9 +11,10 @@ import { ChannelModule } from './channel/channel.module';
 import { AccessModule } from './access/access.module';
 import { FriendModule } from './friend/friend.module';
 import { DfaModule } from './dfa/dfa.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(), UserModule, PictureModule, NotificationModule, MessageModule, MatchModule, ChannelModule, AccessModule, FriendModule, DfaModule],
+  imports: [TypeOrmModule.forRoot(), UserModule, PictureModule, NotificationModule, MessageModule, MatchModule, ChannelModule, AccessModule, FriendModule, DfaModule, AuthModule],
   controllers: [AppController],
   providers: [AppService],
 })
