@@ -1,7 +1,6 @@
 import { Controller, Get, Post, Req, HttpException, HttpStatus, Param, ParseIntPipe } from '@nestjs/common';
 import { UserService } from './user.service'
 import { User } from './user.entity'
-const fs = require("fs");
 import { FastifyRequest } from 'fastify'
 import { Picture } from 'src/picture/picture.entity'
 
