@@ -10,11 +10,13 @@ import { MessagesModule } from './messages/messages.module';
 import { ChannelsModule } from './channels/channels.module';
 import { AppGateway } from './app.gateway';
 import { ImagesModule } from './images/images.module';
+import { UsersSubscriber } from './users/entity/users.subscriber';
+import { Users } from './users/entity/users.entity';
 
 @Module({
   imports: [UsersModule,
 			AuthModule,
-			TypeOrmModule.forRoot(),
+			TypeOrmModule.forRoot({subscribers: [UsersSubscriber], entities: [Users]}),
 			RankModule,
 			MatchsModule,
 			MessagesModule,

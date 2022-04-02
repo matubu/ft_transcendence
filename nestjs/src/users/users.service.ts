@@ -135,10 +135,11 @@ export class UsersService {
 	}
 
 	RemoveElementFromIntArray(tab: number[], element: number): number[]{
-		tab.forEach((value,index)=>{
-			if(value==element) tab.splice(index,1);
-		});
-		return (tab)
+		// tab.forEach((value,index)=>{
+		// 	if(value==element) tab.splice(index,1);
+		// });
+		// return (tab)
+		return tab.filter(value => value != element)
 	}
 
 	async remove_friend(userId: number, id_friend: number)
