@@ -46,5 +46,4 @@ export class User
 
 	@OneToMany(() => Notification, notification => notification.receiver)
     notifications?: Notification[];
-	user: Promise<Picture>;
 }

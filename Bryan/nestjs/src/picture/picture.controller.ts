@@ -1,7 +1,6 @@
 import { Controller, Get, Header, Param, StreamableFile, HttpException, HttpStatus } from '@nestjs/common';
 import { createReadStream } from 'fs';
 import { PictureService } from './picture.service';
-const fs = require("fs");
 
 @Controller('picture')
 export class PictureController {

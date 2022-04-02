@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Req, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Req, HttpException, HttpStatus, Param, ParseIntPipe } from '@nestjs/common';
 import { UserService } from './user.service'
 import { User } from './user.entity'
 const fs = require("fs");
@@ -9,10 +9,18 @@ import { Picture } from 'src/picture/picture.entity'
 export class UserController {
 	constructor(private readonly userService: UserService) {}
 
-	@Get()
-	async getAll() : Promise<User[]>
-	{ return await this.userService.findAll(); }
+	// Auth
+	// @Get()
+	// async get() : Promise<User>
+	// { return await this.userService.get(id, ["picture", "friends", "ownerChannels",
+	//											"adminChannels", "accessChannels",
+	//											"notifications"]); }
+	
+	@Get(':id')
+	async get(@Param('id', ParseIntPipe) id: number) : Promise<User>
+	{ return await this.userService.get(id, ["picture", "friends"]); }
 
+	// Auth
 	@Post()
 	async uploadPicture(@Req() req: FastifyRequest): Promise<Picture>
 	{

@@ -16,14 +16,6 @@ export class UserService {
 		private readonly pictureService: PictureService
 	) {}
 
-	async findAll(): Promise<User[]> {
-		return this.userRepository.find({
-			relations: ["picture", "dfa", "friends",
-						"adminChannels", "accessChannels", "ownerChannels",
-						"notifications"],
-		});
-	}
-
 	async get(id: number, relations: any[]): Promise<User>
 	{
 		return this.userRepository.findOne({ where: {id: id}, relations: relations});
@@ -65,25 +57,19 @@ export class UserService {
 
 	async activate2FA(id:number): Promise<Dfa>
 	{
-		let user = await this.get(id, []);
+		let user = await this.get(id, ["dfa"]);
 		if (user.twoauth)
 			return user.dfa;
 		let dfa = await this.dfaService.insert(user.nickname ?? user.fullname);
-		user.twoauth = true;
-		user.dfa = dfa;
-		this.userRepository.save(user);
+		this.userRepository.save({id: user.id, twoauth: true, dfa: dfa});
 		return dfa;
 	}
 
-	async disabled2FA(id: number)
+	async disabled2FA(id: number): Promise<User>
 	{
-		let user = await this.get(id, []);
-		if (user.twoauth == false)
-			return ;
-		user.twoauth = false;
-		this.dfaService.remove(user.dfa.id);
-		user.dfa = null;
-		this.userRepository.save(user);
+		let user = await this.get(id, ["dfa"]);
+		this.userRepository.softRemove(user.dfa);
+		return this.userRepository.save({id: user.id, twoauth: false});
 	}
 
 	async checkCode(id: number, code: string): Promise<boolean>
