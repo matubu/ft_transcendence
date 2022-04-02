@@ -9,6 +9,7 @@
 	import Layout from '@components/Layout.svelte'
 	import Modal from '@components/Modal.svelte'
 	import Head from '@components/Head.svelte'
+	import Icon from '@components/Icon.svelte'
 	import { goto } from '@sapper/app'
 	import Button from '@components/Button.svelte'
 	import User from '@components/User.svelte'
@@ -57,40 +58,15 @@
 	}
 	.card-container {
 		display: flex;
-		flex-wrap: wrap;
 		gap: 30px;
 		padding: 20px;
 		margin-bottom: 30px;
 	}
-	.card {
-		flex: 1;
-		border: 1px solid var(--fore);
-		border-radius: 5px;
-		padding: 20px;
-		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
-		max-width: 500px;
-	}
-	.card h2 {
-		margin: 0;
-		margin-bottom: 15px;
-	}
-	.card > div {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		gap: 20px;
-		flex: 1;
-	}
 	@media (max-width: 800px) {
-		.card > div {
-			flex-direction: column-reverse;
-		}
+		.card-container { flex-direction: column; }
 	}
 	h1 {
 		overflow-wrap: anywhere;
-		font-size: clamp(40px, 10vw, 60px);
 	}
 </style>
 
@@ -108,32 +84,24 @@
 			<h1>Hi, {$user.nickname ?? $user.fullname.split(' ')[0]}</h1>
 
 			<div class="card-container">
-				<div class="card" style="background: linear-gradient(107.56deg,#74cabe,#1d9dba,#0d214e)">
-					<div>
-						<div>
-							<h2>2FA</h2>
-							<p>Each time you sign in to your Transcendence, you'll need your password and a verification code.</p>
-						</div>
-						<div>
-							<img width="70" height="70" src="https://cdn-icons-png.flaticon.com/512/3643/3643948.png" alt="">
-						</div>
-					</div>
+				<div class="grad-card" style="background:var(--grad-blue)">
+					<Icon>
+						<svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+					</Icon>
+					<h2>2FA</h2>
+					<p>Each time you sign in to your Transcendence, you'll need your password and a verification code.</p>
 					<Button on:click={() => {
 						qrCode2FA = undefined
 						modal2FA.open()
 					}}>{$user?.twoauth ? "Disable" : "Enable"} 2fa</Button>
 				</div>
-				<div class="card" style="background: linear-gradient(107.56deg,#ca748c,#ba1d65,#7e092a)">
-					<div>
-						<div>
-							<h2>Personal information</h2>
-							<p>Change your nickname</p>
-						</div>
-						<div>
-							<img width="70" height="70" src="https://cdn-icons-png.flaticon.com/512/5956/5956503.png" alt="">
-						</div>
-					</div>
-					<Button on:click={() => modalNickname.open()}>Change your nickname</Button>
+				<div class="grad-card" style="background:var(--grad-purp)">
+					<Icon>
+						<svg width="40" height="40" enable-background="new 0 0 24 24" viewBox="0 0 24 24" fill="currentColor"><g><rect fill="none" height="24" width="24" y="0"/></g><g><g><rect height="1.5" width="4" x="14" y="12"/><rect height="1.5" width="4" x="14" y="15"/><path d="M20,7h-5V4c0-1.1-0.9-2-2-2h-2C9.9,2,9,2.9,9,4v3H4C2.9,7,2,7.9,2,9v11c0,1.1,0.9,2,2,2h16c1.1,0,2-0.9,2-2V9 C22,7.9,21.1,7,20,7z M11,7V4h2v3v2h-2V7z M20,20H4V9h5c0,1.1,0.9,2,2,2h2c1.1,0,2-0.9,2-2h5V20z"/><circle cx="9" cy="13.5" r="1.5"/><path d="M11.08,16.18C10.44,15.9,9.74,15.75,9,15.75s-1.44,0.15-2.08,0.43C6.36,16.42,6,16.96,6,17.57V18h6v-0.43 C12,16.96,11.64,16.42,11.08,16.18z"/></g></g></svg>
+					</Icon>
+					<h2>Personal information</h2>
+					<p>Change your nickname</p>
+					<Button on:click={() => modalNickname.open()}>Change nickname</Button>
 				</div>
 			</div>
 

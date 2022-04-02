@@ -2,81 +2,10 @@
 	import Layout from '@components/Layout.svelte'
 	import Head from '@components/Head.svelte'
 	import Button from '@components/Button.svelte'
+	import Icon from '@components/Icon.svelte'
 	import { user, waitingLogin } from '@lib/store'
 	import { logIn } from '@lib/utils'
 </script>
-
-<style>
-	.container {
-		display: flex;
-		gap: 20px;
-		justify-content: center;
-	}
-	button {
-		padding: 60px 30px;
-		border-radius: 10px;
-		overflow: hidden;
-		border: none;
-		background: #0000;
-		cursor: pointer;
-		transition: .3s;
-		flex: 1;
-
-		position: relative;
-	}
-	button:before,
-	button:after {
-		content: '';
-		width: 100%;
-		height: 100%;
-		position: absolute;
-		top: 0;
-		left: 0;
-		background: linear-gradient(0deg, #2336eb, var(--color));
-		z-index: -1;
-		transition: 1s;
-	}
-	button:before { background: linear-gradient(30deg, #3a48c3, var(--color)) }
-	button:hover:after { opacity: 0 }
-	button :is(h4, p, svg) {
-		margin: 0;
-	}
-	button h4 {
-		font-size: 30px;
-	}
-	button p {
-		color: var(--grey);
-	}
-	button svg {
-		filter: drop-shadow(3px 3px 3px rgba(0, 0, 0, 0.15));
-		width: 120px;
-		height: 120px;
-		opacity: .7;
-	}
-	button:hover {
-		flex: 1.5;
-	}
-	@media only screen and (max-width: 700px) {
-		.container {
-			flex-direction: column;
-		}
-		button {
-			width: 100%;
-			padding: 5px;
-			display: flex;
-			align-items: center;
-			gap: 20px;
-			text-align: left;
-		}
-		button svg {
-			width: 80px;
-			height: 80px;
-		}
-		button h4 {
-			font-size: 25px;
-		}
-	}
-</style>
 
 <Head title="Play" />
 
@@ -85,28 +14,34 @@
 		<h1>Play<span class="dim">.</span></h1>
 		
 		{#if ($user)}
-			<div class="container">
-				<button style="--color: #9e51e0">
-					<svg width="50" height="50" viewBox="0 0 50 50" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M28.7487 7.53554C26.7961 5.58292 23.6303 5.58292 21.6777 7.53554L7.53554 21.6777C5.58292 23.6303 5.58292 26.7961 7.53554 28.7487L21.6777 42.8909C23.6303 44.8435 26.7961 44.8435 28.7487 42.8909L42.8909 28.7487C44.8435 26.7961 44.8435 23.6303 42.8909 21.6777L28.7487 7.53554ZM33 20V22C34.66 22 36 23.34 36 25C36 26.66 34.66 28 33 28V32C33 33.1 32.1 34 31 34H19C17.9 34 17 33.1 17 32V28C15.34 28 14 26.66 14 25C14 23.34 15.34 22 17 22V20C17 18.9 17.9 18 19 18H22C22 16.34 23.34 15 25 15C26.66 15 28 16.34 28 18H31C32.1 18 33 18.9 33 20ZM19 32H31V20H19V32ZM20.5 24.5C20.5 25.33 21.17 26 22 26C22.83 26 23.5 25.33 23.5 24.5C23.5 23.67 22.83 23 22 23C21.17 23 20.5 23.67 20.5 24.5ZM28 26C28.83 26 29.5 25.33 29.5 24.5C29.5 23.67 28.83 23 28 23C27.17 23 26.5 23.67 26.5 24.5C26.5 25.33 27.17 26 28 26ZM29 30V28H21V30H29Z" fill="currentColor"/></svg>
+			<div class="grid-layout">
+				<div class="grad-card" style="background:var(--grad-purp)">
 					<div>
-						<h4>Solo</h4>
-						<p>Play against a bot</p>
+						<Icon>
+							<svg enable-background="new 0 0 24 24" height="40" viewBox="0 0 24 24" width="40" fill="currentColor"><g><rect fill="none" height="24" width="24" y="0"/></g><g><g><path d="M20,9V7c0-1.1-0.9-2-2-2h-3c0-1.66-1.34-3-3-3S9,3.34,9,5H6C4.9,5,4,5.9,4,7v2c-1.66,0-3,1.34-3,3s1.34,3,3,3v4 c0,1.1,0.9,2,2,2h12c1.1,0,2-0.9,2-2v-4c1.66,0,3-1.34,3-3S21.66,9,20,9z M18,19L6,19V7h12V19z M9,13c-0.83,0-1.5-0.67-1.5-1.5 S8.17,10,9,10s1.5,0.67,1.5,1.5S9.83,13,9,13z M16.5,11.5c0,0.83-0.67,1.5-1.5,1.5s-1.5-0.67-1.5-1.5S14.17,10,15,10 S16.5,10.67,16.5,11.5z M8,15h8v2H8V15z"/></g></g></svg>
+						</Icon>
+						<h2>Solo</h2>
 					</div>
-				</button>
-				<button style="--color: #5ae29f">
-					<svg width="50" height="50" viewBox="0 0 50 50" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M28.7487 7.53554C26.7961 5.58292 23.6303 5.58292 21.6777 7.53554L7.53554 21.6777C5.58292 23.6303 5.58292 26.7961 7.53554 28.7487L21.6777 42.8909C23.6303 44.8435 26.7961 44.8435 28.7487 42.8909L42.8909 28.7487C44.8435 26.7961 44.8435 23.6303 42.8909 21.6777L28.7487 7.53554ZM27 21C27 19.9 26.1 19 25 19C23.9 19 23 19.9 23 21C23 22.1 23.9 23 25 23C26.1 23 27 22.1 27 21ZM31 31C30.8 30.29 27.7 29 25 29C22.31 29 19.23 30.28 19 31H31ZM21 21C21 18.79 22.79 17 25 17C27.21 17 29 18.79 29 21C29 23.21 27.21 25 25 25C22.79 25 21 23.21 21 21ZM17 31C17 28.34 22.33 27 25 27C27.67 27 33 28.34 33 31V33H17V31Z" fill="currentColor"/></svg>
+					<Button>Play with bots</Button>
+				</div>
+				<div class="grad-card" style="background:var(--grad-gree)">
 					<div>
-						<h4>Dual</h4>
-						<p>Play against your friend</p>
+						<Icon>
+							<svg height="40" viewBox="0 0 24 24" width="40" fill="currentColor"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2m0 10c2.7 0 5.8 1.29 6 2H6c.23-.72 3.31-2 6-2m0-12C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 10c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+						</Icon>
+						<h2>Dual</h2>
 					</div>
-				</button>
-				<button style="--color: #d84d8e">
-					<svg width="50" height="50" viewBox="0 0 50 50" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M28.7487 7.53554C26.7961 5.58292 23.6303 5.58292 21.6776 7.53554L7.53551 21.6777C5.58289 23.6303 5.58289 26.7961 7.53551 28.7487L21.6776 42.8909C23.6303 44.8435 26.7961 44.8435 28.7487 42.8909L42.8908 28.7487C44.8435 26.7961 44.8435 23.6303 42.8908 21.6777L28.7487 7.53554ZM15 25C15 19.48 19.47 15 24.99 15C30.52 15 35 19.48 35 25C35 30.52 30.52 35 24.99 35C19.47 35 15 30.52 15 25ZM28.97 21H31.92C30.96 19.35 29.43 18.07 27.59 17.44C28.19 18.55 28.65 19.75 28.97 21ZM26.91 21C26.48 19.57 25.83 18.24 25 17.04C24.17 18.24 23.52 19.57 23.09 21H26.91ZM17 25C17 25.69 17.1 26.36 17.26 27H20.64C20.56 26.34 20.5 25.68 20.5 25C20.5 24.32 20.56 23.66 20.64 23H17.26C17.1 23.64 17 24.31 17 25ZM21.03 29H18.08C19.04 30.66 20.57 31.93 22.41 32.56C21.81 31.45 21.35 30.25 21.03 29ZM18.08 21H21.03C21.35 19.75 21.81 18.55 22.41 17.44C20.57 18.07 19.04 19.34 18.08 21ZM23.09 29C23.52 30.43 24.17 31.76 25 32.96C25.83 31.76 26.48 30.43 26.91 29H23.09ZM22.5 25C22.5 25.68 22.57 26.34 22.66 27H27.34C27.43 26.34 27.5 25.68 27.5 25C27.5 24.32 27.43 23.65 27.34 23H22.66C22.57 23.65 22.5 24.32 22.5 25ZM28.97 29C28.65 30.25 28.19 31.45 27.59 32.56C29.43 31.93 30.96 30.65 31.92 29H28.97ZM29.5 25C29.5 25.68 29.44 26.34 29.36 27H32.74C32.9 26.36 33 25.69 33 25C33 24.31 32.9 23.64 32.74 23H29.36C29.44 23.66 29.5 24.32 29.5 25Z" fill="currentColor"/></svg>
+					<Button>Play with friends</Button>
+				</div>
+				<div class="grad-card" style="background:var(--grad-blue)">
 					<div>
-						<h4>Online</h4>
-						<p>Play with stranger</p>
+						<Icon>
+							<svg height="40" viewBox="0 0 24 24" width="40" fill="currentColor"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm6.93 6h-2.95c-.32-1.25-.78-2.45-1.38-3.56 1.84.63 3.37 1.91 4.33 3.56zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2s.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56-1.84-.63-3.37-1.9-4.33-3.56zm2.95-8H5.08c.96-1.66 2.49-2.93 4.33-3.56C8.81 5.55 8.35 6.75 8.03 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08 2.76-1.91 3.96zM14.34 14H9.66c-.09-.66-.16-1.32-.16-2s.07-1.35.16-2h4.68c.09.65.16 1.32.16 2s-.07 1.34-.16 2zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95c-.96 1.65-2.49 2.93-4.33 3.56zM16.36 14c.08-.66.14-1.32.14-2s-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2h-3.38z"/></svg>
+						</Icon>
+						<h2>Online</h2>
 					</div>
-				</button>
+					<Button>Play with strangers</Button>
+				</div>
 			</div>
 		{:else}
 			<p>You need to login first</p>

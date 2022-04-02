@@ -74,16 +74,17 @@
 			inputmode="numeric"
 			pattern="[0-9]{6}"
 			autocomplete="one-time-code"
+			aria-label="two factor authentification"
 			on:input={e => e.target.value.length === 6 && submit()}
 		/>
 		{:else}
 		<div class="input">
-			<input type="text" on:keydown={backspace} on:input={listener}>
-			<input type="text" on:keydown={backspace} on:input={listener}>
-			<input type="text" on:keydown={backspace} on:input={listener}>
-			<input type="text" on:keydown={backspace} on:input={listener}>
-			<input type="text" on:keydown={backspace} on:input={listener}>
-			<input type="text" on:keydown={backspace} on:input={listener}>
+			<input type="text" on:keydown={backspace} on:input={listener} aria-label="two factor authentification">
+			<input type="text" on:keydown={backspace} on:input={listener} aria-label="two factor authentification">
+			<input type="text" on:keydown={backspace} on:input={listener} aria-label="two factor authentification">
+			<input type="text" on:keydown={backspace} on:input={listener} aria-label="two factor authentification">
+			<input type="text" on:keydown={backspace} on:input={listener} aria-label="two factor authentification">
+			<input type="text" on:keydown={backspace} on:input={listener} aria-label="two factor authentification">
 		</div>
 		{/if}
 	</div>

@@ -2,6 +2,8 @@
 	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();
+
+	export let alt: string = ''
 </script>
 
 <style>
@@ -26,6 +28,7 @@
 </style>
 
 <button
+	aria-label={alt}
 	on:click={e => dispatch('click', e)}
 	on:mousedown={e => dispatch('mousedown', e)}
 	on:mouseup={e => dispatch('mouseup', e)}

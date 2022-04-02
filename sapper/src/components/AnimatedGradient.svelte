@@ -22,7 +22,7 @@
 			{
 				if (position[i][0] > window.innerWidth || position[i][0] < 0) velocity[i][0] *= -1
 				if (position[i][1] > window.innerHeight || position[i][1] < 0) velocity[i][1] *= -1
-				balls[i].style.transform = `translate3d(${position[i][0]}px,${position[i][1]}px,0)`
+				balls[i].style.transform = `translate(${position[i][0]}px,${position[i][1]}px)`
 				position[i][0] += velocity[i][0] * 5
 				position[i][1] += velocity[i][1] * 5
 			}
@@ -44,6 +44,7 @@
 		height: 100%;
 		z-index: -1;
 		filter: blur(50px);
+		transform: translate3d(0, 0, 0);
 		overflow: hidden;
 	}
 	.animated-gradient :global(div) {

@@ -3,7 +3,7 @@
 	import { useMediaQuery } from '@lib/store'
 	const dispatch = createEventDispatcher()
 
-	let mediaQuery = useMediaQuery('(max-width: 350px)')
+	let mediaQuery = useMediaQuery('(max-width: 800px)')
 
 	export let vertical: boolean = false
 	export let segment: string

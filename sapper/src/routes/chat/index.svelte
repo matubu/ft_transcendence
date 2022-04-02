@@ -25,14 +25,6 @@
 		reloadChatList()
 </script>
 
-<style>
-	.container {
-		display: grid;
-		gap: 20px;
-		grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-	}
-</style>
-
 <Head title="Chat" />
 
 <Layout>
@@ -40,9 +32,9 @@
 		<h1>Chat<span class="dim">.</span></h1>
 
 		{#if ($user)}
-			<div class="container">
-				{#each $rooms as {id, name, description, password, private: mode}}
-					<Room id={+id} name="{name}" desc="{description ?? ''}" type="{password ? 'protected' : (mode ? 'private' : 'public')}" joined={true}/>
+			<div class="grid-layout">
+				{#each $rooms as {id, name, password, private: mode}}
+					<Room id={+id} name="{name}" type="{password ? 'protected' : (mode ? 'private' : 'public')}" joined={true}/>
 				{/each}
 			</div>
 		{:else}

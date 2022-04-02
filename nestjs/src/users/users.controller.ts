@@ -62,6 +62,7 @@ export class UsersController {
 		if (val)
 			response.setCookie('user', userId,
 							{
+								sameSite: 'Strict',
 								path: '/',
 								signed: true
 							});

@@ -14,6 +14,10 @@
 	--grey: #CBCBCB;
 	--prim: #f2f4f8;
 	--seco: #d8dee9;
+
+	--grad-blue: linear-gradient(107.56deg, #74cabe 2.2%, #6539cd 29.17%, #24054c 95.31%);
+	--grad-purp: linear-gradient(107.56deg, #ffa7a7 2.2%, #a30cb5 29.17%, #00173a 95.31%);
+	--grad-gree: linear-gradient(107.56deg, #91c46a 2.2%, #167243 29.17%, #031b34 95.31%);
 }
 body {
 	font-family: Roboto, -apple-system, BlinkMacSystemFont, Segoe UI, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
@@ -33,10 +37,14 @@ html {
 	position: relative;
 }
 body, button, a { color: var(--whit) }
+* {
+	font-family: 'Inter', sans-serif;
+}
 h1 {
 	margin: 0 0 30px 0;
-	font-size: 4rem
+	font-size: clamp(22px, 7vw, 4rem);
 }
+
 ::placeholder,
 .dim { color: var(--grey) }
 
@@ -50,7 +58,7 @@ label {
 textarea, input[type="text"], input[type="password"] {
 	width: 100%;
 	max-width: 400px;
-	font-size: 25px;
+	font-size: 2px;
 	margin: 0;
 	padding: 10px 20px;
 	box-sizing: border-box;
@@ -64,4 +72,49 @@ textarea, input[type="text"], input[type="password"] {
 }
 input[type="text"], input[type="password"] {
 	height: 50px;
+}
+
+.glass-card {
+	background: #fff3;
+	border: 1px solid rgb(142 140 144 / 5%);
+	box-shadow: inset 1px 1px 0 hsl(0deg 0% 100% / 11%);
+	backdrop-filter: blur(52px);
+	padding: 30px;
+	border-radius: 10px;
+	width: 100%;
+	min-width: 200px;
+	max-width: 500px;
+	display: flex;
+	flex-direction: column;
+	gap: 30px;
+	box-sizing: border-box;
+}
+.glass-card > * {
+	margin: 0;
+}
+
+.grad-card {
+	flex: 1;
+	border: 1px solid var(--fore);
+	border-radius: 20px;
+	padding: 25px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	gap: 15px;
+	max-width: 500px;
+}
+.grad-card * {
+	margin: 0;
+}
+.grad-card > div:first-child {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+}
+
+.grid-layout {
+	display: grid;
+	gap: 20px;
+	grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
 }

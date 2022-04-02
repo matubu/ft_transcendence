@@ -19,41 +19,42 @@ export class AuthController {
 			if (info['id'] !== undefined)
 			{
 				const user = await this.usersService.findOne(info['id'], false);
-				console.log(user, info['id'])
 				if (user !== undefined)
 				{
-					console.log('not first')
 					response.setCookie('user', user.twoauth ? '' : info['id'].toString(),
 					{
+						sameSite: 'Strict',
 						path: '/',
 						signed: true
 					});
 				}
 				else
 				{
-					console.log('first')
-					//const new_image = await this.usersService.downloadImgByUrl(info['image_url'])
+					const new_image = await this.usersService.downloadImgByUrl(info['image_url'])
 					const createUser: UsersInterface = {
 						id: info['id'],
 						fullname: info['displayname'],
 						twoauth: false,
-						img: info['image_url'], //new_image,
+						img: new_image,
 						elo: 1000
 					};
 					await this.usersService.insert(createUser);
 					response.setCookie('first_conn', "true",
 					{
+						sameSite: 'Strict',
 						path: '/',
 						signed: true
 					});
 					response.setCookie('user', info['id'].toString(),
 					{
+						sameSite: 'Strict',
 						path: '/',
 						signed: true
 					});
 				}
 				response.setCookie('userid', info['id'].toString(),
 				{
+					sameSite: 'Strict',
 					path: '/',
 					signed: true
 				});

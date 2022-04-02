@@ -19,10 +19,6 @@
 		place-items: center;
 		text-align: center;
 	}
-
-	h1 {
-		font-size: clamp(22px, 7vw, 4rem);
-	}
 	
 	p {
 		font-size: clamp(16px, 4vw, 1.5rem);

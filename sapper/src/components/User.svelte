@@ -9,7 +9,7 @@
 </script>
 
 <style>
-	a, img {
+	div, a, img {
 		width: var(--size);
 		height: var(--size);
 		border-radius: 50%;
@@ -23,9 +23,13 @@
 </style>
 
 {#if user}
-	<!-- <div> -->
-		<a on:click={() => dispatch('click')} style="--size: {size}px" href={href}>
+	<div style="--size: {size}px" on:click={() => dispatch('click')}>
+		{#if href}
+			<a href={href}>
+				<img src="{user.img}" alt="">
+			</a>
+		{:else}
 			<img src="{user.img}" alt="">
-		</a>
-	<!-- </div> -->
+		{/if}
+	</div>
 {/if}

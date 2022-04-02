@@ -9,14 +9,14 @@
 <Head title="Watch" />
 
 <Layout>
-	<div>
-		<h1>Watch<span class="dim">.</span></h1>
-		
-		{#if ($user)}
-			<Button primary>Watch now</Button>
-		{:else}
-			<p>You need to login first</p>
-			<Button primary loading={$waitingLogin} on:click={logIn}>Login</Button>
-		{/if}
-	</div>
+	<h1>Watch<span class="dim">.</span></h1>
+	
+	{#if ($user)}
+		<div class="grid-layout">
+			<div class="glass-card"></div>
+		</div>
+	{:else}
+		<p>You need to login first</p>
+		<Button primary loading={$waitingLogin} on:click={logIn}>Login</Button>
+	{/if}
 </Layout>

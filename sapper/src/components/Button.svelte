@@ -11,13 +11,10 @@
 	let button
 
 	onMount(() => {
-		if (primary !== false)
-		{
-			button.addEventListener('mousemove', e =>
-				button.style.setProperty('--x', `${e.layerX}px`))
-			button.addEventListener('mouseleave', e =>
-				button.style.setProperty('--x', '0px'))
-		}
+		button.addEventListener('mousemove', e =>
+			button.style.setProperty('--x', `${e.layerX}px`))
+		button.addEventListener('mouseleave', e =>
+			button.style.setProperty('--x', '0px'))
 	})
 </script>
 
@@ -26,26 +23,23 @@
 		display: inline-block;
 		position: relative;
 		padding: 15px 20px;
-		border: none;
 		cursor: pointer;
-		border-radius: 8px;
+		border-radius: 10px;
 		font-size: 18px;
-		border: 4px solid rgba(255, 255, 255, 0.3);
-		transition: background-color .3s, background-image .1s .1s;
+		border: none;
+		transition: background-position 50ms;
 		text-decoration: none;
 		user-select: none;
 		color: var(--prim);
-		background: rgba(255, 255, 255, 0.3);
+		background: #0000;
+		background-image: linear-gradient(90deg, #fff6, #ffffff55, #fff6);
 		background-clip: padding-box;
 		box-sizing: border-box;
 		font-weight: 500;
-	}
-	*:hover {
-		background-color: rgba(255, 255, 255, 0.4);
+		background-position: var(--x, 0px) 0px;
 	}
 	*.primary {
     	background-image: linear-gradient(90deg, var(--prim), var(--seco), var(--prim));
-		background-position: var(--x, 0px) 0px;
 		color: var(--back);
 	}
 	.float {

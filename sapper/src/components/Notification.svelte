@@ -70,6 +70,7 @@
 
 <div class="container" bind:this={container}>
 	<IconButton
+		alt="notifications"
 		on:mousedown={() => {
 			blur = document.activeElement == container.firstChild
 			container.firstChild.blur()
