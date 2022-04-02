@@ -11,13 +11,8 @@ export class Channel
 	@OneToOne(() => User)
 	@JoinColumn()
 	owner: User;
-
-	@OneToMany(() => User, user => user.id)
-    @JoinColumn()
-    propri: User[];
 	
 	@OneToMany(() => User, user => user.id)
-    @JoinColumn()
     admins: User[];
 
 	@Column({ default: null })
