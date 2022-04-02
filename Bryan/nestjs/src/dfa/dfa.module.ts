@@ -5,6 +5,7 @@ import { DfaService } from './dfa.service';
 
 @Module({
 	imports: [TypeOrmModule.forFeature([Dfa])],
-	providers: [DfaService]
+	providers: [DfaService],
+	exports: [DfaService]
 })
 export class DfaModule {}

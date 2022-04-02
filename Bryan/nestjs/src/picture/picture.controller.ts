@@ -1,9 +1,7 @@
-import { Controller, Get, Header, Param, StreamableFile, HttpException, HttpStatus, Post, Req } from '@nestjs/common';
+import { Controller, Get, Header, Param, StreamableFile, HttpException, HttpStatus } from '@nestjs/common';
 import { createReadStream } from 'fs';
 import { PictureService } from './picture.service';
 const fs = require("fs");
-import { FastifyRequest } from 'fastify'
-import { Picture } from './picture.entity'
 
 @Controller('picture')
 export class PictureController {
@@ -18,15 +16,5 @@ export class PictureController {
 			throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
 		const file = createReadStream(process.cwd() + "/upload/images/" + image.name);
 		return new StreamableFile(file);
-	}
-
-	@Post()
-	async uploadPicture(@Req() req: FastifyRequest): Promise<Picture>
-	{
-		const data = await req.file();
-		const valid_mime: string[] = [ "image/gif", "image/jpeg", "image/png", "image/bmp", "image/tiff" ];
-		if (valid_mime.includes(data.mimetype))
-			return await this.pictureService.insertByData(data.file);
-		throw new HttpException('Internal Server Error', HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 }

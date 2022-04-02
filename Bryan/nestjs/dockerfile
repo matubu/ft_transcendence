@@ -4,4 +4,4 @@ RUN		mkdir /var/nestjs
 WORKDIR /var/nestjs
 EXPOSE 	3000
 
-ENTRYPOINT [ "npm run", "start:dev" ]
+CMD npm i && npm run start:dev
