@@ -1,7 +1,8 @@
 FROM 	node
 
-RUN		mkdir /var/nestjs
+RUN		apt update && apt upgrade -y
+RUN		mkdir -p /var/nestjs
 WORKDIR /var/nestjs
 EXPOSE 	3000
 
-CMD npm i && npm run start:dev
+CMD		npm install && npm run start:dev
