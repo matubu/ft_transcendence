@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn, OneToMany, JoinTable } from 'typeorm';
 import { User } from '../user/user.entity'
 import { Message } from '../message/message.entity'
 
@@ -9,8 +9,16 @@ export class Channel
 	id: number;
 
 	@OneToOne(() => User)
+	@JoinColumn()
+	owner: User;
+
+	@OneToMany(() => User, user => user.id)
     @JoinColumn()
-    admin: User;
+    propri: User[];
+	
+	@OneToMany(() => User, user => user.id)
+    @JoinColumn()
+    admins: User[];
 
 	@Column({ default: null })
 	name?: string;

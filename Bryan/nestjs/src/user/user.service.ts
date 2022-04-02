@@ -19,7 +19,7 @@ export class UserService {
 	async findAll(): Promise<User[]> {
 		return this.userRepository.find({
 			relations: ["picture", "dfa", "friends",
-						"adminChannels", "accessChannels",
+						"adminChannels", "accessChannels", "ownerChannels",
 						"notifications"],
 		});
 	}
@@ -53,6 +53,13 @@ export class UserService {
 
 	async remove(id: number): Promise<DeleteResult>
 	{
+		let user = await this.get(id, ["notification", "picture", "dfa"]);
+		this.userRepository.softRemove(user.notifications);
+		this.userRepository.softRemove(user.dfa);
+		this.pictureService.removeByID(user.picture.id);
+		/*
+			Remove friends, channels 
+		*/
 		return this.userRepository.delete({id: id});
 	}
 
@@ -77,5 +84,13 @@ export class UserService {
 		this.dfaService.remove(user.dfa.id);
 		user.dfa = null;
 		this.userRepository.save(user);
+	}
+
+	async checkCode(id: number, code: string): Promise<boolean>
+	{
+		let user = await this.get(id, ["dfa"]);
+		if (user.twoauth == false)
+			return false;
+		return this.dfaService.verifySecret(user.dfa.secret, code);
 	}
 }

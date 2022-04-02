@@ -35,7 +35,10 @@ export class User
 	@OneToMany(() => Friend, friend => friend.user)
     friends?: Friend[];
 
-	@OneToMany(() => Channel, channel => channel.admin)
+	@OneToMany(() => Channel, channel => channel.owner)
+    ownerChannels?: Channel[];
+
+	@OneToMany(() => Channel, channel => channel.admins)
     adminChannels?: Channel[];
 
 	@OneToMany(() => Access, access => access.user)
