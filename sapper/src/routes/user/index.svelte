@@ -105,10 +105,19 @@
 				</div>
 			</div>
 
-			<Button primary on:click={() => {
-				logOut()
-				goto('/')
-			}}>Logout</Button>
+			<div>
+				<Button on:click={() => {
+					fetch('/api/users', {
+						method: 'DELETE'
+					})
+					logOut()
+					goto('/')
+				}}>Delete</Button>
+				<Button primary on:click={() => {
+					logOut()
+					goto('/')
+				}}>Logout</Button>
+			</div>
 		</div>
 	{/if}
 </Layout>
@@ -123,7 +132,7 @@
 			let formData = new FormData();
 			formData.append("file", fileAvatar.files[0]);
 			await fetch('/api/users/picture', {
-				method: "POST", 
+				method: 'POST', 
 				body: formData
 			})
 			fetchUser()

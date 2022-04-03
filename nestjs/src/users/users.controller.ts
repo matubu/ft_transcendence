@@ -39,11 +39,10 @@ export class UsersController {
 	getByContent(@Param('str') str: string) : Promise<Users[]>
 	{ return this.usersService.findByContent(str); }
 
-	@Delete(':id')
-	remove(@Autorization() userId: number, @Param('id') id: string): Promise<DeleteResult>
+	@Delete()
+	remove(@Autorization() userId: number): Promise<DeleteResult>
 	{
-		if (userId.toString() === id)
-			return this.usersService.remove(userId);
+		return this.usersService.remove(userId);
 	}
 
 	@Post('check_code')
