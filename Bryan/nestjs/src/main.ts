@@ -17,7 +17,7 @@ async function bootstrap()
 	const app = await NestFactory.create<NestFastifyApplication>(
 		AppModule,
 		new FastifyAdapter({ https: httpsOptions }),
-		);
+	);
 	app.setGlobalPrefix('api');
 	app.register(fastifyMultipart);
 	app.register(fastifyCookie, { secret: SECRET_COOKIES });
