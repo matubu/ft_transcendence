@@ -7,6 +7,7 @@ services:
   #   container_name: Sapper
   #   build: ./sapper
   #   image: sapper
+  #   hostname: sapper
   #   env_file:
   #     - .env
   #   ports:
@@ -17,25 +18,28 @@ services:
   #     - transcendence-network
   #   restart: always
 
-  NestJS:
-    depends_on:
-      - PostGresSQL
-    container_name: NestJS
-    build: ./nestjs
-    image: nestjs
-    env_file:
-      - .env
-    ports:
-      - 3000:3000 # remove for prod
-    volumes:
-      - ./nestjs:/var/nestjs
-    networks:
-      - transcendence-network
-    restart: always
+  # NestJS:
+  #   depends_on:
+  #     - PostGresSQL
+  #   container_name: NestJS
+  #   build: ./nestjs
+  #   image: nestjs
+  #   # hostname: nestjs
+  #   env_file:
+  #     - .env
+  #   # ports:
+  #   #   - 3000:3000 # remove for prod
+  #   volumes:
+  #     - ./nestjs:/var/nestjs
+  #   # networks:
+  #   #   - transcendence-network
+  #   network_mode: service:PostGresSQL
+  #   restart: always
 
   PostGresSQL:
     container_name: PostGresSQL
     image: postgres
+    hostname: postgres
     env_file:
       - .env
     environment:
