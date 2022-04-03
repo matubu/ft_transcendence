@@ -5,27 +5,29 @@ import {
 	WsResponse,
 } from '@nestjs/websockets'
 import { Server } from 'ws'
-import { Autorization } from './auth.guard'
+// import { UnauthorizedException } from '@nestjs/common'
+//import { Autorization } from './auth.guard'
+
 
 let clients: Map<number, any> = new Map()
 
-@WebSocketGateway()
+@WebSocketGateway(3000)
 export class AppGateway {
 	@WebSocketServer()
 	server: Server;
 
-	handleConnection(client, ...args: any[]) {
-		// console.log(`=====> Client connected: ${client.id}`, client, args);
-		// console.log('=====>>>>>', client, args, '<<<<<=====')
+	handleConnection(client: any) {
+		client.terminate()
+		console.log(`=====> Client {} connected`);
 	}
 
-	handleDisconnect(client) {
-		// console.log(`=====> Client disconnected: ${client.id}`);
+	handleDisconnect(client: any) {
+		console.log(`=====> Client {} disconnected`);
 	}
 
 	@SubscribeMessage('events')
 	onEvent(client: any, data: any): WsResponse<string> {
-		//console.log(client, data)
-		return ({event: 'events', data: 'test' })
+		console.log('=====> Client {} event')
+		return ({ event: 'events', data: 'test' })
 	}
 }

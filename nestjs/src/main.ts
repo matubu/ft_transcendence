@@ -15,7 +15,7 @@ async function bootstrap() {
 	app.setGlobalPrefix('api');
 	const port = NESTJS_PORT;
 	const secret = SECRET_COOKIES;
-	app.register(fastifyCookie, { secret: `${secret}` });
+	app.register(fastifyCookie, { secret });
 	app.register(fastifyMultipart)
 	app.useWebSocketAdapter(new WsAdapter(app));
 	await app.listen(port);

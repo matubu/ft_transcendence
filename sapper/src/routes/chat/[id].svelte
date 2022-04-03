@@ -18,7 +18,8 @@
 	{
 		id_channel = +location.pathname.split('/')[2]
 		reloadChat()
-		setInterval(reloadChat, 10000)
+		// setInterval(reloadChat, 10000)
+		//TODO remove listener
 	}
 </script>
 

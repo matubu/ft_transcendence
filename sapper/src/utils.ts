@@ -16,7 +16,7 @@ export const getCookie = key => getCookieFromString(document.cookie, key)
 export const removeCookie = key => (document.cookie = `${key}=; expires=Thu, 01 Jan 1970 00:00:01 GMT`)
 
 export const clearCookies = () => {
-	for (let key of Object.keys(getCookies()))
+	for (let key in getCookies())
 		removeCookie(key)
 }
 
@@ -24,33 +24,23 @@ export const logIn = () => {
 	waitingLogin.set(true)
 	user.set(undefined)
 	clearCookies()
-	let treated = false
 	let win = window
 		.open(`https://api.intra.42.fr/oauth/authorize?client_id=5fb8cff19443b1e91c5753666fdcb12d45ecbc49c667ba7eb97150cb2590b38a&redirect_uri=${encodeURIComponent(location.origin)}%2Fapi%2Fauth&response_type=code`, 'Auth 42', 'width=500,height=700')
-	win.onload = () => {
-		console.log('load')
-		win.onbeforeunload = () => {
-			console.log('unload')
-			let update = () => {
-				if (treated || getCookie('user') === undefined)
-					return ;
-				treated = true
-				waitingLogin.set(false)
-				if (getCookie('user') === '')
-					get(twoauth).open()
-				else if (getCookie('first_conn'))
-				{
-					removeCookie('first_conn')
-					goto('/user')
-				}
-				else
-					fetchUser()
-			}
-			for (let time of [10, 50, 100, 1000, 2000, 5000])
-				setTimeout(update, time)
-			setTimeout(() => waitingLogin.set(false), 2000)
+	let pooling = async () => {
+		if (!win.closed) return requestAnimationFrame(pooling)
+
+		if (getCookie('user') === '')
+			get(twoauth).open()
+		else
+		{
+			await fetchUser()
+			if (getCookie('first_conn'))
+				goto('/user')
+			removeCookie('first_conn')
 		}
+		waitingLogin.set(false)
 	}
+	pooling()
 }
 export const logOut = () => {
 	user.set(undefined)
@@ -106,7 +96,6 @@ if (typeof document !== 'undefined')
 		let ws
 		if (data)
 		{
-			// ws = new WebSocket(`${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}`)
 			ws = new WebSocket(`ws://localhost:3000`)
 			ws.onmessage = data => console.log(data)
 			ws.onopen = () => {
