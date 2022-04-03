@@ -22,7 +22,7 @@ async function bootstrap()
 	app.setGlobalPrefix('api');
 	app.register(fastifyMultipart);
 	app.register(fastifyCookie, { secret: SECRET_COOKIES });
-	await app.listen(NESTJS_PORT);
+	await app.listen(NESTJS_PORT, "0.0.0.0");
 	console.log(`Application is running on: ${await app.getUrl()}`);
 }
 
