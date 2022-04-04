@@ -12,9 +12,10 @@ import { AccessModule } from './access/access.module';
 import { FriendModule } from './friend/friend.module';
 import { DfaModule } from './dfa/dfa.module';
 import { AuthModule } from './auth/auth.module';
+import { AchievementModule } from './achievement/achievement.module';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(), UserModule, PictureModule, NotificationModule, MessageModule, MatchModule, ChannelModule, AccessModule, FriendModule, DfaModule, AuthModule],
+  imports: [TypeOrmModule.forRoot(), UserModule, PictureModule, NotificationModule, MessageModule, MatchModule, ChannelModule, AccessModule, FriendModule, DfaModule, AuthModule, AchievementModule],
   controllers: [AppController],
   providers: [AppService],
 })

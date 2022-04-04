@@ -48,6 +48,7 @@ services:
     ports:
       - 5432:5432 # remove for prod
     volumes:
+      - ./achievement.sql:/docker-entrypoint-initdb.d/achievement.sql
       - ./PostGresSQL-data:/var/lib/postgresql/data
     networks:
       - transcendence-network
