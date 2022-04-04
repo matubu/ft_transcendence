@@ -1,10 +1,12 @@
-import { Controller, Get, Post, Req, HttpException, HttpStatus, Param, ParseIntPipe, Body, Res, UnauthorizedException } from '@nestjs/common';
+import { Controller, Get, Post, Put, Req, HttpException, HttpStatus, Param, ParseIntPipe, Body, Res, UnauthorizedException } from '@nestjs/common';
 import { UserService } from './user.service'
 import { User } from './user.entity'
 import { FastifyRequest } from 'fastify'
 import { Picture } from 'src/picture/picture.entity'
 import { Autorization } from '../auth.guard'
 import { AuthService } from 'src/auth/auth.service';
+import { DeleteResult } from 'typeorm';
+import { Dfa } from 'src/dfa/dfa.entity';
 
 @Controller('user')
 export class UserController {
@@ -40,13 +42,33 @@ export class UserController {
 												"notifications"]);
 	}
 
-	@Post()
-	async uploadPicture(@Autorization() userId: number, @Req() req: FastifyRequest): Promise<Picture>
+	@Post('changePicture')
+	async changePicture(@Autorization() userId: number, @Req() req: FastifyRequest): Promise<Picture>
 	{
 		const data = await req.file();
 		const valid_mime: string[] = [ "image/gif", "image/jpeg", "image/png", "image/bmp", "image/tiff" ];
 		if (valid_mime.includes(data.mimetype))
 			return await this.userService.changePicture(userId, data.file);
 		throw new HttpException('Internal Server Error', HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@Post('changeNickname')
+	async changeNickname(@Autorization() userId: number, @Body() body: { nickname: string }) : Promise<User> {
+		return await this.userService.changeNickname(userId, body.nickname);
+	}
+
+	@Put('delete')
+	async delete(@Autorization() userId: number) : Promise<DeleteResult> {
+		return await this.userService.remove(userId);
+	}
+
+	@Put('activate2FA')
+	async activate2FA(@Autorization() userId: number) : Promise<Dfa> {
+		return await this.userService.activate2FA(userId);
+	}
+
+	@Put('disabled2FA')
+	async disabled2FA(@Autorization() userId: number) : Promise<User> {
+		return await this.userService.disabled2FA(userId);
 	}
 }
