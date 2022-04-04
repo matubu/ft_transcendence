@@ -100,10 +100,7 @@ if (typeof document !== 'undefined')
 			ws.onmessage = data => console.log(data)
 			ws.onopen = () => {
 				console.log('send')
-				ws.send(JSON.stringify({
-					event: 'events',
-					data: 'test',
-				}))
+				ws.send('events:["test"]')
 			}
 		}
 		sock.set(ws)

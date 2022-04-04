@@ -1,33 +1,45 @@
 import {
 	SubscribeMessage,
 	WebSocketGateway,
-	WebSocketServer,
-	WsResponse,
+	WebSocketServer
 } from '@nestjs/websockets'
 import { Server } from 'ws'
-// import { UnauthorizedException } from '@nestjs/common'
-//import { Autorization } from './auth.guard'
 
-
-let clients: Map<number, any> = new Map()
+let puts = (color: number, txt: string) => {
+	console.log(`\u001B[1;${color}m${txt}\u001B[0m`)
+}
 
 @WebSocketGateway(3000)
 export class AppGateway {
+	userMap: Map<number, any> = new Map()
 	@WebSocketServer()
-	server: Server;
+	server: Server
 
-	handleConnection(client: any) {
-		client.terminate()
-		console.log(`=====> Client {} connected`);
+	send(client: any, channel: string, data: any) {
+		if (!client) return ;
+		puts(94, `<<< SEND {${client.userId}} ${JSON.stringify(data)} in ${channel}`)
+		client.send(`${channel}:${JSON.stringify(data)}`)
+	}
+	sendTo(userId: number, channel: string, data: any) {
+		this.send(this.userMap.get(userId), channel, data)
+	}
+
+	handleConnection(client: any, req: any) {
+		puts(92, `+++ CONNECTED {${client.userId}}`)
+		if (this.userMap.has(client.userId))
+			this.userMap.get(client.userId).close()
+		this.userMap.set(client.userId, client)
 	}
 
 	handleDisconnect(client: any) {
-		console.log(`=====> Client {} disconnected`);
+		puts(91, `--- DISCONNECTED {${client.userId}}`)
+		this.userMap.delete(client.userId)
 	}
 
 	@SubscribeMessage('events')
-	onEvent(client: any, data: any): WsResponse<string> {
-		console.log('=====> Client {} event')
-		return ({ event: 'events', data: 'test' })
+	onEvent(client: any, data: string) {
+		puts(95, `>>> RECEIVED {${client.userId}} ${data}`)
+		this.send(client, 'test', 'data')
+		this.sendTo(client.userId, 'channel', {x:156,y:489})
 	}
 }

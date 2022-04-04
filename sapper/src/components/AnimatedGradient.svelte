@@ -11,20 +11,22 @@
 
 	let vel = (): number[] => [Math.random() * 2 - 1, Math.random() * 2 - 1]
 	let pos = (): number[] => [Math.random() * window.innerWidth, Math.random() * window.innerHeight]
+	let neg = (val: number, sign: boolean): number => Math.abs(val) * (sign ? 1 : -1)
 
 	onMount(() => {
 		let balls: HTMLDivElement[] = [ball('#c55273'), ball('#424db3')]
-		let velocity = [vel(), vel()]
-		let position = [pos(), pos()]
+		const speed = 4
+		let v = [vel(), vel()]
+		let p = [pos(), pos()]
 
 		let anim = () => {
 			for (let i in balls)
 			{
-				if (position[i][0] > window.innerWidth || position[i][0] < 0) velocity[i][0] *= -1
-				if (position[i][1] > window.innerHeight || position[i][1] < 0) velocity[i][1] *= -1
-				balls[i].style.transform = `translate(${position[i][0]}px,${position[i][1]}px)`
-				position[i][0] += velocity[i][0] * 5
-				position[i][1] += velocity[i][1] * 5
+				if (p[i][0] > window.innerWidth || p[i][0] < 0) v[i][0] = neg(v[i][0], p[i][0] < 0)
+				if (p[i][1] > window.innerHeight || p[i][1] < 0) v[i][1] = neg(v[i][1], p[i][1] < 0)
+				balls[i].style.transform = `translate(${p[i][0]}px,${p[i][1]}px)`
+				p[i][0] += v[i][0] * speed
+				p[i][1] += v[i][1] * speed
 			}
 			requestAnimationFrame(anim)
 		}
