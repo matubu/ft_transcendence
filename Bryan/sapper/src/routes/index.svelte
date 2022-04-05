@@ -5,7 +5,7 @@
 	import AnimatedGradient from '@components/AnimatedGradient.svelte'
 	import { fly } from 'svelte/transition';
 	import { onMount } from 'svelte';
-	import { user } from '@lib/store'
+	import { user, waitingLogin } from '@lib/store'
 	import { logIn } from '@lib/utils';
 
 	let mounted = false
@@ -55,7 +55,7 @@ Points are earned when the other fails to return the ball.`.split(/\s/) as c, id
 			{#if ($user)}
 				<Button primary href="/play">Play now</Button>
 			{:else}
-				<Button primary on:click={logIn}>Login</Button>
+				<Button primary loading={$waitingLogin} on:click={logIn}>Login</Button>
 			{/if}
 		</div>
 	</div>

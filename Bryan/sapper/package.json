@@ -1,10 +1,10 @@
 {
 	"name": "transcendence_sapper",
 	"scripts": {
-		"dev": "export $(cat ../.env) && sapper dev",
+		"dev": "sapper dev",
 
-		"build": "export $(cat ../.env) && sapper build",
-		"start": "export $(cat ../.env) && node __sapper__/build",
+		"build": "sapper build",
+		"start": "node __sapper__/build",
 
 		"validate": "export $(cat ../.env) && svelte-check --ignore src/node_modules/@sapper"
 	},

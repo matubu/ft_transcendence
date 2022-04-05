@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Req, HttpException, HttpStatus, Param, ParseIntPipe, Body, Res, UnauthorizedException } from '@nestjs/common';
+import { Controller, Get, Post, Put, Req, HttpException, HttpStatus, Param, ParseIntPipe, Body, Res, UnauthorizedException, Delete } from '@nestjs/common';
 import { UserService } from './user.service'
 import { User } from './user.entity'
 import { FastifyRequest } from 'fastify'
@@ -24,7 +24,7 @@ export class UserController {
 	}
 	
 	@Post('checkCode')
-	async checkCode(@Body() body: { code: string }, @Req() req: FastifyRequest, @Res({ passthrough: true }) response): Promise<boolean>
+	async checkCode(@Body() body: { code: string }, @Req() req: FastifyRequest, @Res({ passthrough: true }) response): Promise<void>
 	{
 		if (!req.cookies.userid)
 			throw new UnauthorizedException()
@@ -34,17 +34,18 @@ export class UserController {
 			throw new UnauthorizedException()
 
 		const val = await this.userService.checkCode(+user.value, body.code)
-		if (val)
-			this.authService.setCookie(response, "user", user.value);
-		return val
+		if (!val)
+			throw new UnauthorizedException()
+		this.authService.setCookie(response, "user", user.value);
 	}
 	
 	/* AUTHORIZATION REQUIRED */
 	@Get()
 	async get(@Autorization() userId: number) : Promise<User> {
-		return await this.userService.get(userId, ["picture", "friends", "ownerChannels",
-												"adminChannels", "accessChannels",
-												"notifications"]);
+		/*
+			TODO : pb relations other
+		*/
+		return await this.userService.get(userId, ["picture", "dfa"]);
 	}
 
 	@Post('changePicture')
@@ -62,7 +63,7 @@ export class UserController {
 		return await this.userService.changeNickname(userId, body.nickname);
 	}
 
-	@Put('delete')
+	@Delete()
 	async delete(@Autorization() userId: number) : Promise<DeleteResult> {
 		return await this.userService.remove(userId);
 	}
@@ -72,7 +73,7 @@ export class UserController {
 		return await this.userService.activate2FA(userId);
 	}
 
-	@Put('disabled2FA')
+	@Put('disable2FA')
 	async disabled2FA(@Autorization() userId: number) : Promise<User> {
 		return await this.userService.disabled2FA(userId);
 	}

@@ -13,23 +13,23 @@
 			elm.value = ''
 	}
 	let submit = async () => {
-		for (let elm of input.children)
+		for (let elm of input.querySelectorAll('input'))
 			elm.disabled = true
-		await fetch('/api/users/check_code', {
-			method: "POST",
+		await fetch('/api/user/checkCode', {
+			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				code: [...input.children].reduce((acc, elm) => acc + elm.value, '')
+				code: [...input.querySelectorAll('input')].reduce((acc, elm) => acc + elm.value, '')
 			})
 		})
 		reset()
-		for (let elm of input.children)
+		for (let elm of input.querySelectorAll('input'))
 			elm.disabled = false
 		if (!getCookie('user'))
 		{
-			input.firstChild.focus()
+			input.querySelector('input').focus()
 			return ;
 		}
 		$twoauth.close()
@@ -40,7 +40,7 @@
 			&& e.target.previousElementSibling?.focus?.()
 	}
 	let listener = e => {
-		let elm = input.firstChild;
+		let elm = input.querySelector('input')
 		while (elm?.value)
 			elm = elm.nextElementSibling
 		if (elm) elm.focus()
@@ -64,7 +64,7 @@
 
 <Modal bind:this={$twoauth} on:open={() => {
 		reset()
-		input.firstChild.focus()
+		input.querySelector('input').focus()
 	}}>
 	<h2>Two auth code</h2>
 	<div bind:this={input}>

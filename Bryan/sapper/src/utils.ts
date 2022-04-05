@@ -54,15 +54,14 @@ export const resolve = async (promise) => new Promise<any[]>(resolve =>
 			.catch(err => resolve([null, err]))
 	)
 
-export const fetchUser = async (id = getCookie('user'), req = fetch) => {
+export const fetchUser = async () => {
 	let noLogged = () => {
 		user.set(undefined)
 		if (typeof document !== 'undefined')
 			localStorage.removeItem('user')
 	}
 
-	if (!id) return noLogged()
-	const [res, ferr] = await resolve(req(`/api/users/${id}`))
+	const [res, ferr] = await resolve(fetch(`/api/user`))
 	if (ferr || !res.ok) return noLogged()
 	const [json, jerr] = await resolve(res.json())
 	if (jerr) return noLogged()

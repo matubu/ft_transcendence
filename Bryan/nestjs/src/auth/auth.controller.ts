@@ -22,7 +22,7 @@ export class AuthController {
 					this.authService.setCookie(response, "user", user.twoauth ? '' : info['id'].toString());
 				else
 				{
-					this.userService.create(info['id'], info['displayname'], info['image_url']);
+					await this.userService.create(info['id'], info['displayname'], info['image_url']);
 					this.authService.setCookie(response, "first_conn", "true");
 					this.authService.setCookie(response, "user", info['id'].toString());
 				}

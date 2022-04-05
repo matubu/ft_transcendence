@@ -107,7 +107,7 @@
 
 			<div>
 				<Button on:click={() => {
-					fetch('/api/users', {
+					fetch('/api/user', {
 						method: 'DELETE'
 					})
 					logOut()
@@ -131,7 +131,7 @@
 			modalAvatar.close()
 			let formData = new FormData();
 			formData.append("file", fileAvatar.files[0]);
-			await fetch('/api/users/picture', {
+			await fetch('/api/user/changePicture', {
 				method: 'POST', 
 				body: formData
 			})
@@ -147,7 +147,7 @@
 		<Button on:click={() => modalNickname.close()}>Cancel</Button>
 		<Button primary on:click={async () => {
 			modalNickname.close()
-			await fetch('/api/users/update', {
+			await fetch('/api/user/changeNickname', {
 				method: "POST",
 				headers: {
 					'Content-Type': 'application/json'
@@ -166,7 +166,7 @@
 	<h2>{$user?.twoauth ? "Disable" : "Enable"} 2FA</h2>
 	{#if qrCode2FA}
 	<p>You will never see the QR code again, please scan it</p>
-	<img width="150" height="150" src="{qrCode2FA}" alt="">
+	<img width="150" height="150" src="{qrCode2FA.qr}" alt="">
 	{/if}
 	<div style="text-align: right">
 		{#if qrCode2FA}
@@ -174,12 +174,12 @@
 		{:else}
 		<Button on:click={() => modal2FA.close()}>Cancel</Button>
 		<Button primary on:click={async () => {
-			let res = await fetch(`/api/users/${get(user)?.twoauth ? "disable" : "activate"}_2fa`, {
+			let res = await fetch(`/api/user/${get(user)?.twoauth ? "disable" : "activate"}2FA`, {
 				method: "PUT"
 			})
 			if (get(user)?.twoauth)
 				modal2FA.close()
-			qrCode2FA = await res.text()
+			qrCode2FA = await res.json()
 			fetchUser()
 		}}>{$user?.twoauth ? "Disable" : "Enable"}</Button>
 		{/if}

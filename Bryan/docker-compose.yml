@@ -1,22 +1,23 @@
 version: '3.1'
 
 services:
-  # Sapper:
-  #   depends_on:
-  #     - NestJS
-  #   container_name: Sapper
-  #   build: ./sapper
-  #   image: sapper
-  #   hostname: sapper
-  #   env_file:
-  #     - .env
-  #   ports:
-  #     - 80:80 
-  #   volumes:
-  #     - ./sapper:/var/sapper
-  #   networks:
-  #     - transcendence-network
-  #   restart: always
+  Sapper:
+    depends_on:
+      - NestJS
+    container_name: Sapper
+    build: ./sapper
+    image: sapper
+    hostname: sapper
+    env_file:
+      - .env
+    ports:
+      - 80:80 
+      - 10000:10000 # (hot reload)
+    volumes:
+      - ./sapper:/var/sapper
+    networks:
+      - transcendence-network
+    restart: always
 
   NestJS:
     depends_on:

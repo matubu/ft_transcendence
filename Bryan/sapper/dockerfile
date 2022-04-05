@@ -5,4 +5,4 @@ RUN		mkdir -p /var/sapper
 WORKDIR /var/sapper
 EXPOSE 	80
 
-CMD		npm install && npm run dev
+CMD		npm i && npm run dev

@@ -5,4 +5,4 @@ RUN		mkdir -p /var/nestjs
 WORKDIR /var/nestjs
 EXPOSE 	3000
 
-CMD		npm install && npm run start:dev
+CMD		npm i && npm run dev

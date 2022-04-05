@@ -6,6 +6,7 @@ import { Dfa } from 'src/dfa/dfa.entity'
 import { DfaService } from 'src/dfa/dfa.service';
 import { Picture } from 'src/picture/picture.entity';
 import { PictureService } from 'src/picture/picture.service';
+const fs = require('fs')
 
 @Injectable()
 export class UserService {
@@ -39,21 +40,20 @@ export class UserService {
 	{
 		let img = this.pictureService.insertByData(file);
 		let user = await this.get(id, ["picture"]);
-		this.pictureService.removeByID(user.picture.id);
+		const id_img_for_remove = user.picture.id;
 		user.picture = await img;
+		await this.userRepository.save(user);
+		this.pictureService.removeByID(id_img_for_remove);
 		return img;
 	}
 
 	async remove(id: number): Promise<DeleteResult>
 	{
-		let user = await this.get(id, ["notification", "picture", "dfa"]);
-		this.userRepository.softRemove(user.notifications);
-		this.userRepository.softRemove(user.dfa);
-		this.pictureService.removeByID(user.picture.id);
-		/*
-			Remove friends, channels 
-		*/
-		return this.userRepository.delete({id: id});
+		let user = await this.get(id, ["picture"]);
+		const name = user.picture.name;
+		const ret = this.userRepository.delete({id: id});
+		fs.unlinkSync(process.cwd() + "/upload/images/" + name);
+		return ret;
 	}
 
 	async activate2FA(id:number): Promise<Dfa>
