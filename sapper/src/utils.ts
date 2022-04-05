@@ -95,7 +95,7 @@ if (typeof document !== 'undefined')
 		let ws
 		if (data)
 		{
-			ws = new WebSocket(`ws://localhost:3000`)
+			ws = new WebSocket(`ws://localhost:3001`)
 			ws.onmessage = data => console.log(data)
 			ws.onopen = () => {
 				console.log('send')

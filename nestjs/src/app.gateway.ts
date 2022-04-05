@@ -5,11 +5,10 @@ import {
 } from '@nestjs/websockets'
 import { Server } from 'ws'
 
-let puts = (color: number, txt: string) => {
+let puts = (color: number, txt: string) =>
 	console.log(`\u001B[1;${color}m${txt}\u001B[0m`)
-}
 
-@WebSocketGateway(3000)
+@WebSocketGateway(3001)
 export class AppGateway {
 	userMap: Map<number, any> = new Map()
 	@WebSocketServer()

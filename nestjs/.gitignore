@@ -1,5 +1,6 @@
 # compiled output
 /dist
+/node_modules
 
 # Logs
 logs
@@ -9,6 +10,9 @@ pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
+
+# OS
+.DS_Store
 
 # Tests
 /coverage
@@ -30,6 +34,7 @@ lerna-debug.log*
 !.vscode/launch.json
 !.vscode/extensions.json
 
-# CUSTOM
-ormconfig.json
-upload/*/*.jpg
+#Custom
+upload/images/*.jpg
+upload/tmp/*
+!upload/tmp/.gitkeep

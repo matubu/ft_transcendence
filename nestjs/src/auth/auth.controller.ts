@@ -1,12 +1,11 @@
-import { Controller, Get, Query, Header, Res, Headers} from '@nestjs/common'
+import { Controller, Get, Header, Query, Res, Headers } from '@nestjs/common';
+import { UserService } from 'src/user/user.service';
 import { AuthService } from './auth.service'
-import { UsersService } from 'src/users/users.service'
-import { UsersInterface } from 'src/users/interfaces/users.interface'
 
 @Controller('auth')
 export class AuthController {
 	constructor(private readonly authService: AuthService,
-				private readonly usersService: UsersService) {}
+				private readonly userService: UserService) {}
 
 	@Get()
 	@Header('Content-Type', 'text/html')
@@ -18,46 +17,16 @@ export class AuthController {
 			const info = await this.authService.getInfo(token['access_token']);
 			if (info['id'] !== undefined)
 			{
-				const user = await this.usersService.findOne(info['id'], false);
+				const user = await this.userService.get(info['id'], []);
 				if (user !== undefined)
-				{
-					response.setCookie('user', user.twoauth ? '' : info['id'].toString(),
-					{
-						sameSite: 'Strict',
-						path: '/',
-						signed: true
-					});
-				}
+					this.authService.setCookie(response, "user", user.twoauth ? '' : info['id'].toString());
 				else
 				{
-					const new_image = await this.usersService.downloadImgByUrl(info['image_url'])
-					const createUser: UsersInterface = {
-						id: info['id'],
-						fullname: info['displayname'],
-						twoauth: false,
-						img: new_image,
-						elo: 1000
-					};
-					await this.usersService.insert(createUser);
-					response.setCookie('first_conn', "true",
-					{
-						sameSite: 'Strict',
-						path: '/',
-						signed: true
-					});
-					response.setCookie('user', info['id'].toString(),
-					{
-						sameSite: 'Strict',
-						path: '/',
-						signed: true
-					});
+					await this.userService.create(info['id'], info['displayname'], info['image_url']);
+					this.authService.setCookie(response, "first_conn", "true");
+					this.authService.setCookie(response, "user", info['id'].toString());
 				}
-				response.setCookie('userid', info['id'].toString(),
-				{
-					sameSite: 'Strict',
-					path: '/',
-					signed: true
-				});
+				this.authService.setCookie(response, "userid", info['id'].toString());
 			}
 		}
 		return ('<script>window.close()</script>');

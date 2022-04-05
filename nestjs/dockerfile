@@ -1,8 +1,8 @@
 FROM 	node
 
 RUN		apt update && apt upgrade -y
-RUN		mkdir -p /var/sapper
-WORKDIR /var/sapper
-EXPOSE 	80
+RUN		mkdir -p /var/nestjs
+WORKDIR /var/nestjs
+EXPOSE 	3001
 
 CMD		npm i && npm run dev
