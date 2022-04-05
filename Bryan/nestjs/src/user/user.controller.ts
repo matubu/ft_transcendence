@@ -16,7 +16,12 @@ export class UserController {
 	/* NOT AUTHORIZATION REQUIRED */
 	@Get(':id')
 	async getByID(@Param('id', ParseIntPipe) id: number) : Promise<User>
-	{ return await this.userService.get(id, ["picture", "friends"]); }
+	{ 
+		const user = await this.userService.get(id, ["picture", "friends"]);
+		if (user != undefined)
+			return user;
+		throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
+	}
 	
 	@Post('checkCode')
 	async checkCode(@Body() body: { code: string }, @Req() req: FastifyRequest, @Res({ passthrough: true }) response): Promise<boolean>

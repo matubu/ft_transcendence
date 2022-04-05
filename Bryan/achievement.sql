@@ -47,4 +47,13 @@ INSERT INTO "public"."achievement" ("id","title","description","private")
 VALUES ('13', 'HackerMan', 'Make private achievements visible', FALSE);
 
 INSERT INTO "public"."achievement" ("id","title","description","private")
-VALUES ('14', 'The end', 'Achieve all the achievement', TRUE);
+VALUES ('14', 'Under the table', 'Take Fanny', FALSE);
+
+INSERT INTO "public"."achievement" ("id","title","description","private")
+VALUES ('15', 'Fanny', 'Put Fanny', FALSE);
+
+INSERT INTO "public"."achievement" ("id","title","description","private")
+VALUES ('16', 'Take the top position', 'Winning while you were in trouble', FALSE);
+
+INSERT INTO "public"."achievement" ("id","title","description","private")
+VALUES ('17', 'The end', 'Achieve all the achievement', TRUE);
