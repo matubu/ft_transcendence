@@ -5,6 +5,7 @@ import { Friend } from "../friend/friend.entity";
 import { Channel } from "../channel/channel.entity";
 import { Access } from "../access/access.entity";
 import { Notification } from "../notification/notification.entity";
+import { Admin } from 'src/admin/admin.entity';
 
 @Entity()
 export class User
@@ -38,8 +39,8 @@ export class User
 	@OneToMany(() => Channel, channel => channel.owner)
     ownerChannels?: Channel[];
 
-	@OneToMany(() => Channel, channel => channel.admins)
-    adminChannels?: Channel[];
+	@OneToMany(() => Admin, admin => admin.user)
+    adminChannels?: Admin[];
 
 	@OneToMany(() => Access, access => access.user)
     accessChannels?: Access[];

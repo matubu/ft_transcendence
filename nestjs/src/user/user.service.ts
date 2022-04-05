@@ -69,8 +69,12 @@ export class UserService {
 	async disabled2FA(id: number): Promise<User>
 	{
 		let user = await this.get(id, ["dfa"]);
-		this.userRepository.softRemove(user.dfa);
-		return this.userRepository.save({id: user.id, twoauth: false});
+		if (!user.twoauth)
+			return user;
+		const id_dfa_remove = user.dfa.id;
+		const ret = await this.userRepository.save({id: user.id, twoauth: false, dfa: null});
+		this.dfaService.remove(id_dfa_remove);
+		return ret;
 	}
 
 	async checkCode(id: number, code: string): Promise<boolean>
