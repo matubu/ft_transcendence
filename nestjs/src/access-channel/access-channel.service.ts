@@ -41,7 +41,7 @@ export class AccessChannelService {
 
 	async remove(id_user: number, id_channel: number): Promise<DeleteResult>
 	{
-		return this.found(id_user, id_channel, true)
+		return this.found(id_user, id_channel, false)
 			.then(data => {
 				return this.accessRepository
 					.delete({user: data.user, channel: data.channel});	
