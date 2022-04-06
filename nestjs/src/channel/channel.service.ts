@@ -84,7 +84,7 @@ export class ChannelService {
 	{
 		const channel = await this.get(id_channel);
 		if (channel != undefined && channel.password != undefined)
-			if (await bcrypt.compare(password, channel.password) == false)
+			if (password == undefined || await bcrypt.compare(password, channel.password) == false)
 				throw new UnauthorizedException()
 		return this.accessChannelService.insert(id_user, id_channel);
 	}

@@ -1,6 +1,8 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
 import { AdminChannel } from 'src/admin-channel/admin-channel.entity';
 import { Autorization } from 'src/auth.guard';
+import { Message } from 'src/message/message.entity';
+import { MessageService } from 'src/message/message.service';
 import { DeleteResult } from 'typeorm';
 import { Channel } from './channel.entity';
 import { ChannelInterface } from './channel.interface';
@@ -8,7 +10,8 @@ import { ChannelService } from './channel.service';
 
 @Controller('channel')
 export class ChannelController {
-	constructor(private readonly channelService: ChannelService) {}
+	constructor(private readonly channelService: ChannelService,
+				private readonly messageService: MessageService) {}
 
 	@Get()
 	async getAll(): Promise<Channel[]>
@@ -31,13 +34,12 @@ export class ChannelController {
 	@Get(':id_channel')
 	async access(@Param('id_channel', ParseIntPipe) id_channel: number,
 					@Autorization() userId: number,
-					@Body() body: { password?: string }): Promise<boolean>
+					@Body() body: { password?: string }): Promise<Message[]>
 	{
 		const access = await this.channelService.isAccess(userId, id_channel);
 		if (!access)
 			await this.channelService.addAccess(userId, id_channel, body.password);
-		return true;
-		// return msg[]
+		return await this.messageService.getMessages(id_channel);
 	}
 
 	@Post(':id_channel/addAdmin')
