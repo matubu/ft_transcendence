@@ -23,10 +23,10 @@ export class ChannelController {
 	async create(@Autorization() userId: number, @Body() body: ChannelInterface): Promise<Channel>
 	{
 		const channel: ChannelInterface = {
-			name: body.name,
-			password: body.password,
-			description: body.description,
-			private: body.private
+			name: body?.name ?? undefined,
+			password: body?.password ?? undefined,
+			description: body?.description ?? undefined,
+			private: body?.private ?? false
 		};
 		return await this.channelService.create(userId, channel);
 	}

@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, ManyToOne } from 'typeorm';
 import { User } from '../user/user.entity'
 
 @Entity()
@@ -7,8 +7,7 @@ export class Channel
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@OneToOne(() => User)
-	@JoinColumn()
+	@ManyToOne(() => User)
 	owner: User;
 
 	@Column({ default: null })
