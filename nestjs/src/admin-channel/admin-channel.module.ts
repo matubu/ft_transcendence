@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Admin } from './admin.entity';
+import { AdminChannel } from './admin-channel.entity';
 
 @Module({
-	imports: [TypeOrmModule.forFeature([Admin])]
+	imports: [TypeOrmModule.forFeature([AdminChannel])]
 })
 export class AdminModule {}

@@ -3,9 +3,9 @@ import { Dfa } from "../dfa/dfa.entity";
 import { Picture } from "../picture/picture.entity";
 import { Friend } from "../friend/friend.entity";
 import { Channel } from "../channel/channel.entity";
-import { Access } from "../access/access.entity";
+import { AccessChannel } from "../access-channel/access-channel.entity";
 import { Notification } from "../notification/notification.entity";
-import { Admin } from 'src/admin/admin.entity';
+import { AdminChannel } from 'src/admin-channel/admin-channel.entity';
 import { UserAchievement } from 'src/user-achievement/user-achievement.entity';
 import { Match } from 'src/match/match.entity';
 
@@ -41,11 +41,11 @@ export class User
 	@OneToMany(() => Channel, channel => channel.owner)
     ownerChannels?: Channel[];
 
-	@OneToMany(() => Admin, admin => admin.user)
-    adminChannels?: Admin[];
+	@OneToMany(() => AdminChannel, adminChannel => adminChannel.user)
+    adminChannels?: AdminChannel[];
 
-	@OneToMany(() => Access, access => access.user)
-    accessChannels?: Access[];
+	@OneToMany(() => AccessChannel, accessChannel => accessChannel.user)
+    accessChannels?: AccessChannel[];
 
 	@OneToMany(() => Notification, notification => notification.receiver)
     notifications?: Notification[];

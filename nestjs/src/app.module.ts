@@ -8,13 +8,13 @@ import { NotificationModule } from './notification/notification.module';
 import { MessageModule } from './message/message.module';
 import { MatchModule } from './match/match.module';
 import { ChannelModule } from './channel/channel.module';
-import { AccessModule } from './access/access.module';
+import { AccessModule } from './access-channel/access-channel.module';
 import { FriendModule } from './friend/friend.module';
 import { DfaModule } from './dfa/dfa.module';
 import { AuthModule } from './auth/auth.module';
 import { AchievementModule } from './achievement/achievement.module';
 import { AppGateway } from './app.gateway';
-import { AdminModule } from './admin/admin.module';
+import { AdminModule } from './admin-channel/admin-channel.module';
 import { UserAchievementModule } from './user-achievement/user-achievement.module';
 
 @Module({

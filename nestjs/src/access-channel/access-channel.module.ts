@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Access } from './access.entity';
+import { AccessChannel } from './access-channel.entity';
 
 @Module({
-	imports: [TypeOrmModule.forFeature([Access])]
+	imports: [TypeOrmModule.forFeature([AccessChannel])]
 })
 export class AccessModule {}

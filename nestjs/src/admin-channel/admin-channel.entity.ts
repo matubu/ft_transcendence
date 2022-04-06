@@ -3,7 +3,7 @@ import { User } from '../user/user.entity'
 import { Channel } from '../channel/channel.entity'
 
 @Entity()
-export class Admin
+export class AdminChannel
 {
 	@PrimaryGeneratedColumn()
 	id: number;
