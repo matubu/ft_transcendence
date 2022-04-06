@@ -18,7 +18,7 @@ export class UserController {
 	async getByID(@Param('id', ParseIntPipe) id: number) : Promise<User>
 	{ 
 		const user = await this.userService.get(id,
-					["picture", "friends", "achievements", "matchs"]);
+					["friends", "achievements", "matchs"]);
 		if (user != undefined)
 			return user;
 		throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
@@ -44,7 +44,7 @@ export class UserController {
 	@Get()
 	async get(@Autorization() userId: number) : Promise<User> {
 		return await this.userService.get(userId,
-			["picture", "dfa", "friends", "ownerChannels",
+			["dfa", "friends", "ownerChannels",
 			"adminChannels", "accessChannels", "notifications",
 			"achievements", "matchs"]);
 	}

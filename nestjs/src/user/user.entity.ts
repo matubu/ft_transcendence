@@ -27,7 +27,7 @@ export class User
 	@Column({ unique: true, default: null })
 	nickname?: string;
 
-	@OneToOne(() => Picture)
+	@OneToOne(() => Picture, { eager : true })
     @JoinColumn()
     picture: Picture;
 

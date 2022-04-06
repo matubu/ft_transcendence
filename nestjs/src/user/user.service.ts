@@ -26,7 +26,7 @@ export class UserService {
 	{
 		let img = await this.pictureService.insertByURL(urlImage);
 		await this.userRepository.save({id: id, fullname: fullname, picture: img});
-		return this.get(id, ["picture"]);
+		return this.get(id, []);
 	}
 
 	async changeNickname(id: number, nickname: string): Promise<User>
@@ -39,7 +39,7 @@ export class UserService {
 	async changePicture(id: number, file: any): Promise<Picture>
 	{
 		const img = this.pictureService.insertByData(file);
-		let user = await this.get(id, ["picture"]);
+		let user = await this.get(id, []);
 		const id_img_for_remove = user.picture.id;
 		user.picture = await img;
 		await this.userRepository.save(user);
@@ -49,7 +49,7 @@ export class UserService {
 
 	async remove(id: number): Promise<DeleteResult>
 	{
-		const user = await this.get(id, ["picture"]);
+		const user = await this.get(id, []);
 		const name = user.picture.name;
 		const ret = this.userRepository.delete({id: id});
 		fs.unlinkSync(process.cwd() + "/upload/images/" + name);
