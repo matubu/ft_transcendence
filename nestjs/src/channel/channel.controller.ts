@@ -38,7 +38,7 @@ export class ChannelController {
 	{
 		const access = await this.channelService.isAccess(userId, id_channel);
 		if (!access)
-			await this.channelService.addAccess(userId, id_channel, body.password);
+			await this.channelService.addAccess(userId, id_channel, body?.password);
 		return await this.messageService.getMessages(id_channel);
 	}
 

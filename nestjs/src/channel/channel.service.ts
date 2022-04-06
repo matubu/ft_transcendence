@@ -30,6 +30,7 @@ export class ChannelService {
 
 	async get(id: number): Promise<Channel>
 	{
+		console.log("ID : ", id);
 		return this.channelRepository.findOne({ where: { id:id } });
 	}
 
