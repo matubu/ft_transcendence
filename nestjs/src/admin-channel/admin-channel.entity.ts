@@ -12,7 +12,7 @@ export class AdminChannel
 	@JoinColumn()
 	user: User;
 
-	@OneToOne(() => Channel)
+	@OneToOne(() => Channel, { eager : true })
 	@JoinColumn()
 	channel: Channel;
 }
