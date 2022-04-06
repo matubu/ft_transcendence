@@ -106,8 +106,8 @@
 			</div>
 
 			<div>
-				<Button on:click={() => {
-					fetch('/api/user', {
+				<Button on:click={async () => {
+					await fetch('/api/user', {
 						method: 'DELETE'
 					})
 					logOut()

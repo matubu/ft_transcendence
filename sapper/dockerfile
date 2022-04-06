@@ -1,9 +1,10 @@
-FROM 	node
+FROM node:17.8.0-alpine
 
-RUN		apt update && apt upgrade -y
-RUN		mkdir -p /var/sapper
-WORKDIR /var/sapper
-EXPOSE 	80
-EXPOSE 	10000
+# (App)
+EXPOSE 80
+# (Hot reload)
+EXPOSE 10000
 
-CMD		npm i && npm run dev
+WORKDIR	/var/sapper
+
+ENTRYPOINT	npm i && npm run dev
