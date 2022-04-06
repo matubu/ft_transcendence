@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm'
-import { DeleteResult, Repository } from 'typeorm'
+import { DeleteResult, ILike, Repository } from 'typeorm'
 import { User } from './user.entity'
 import { Dfa } from 'src/dfa/dfa.entity'
 import { DfaService } from 'src/dfa/dfa.service';
@@ -83,5 +83,17 @@ export class UserService {
 		if (user.twoauth == false)
 			return false;
 		return this.dfaService.verifySecret(user.dfa.secret, code);
+	}
+
+	async rank(): Promise<User[]>
+	{
+		return this.userRepository.find({ order: {elo: "DESC"},
+											take: 100  });
+	}
+
+	async search(search: string): Promise<User[]>
+	{
+		return this.userRepository.find({ where: [{fullname: ILike(`%${search}%`)},
+													{nickname: ILike(`%${search}%`)}] });
 	}
 }
