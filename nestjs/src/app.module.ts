@@ -15,9 +15,10 @@ import { AuthModule } from './auth/auth.module';
 import { AchievementModule } from './achievement/achievement.module';
 import { AppGateway } from './app.gateway';
 import { AdminModule } from './admin/admin.module';
+import { UserAchievementModule } from './user-achievement/user-achievement.module';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(), UserModule, PictureModule, NotificationModule, MessageModule, MatchModule, ChannelModule, AccessModule, FriendModule, DfaModule, AuthModule, AchievementModule, AdminModule],
+  imports: [TypeOrmModule.forRoot(), UserModule, PictureModule, NotificationModule, MessageModule, MatchModule, ChannelModule, AccessModule, FriendModule, DfaModule, AuthModule, AchievementModule, AdminModule, UserAchievementModule],
   controllers: [AppController],
   providers: [AppService, AppGateway],
 })

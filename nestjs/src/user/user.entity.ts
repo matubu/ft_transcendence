@@ -6,6 +6,8 @@ import { Channel } from "../channel/channel.entity";
 import { Access } from "../access/access.entity";
 import { Notification } from "../notification/notification.entity";
 import { Admin } from 'src/admin/admin.entity';
+import { UserAchievement } from 'src/user-achievement/user-achievement.entity';
+import { Match } from 'src/match/match.entity';
 
 @Entity()
 export class User
@@ -47,4 +49,10 @@ export class User
 
 	@OneToMany(() => Notification, notification => notification.receiver)
     notifications?: Notification[];
+
+	@OneToMany(() => UserAchievement, userAchievement => userAchievement.user)
+    achievements?: UserAchievement[];
+
+	@OneToMany(() => Match, match => match.player1 || match.player2)
+    matchs?: Match[];
 }

@@ -17,7 +17,8 @@ export class UserController {
 	@Get(':id')
 	async getByID(@Param('id', ParseIntPipe) id: number) : Promise<User>
 	{ 
-		const user = await this.userService.get(id, ["picture", "friends"]);
+		const user = await this.userService.get(id,
+					["picture", "friends", "achievements", "matchs"]);
 		if (user != undefined)
 			return user;
 		throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
@@ -42,10 +43,10 @@ export class UserController {
 	/* AUTHORIZATION REQUIRED */
 	@Get()
 	async get(@Autorization() userId: number) : Promise<User> {
-		/*
-			TODO : pb relations other
-		*/
-		return await this.userService.get(userId, ["picture", "dfa", "friends", "ownerChannels", "adminChannels", "accessChannels", "notifications"]);
+		return await this.userService.get(userId,
+			["picture", "dfa", "friends", "ownerChannels",
+			"adminChannels", "accessChannels", "notifications",
+			"achievements", "matchs"]);
 	}
 
 	@Post('changePicture')
