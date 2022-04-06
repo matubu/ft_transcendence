@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne, OneToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, ManyToOne, OneToOne, JoinColumn, JoinTable } from 'typeorm';
 import { User } from '../user/user.entity'
 
 @Entity()
@@ -10,7 +10,7 @@ export class Friend
 	@ManyToOne(() => User, user => user.friends)
     user: User;
 
-	@OneToOne(() => User)
+	@OneToOne(() => User, { eager : true })
     @JoinColumn()
     friend: User;
 }

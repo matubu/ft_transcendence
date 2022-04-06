@@ -38,7 +38,7 @@ export class UserService {
 
 	async changePicture(id: number, file: any): Promise<Picture>
 	{
-		let img = this.pictureService.insertByData(file);
+		const img = this.pictureService.insertByData(file);
 		let user = await this.get(id, ["picture"]);
 		const id_img_for_remove = user.picture.id;
 		user.picture = await img;
@@ -49,7 +49,7 @@ export class UserService {
 
 	async remove(id: number): Promise<DeleteResult>
 	{
-		let user = await this.get(id, ["picture"]);
+		const user = await this.get(id, ["picture"]);
 		const name = user.picture.name;
 		const ret = this.userRepository.delete({id: id});
 		fs.unlinkSync(process.cwd() + "/upload/images/" + name);
@@ -58,10 +58,10 @@ export class UserService {
 
 	async activate2FA(id:number): Promise<Dfa>
 	{
-		let user = await this.get(id, ["dfa"]);
+		const user = await this.get(id, ["dfa"]);
 		if (user.twoauth)
 			return user.dfa;
-		let dfa = await this.dfaService.insert(user.nickname ?? user.fullname);
+		const dfa = await this.dfaService.insert(user.nickname ?? user.fullname);
 		this.userRepository.save({id: user.id, twoauth: true, dfa: dfa});
 		return dfa;
 	}
@@ -72,7 +72,7 @@ export class UserService {
 		if (!user.twoauth)
 			return user;
 		const id_dfa_remove = user.dfa.id;
-		const ret = await this.userRepository.save({id: user.id, twoauth: false, dfa: null});
+		const ret = await this.userRepository.save({ id: user.id, twoauth: false, dfa: null });
 		this.dfaService.remove(id_dfa_remove);
 		return ret;
 	}
