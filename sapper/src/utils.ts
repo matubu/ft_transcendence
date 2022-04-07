@@ -26,8 +26,8 @@ export const logIn = () => {
 	clearCookies()
 	let win = window
 		.open(`https://api.intra.42.fr/oauth/authorize?client_id=5fb8cff19443b1e91c5753666fdcb12d45ecbc49c667ba7eb97150cb2590b38a&redirect_uri=${encodeURIComponent(location.origin)}%2Fapi%2Fauth&response_type=code`, 'Auth 42', 'width=500,height=700')
-	let pooling = async () => {
-		if (!win.closed) return requestAnimationFrame(pooling)
+	let polling = async () => {
+		if (!win.closed) return requestAnimationFrame(polling)
 
 		if (getCookie('user') === '')
 			get(twoauth).open()
@@ -40,7 +40,7 @@ export const logIn = () => {
 		}
 		waitingLogin.set(false)
 	}
-	pooling()
+	polling()
 }
 export const logOut = () => {
 	user.set(undefined)
@@ -77,6 +77,11 @@ export const localStorageUser = () => {
 		user.set(undefined)
 }
 
+export const send = (channel, data) => {
+	console.log('send', channel, data)
+	get(sock)?.send?.(`${channel}:${JSON.stringify(data)}`)
+}
+
 if (typeof document !== 'undefined')
 {
 	if (getCookie('user'))
@@ -96,10 +101,18 @@ if (typeof document !== 'undefined')
 		if (data)
 		{
 			ws = new WebSocket(`ws://localhost:3001`)
-			ws.onmessage = data => console.log(data)
+			ws.onmessage = ({ data: msg }) => {
+				let idx = msg.indexOf(':')
+				if (idx === -1) return ;
+				window.dispatchEvent(new CustomEvent('wsmsg', {
+					detail: {
+						channel: msg.slice(0, idx),
+						data: JSON.parse(msg.slice(idx + 1))
+					}
+				}))
+			}
 			ws.onopen = () => {
-				console.log('send')
-				ws.send('events:["test"]')
+				send('events', ['test'])
 			}
 		}
 		sock.set(ws)

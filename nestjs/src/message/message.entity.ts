@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, OneToOne, Column, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, ManyToOne, Column, JoinColumn } from 'typeorm';
 import { User } from '../user/user.entity'
 import { Channel } from '../channel/channel.entity'
 
@@ -8,12 +8,10 @@ export class Message
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@OneToOne(() => User, { eager : true })
-    @JoinColumn()
+	@ManyToOne(() => User, { eager : true })
     user: User;
 
-	@OneToOne(() => Channel)
-    @JoinColumn()
+	@ManyToOne(() => Channel)
     channel: Channel;
 
 	@Column()

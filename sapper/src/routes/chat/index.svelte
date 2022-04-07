@@ -16,7 +16,7 @@
 	let rooms = writable([])
 
 	const reloadChatList = async () => {
-		let res = await fetch('/api/channels')
+		let res = await fetch('/api/channel')
 		if (!res.ok) return ;
 		let json = await res.json()
 		rooms.set(json)
@@ -65,7 +65,7 @@
 			console.log('wrong password')
 			return ;
 		}
-		await fetch('/api/channels', {
+		await fetch('/api/channel', {
 			method: "POST",
 			headers: {
 				'Content-Type': 'application/json'

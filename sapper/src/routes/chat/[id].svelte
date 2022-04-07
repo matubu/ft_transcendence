@@ -9,7 +9,7 @@
 	let messages = writable([])
 
 	const reloadChat = async () => {
-		let res = await fetch(`/api/messages/${id_channel}`)
+		let res = await fetch(`/api/message/${id_channel}`)
 		if (!res.ok) return ;
 		let json = await res.json()
 		messages.set(json)
@@ -23,6 +23,11 @@
 	}
 </script>
 
+<svelte:window on:wsmsg={e => {
+	const { channel, data } = e.detail
+	console.log('here in svelte:window', channel, data)
+}}/>
+
 <Layout>
 	{#each $messages as { id_user, msg }}
 		<p>{id_user}: {msg}</p>
@@ -30,7 +35,7 @@
 
 	<form on:submit={async e => {
 		e.preventDefault()
-		await fetch('/api/messages/send', {
+		await fetch('/api/message/send', {
 			method: "POST",
 			headers: {
 				'Content-Type': 'application/json'
