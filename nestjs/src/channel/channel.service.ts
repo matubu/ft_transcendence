@@ -30,7 +30,7 @@ export class ChannelService {
 
 	async get(id: number): Promise<Channel>
 	{
-		return this.channelRepository.findOne({ where: { id:id } });
+		return this.channelRepository.findOne({ where: { id } });
 	}
 
 	async create(id_user: number, channel: ChannelInterface): Promise<Channel>

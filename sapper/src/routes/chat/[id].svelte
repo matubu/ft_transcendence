@@ -2,30 +2,35 @@
 	import Layout from '@components/Layout.svelte'
 	import Button from '@components/Button.svelte'
 	import { writable } from 'svelte/store';
+	import { send } from '@lib/utils';
 
 	let msg
-	let id_channel
+	let id_room
 
 	let messages = writable([])
 
 	const reloadChat = async () => {
-		let res = await fetch(`/api/channel/${id_channel}`)
+		let res = await fetch(`/api/channel/${id_room}`)
 		if (!res.ok) return ;
 		let json = await res.json()
 		messages.set(json)
 	}
 	if (typeof document !== 'undefined')
 	{
-		id_channel = +location.pathname.split('/')[2]
+		id_room = +location.pathname.split('/')[2]
 		reloadChat()
 		// setInterval(reloadChat, 10000)
 		//TODO remove listener
 	}
+	const addMessage = (msg) => {
+		$messages = [...$messages, msg];
+	};
 </script>
 
 <svelte:window on:wsmsg={e => {
 	const { channel, data } = e.detail
 	console.log('here in svelte:window', channel, data)
+	addMessage( data );
 }}/>
 
 <Layout>
@@ -34,20 +39,11 @@
 	{/each}
 
 	<form on:submit={async e => {
-		// TODO new send message
-
-		// e.preventDefault()
-		// await fetch('/api/message/insert', {
-		// 	method: "POST",
-		// 	headers: {
-		// 		'Content-Type': 'application/json'
-		// 	},
-		// 	body: JSON.stringify({
-		// 		id_channel,
-		// 		msg: msg.value
-		// 	})
-		// })
-		// msg.value = ''
+		e.preventDefault()
+		msg.value = msg.value.trim();
+		if (!msg.value) return;
+		send('chat', { room: id_room, msg: msg.value });
+		msg.value = ''
 		// reloadChat()
 	}}>
 		<input type="text" bind:this={msg}>

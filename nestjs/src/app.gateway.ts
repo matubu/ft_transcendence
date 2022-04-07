@@ -40,4 +40,12 @@ export class AppGateway {
 		this.send(client, 'test', 'data')
 		this.sendTo(client.userId, 'channel', { x:156, y:489 })
 	}
+
+	@SubscribeMessage('chat')
+	onChat(client: any, data: any) {
+		//get all user in chat
+		//broadcast client and message to them
+		//insert new message in db
+		this.send(client, 'chat', data);
+	}
 }
