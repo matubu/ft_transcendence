@@ -18,9 +18,9 @@ npm-debug.log*
 .DS_Store
 
 # Data
-PostGresSQL-data
-upload/images/*
-upload/tmp/*
+postgres-data
+nestjs/upload/images/*
+nestjs/upload/tmp/*
 
 # Env
 .env
