@@ -1,59 +1,47 @@
 version: '3.1'
 
 services:
-  Sapper:
-    depends_on:
-      - NestJS
-    container_name: Sapper
-    build: ./sapper
-    image: sapper
-    hostname: sapper
-    env_file:
-      - .env
+  postgres:
+    container_name: postgres
+    hostname: postgres
+    image: postgres:14.2-alpine
+    env_file: [.env]
     ports:
-      - 80:80 # (out)
+      - 5432:5432 # TODO remove for prod
+    volumes:
+      - ./achievement.sql:/docker-entrypoint-initdb.d/achievement.sql
+      - ./postgres-data:/var/lib/postgresql/data
+    networks: [transcendence-network]
+    restart: always
+
+  nestjs:
+    depends_on: [postgres]
+    container_name: nestjs
+    hostname: nestjs
+    image: nestjs
+    build: ./nestjs
+    env_file: [.env]
+    ports:
+      - 3001:3001 # (websocket)
+      - 3000:3000 # TODO remove for prod
+    volumes:
+      - ./nestjs:/var/nestjs
+    networks: [transcendence-network]
+    restart: always
+
+  sapper:
+    depends_on: [nestjs]
+    container_name: sapper
+    hostname: sapper
+    image: sapper
+    build: ./sapper
+    env_file: [.env]
+    ports:
+      - 80:80 # (app)
       - 10000:10000 # (hot reload)
     volumes:
       - ./sapper:/var/sapper
-    networks:
-      - transcendence-network
-    restart: always
-
-  NestJS:
-    depends_on:
-      - PostGresSQL
-    container_name: NestJS
-    build: ./nestjs
-    image: nestjs
-    hostname: nestjs
-    env_file:
-      - .env
-    ports:
-      - 3001:3001 # (websocket)
-      - 3000:3000 # remove for prod
-    volumes:
-      - ./nestjs:/var/nestjs
-    networks:
-      - transcendence-network
-    restart: always
-
-  PostGresSQL:
-    container_name: PostGresSQL
-    image: postgres
-    hostname: postgres
-    env_file:
-      - .env
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ${PASSWORD_DB}
-      POSTGRES_DB: fttrans
-    ports:
-      - 5432:5432 # remove for prod
-    volumes:
-      - ./achievement.sql:/docker-entrypoint-initdb.d/achievement.sql
-      - ./PostGresSQL-data:/var/lib/postgresql/data
-    networks:
-      - transcendence-network
+    networks: [transcendence-network]
     restart: always
 
 networks:
@@ -62,10 +50,10 @@ networks:
         driver: bridge
 
 volumes:
-    PostGresSQL-data:
-        name: PostGresSQL-data
+    postgres-data:
+        name: postgres-data
         driver: local
         driver_opts:
             type: none  
             o: bind
-            device: ./PostGresSQL-data
+            device: ./postgres-data

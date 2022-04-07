@@ -1,7 +1,27 @@
+# Output
+dist
+sapper/__sapper__
+
+# Libs
+node_modules
+package-lock.json
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# IDE
+.vscode/*
+
+# OS
+.DS_Store
+
+# Data
+PostGresSQL-data
+upload/images/*
+upload/tmp/*
+
+# Env
 .env
 nestjs/ormconfig.json
-PostGresSQL-data
-.env
-package-lock.json
-.DS_Store
-node_modules

@@ -1,8 +1,8 @@
-FROM 	node
+FROM node:17.8.0-alpine
 
-RUN		apt update && apt upgrade -y
-RUN		mkdir -p /var/nestjs
-WORKDIR /var/nestjs
-EXPOSE 	3001
+# (Websocket)
+EXPOSE 3001
 
-CMD		npm i && npm run dev
+WORKDIR	/var/nestjs
+
+ENTRYPOINT	npm i && npm run dev
