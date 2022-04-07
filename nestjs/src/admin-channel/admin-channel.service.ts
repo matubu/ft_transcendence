@@ -18,6 +18,16 @@ export class AdminChannelService {
 		private readonly channelService: ChannelService
 	) {}
 
+	async getAdmins(channel: Channel): Promise<User[]>
+	{
+		const adminChannels = await this.adminRepository.find({ where: { channel: channel },
+															relations: ["user"] });
+		let users: User[] = [];
+		for (let i = 0; i < adminChannels.length; i++)
+			users.push(adminChannels[i].user);
+		return (users);
+	}
+
 	async found(id_user: number, id_channel: number, insert: boolean): Promise<{ user: User, channel: Channel }>
 	{
 		const user = await this.userService.get(id_user, []);

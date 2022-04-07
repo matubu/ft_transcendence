@@ -7,6 +7,7 @@ import { DeleteResult } from 'typeorm';
 import { Channel } from './channel.entity';
 import { ChannelInterface } from './channel.interface';
 import { ChannelService } from './channel.service';
+import { User } from 'src/user/user.entity';
 
 @Controller('channel')
 export class ChannelController {
@@ -17,6 +18,12 @@ export class ChannelController {
 	async getAll(): Promise<Channel[]>
 	{
 		return await this.channelService.getALL();
+	}
+
+	@Get(':id_channel/users')
+	async getUsers(@Param('id_channel', ParseIntPipe) id_channel: number): Promise<User[]>
+	{
+		return await this.channelService.getUsers(id_channel);
 	}
 
 	@Post()

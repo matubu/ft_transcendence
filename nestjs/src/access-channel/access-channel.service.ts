@@ -18,6 +18,16 @@ export class AccessChannelService {
 		private readonly channelService: ChannelService
 	) {}
 
+	async getAccess(channel: Channel): Promise<User[]>
+	{
+		const accesChannels = await this.accessRepository.find({ where: { channel: channel },
+																	relations: ["user"] });
+		let users: User[] = [];
+		for (let i = 0; i < accesChannels.length; i++)
+			users.push(accesChannels[i].user);
+		return (users);
+	}
+
 	async found(id_user: number, id_channel: number, insert: boolean): Promise<{ user: User, channel: Channel }>
 	{
 		const user = await this.userService.get(id_user, []);

@@ -9,6 +9,7 @@ import { DeleteResult, Repository } from 'typeorm';
 import { Channel } from './channel.entity';
 import { ChannelInterface } from './channel.interface';
 import * as bcrypt from 'bcrypt';
+import { User } from 'src/user/user.entity';
 
 @Injectable()
 export class ChannelService {
@@ -31,6 +32,15 @@ export class ChannelService {
 	async get(id: number): Promise<Channel>
 	{
 		return this.channelRepository.findOne({ where: { id } });
+	}
+
+	async getUsers(id_channel: number): Promise<User[]>
+	{
+		const channel = await this.get(id_channel);
+		const owner: User = channel.owner;
+		let admins: User[] = await this.adminChannelService.getAdmins(channel);
+		let access: User[] = await this.accessChannelService.getAccess(channel);
+		return admins.concat(access, owner);
 	}
 
 	async create(id_user: number, channel: ChannelInterface): Promise<Channel>
