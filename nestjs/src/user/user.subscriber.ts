@@ -17,6 +17,8 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
 		const nickname: string = event.entity.nickname;
 		if (nickname === undefined || nickname == null)
 			return ;
+		else
+			console.log("Achievement YourName.");
 		const creators: string[] = ["mberger-", "mmehran", "bledda"];
 		if (await this.alcoholService.isAlcohol(nickname))
 			console.log("Achievement alcolique");
