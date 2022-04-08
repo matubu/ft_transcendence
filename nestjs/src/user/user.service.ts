@@ -47,6 +47,13 @@ export class UserService {
 		return img;
 	}
 
+	async changeElo(id: number, newElo: number): Promise<User>
+	{
+		let user = await this.get(id, []);
+		user.elo = newElo;
+		return this.userRepository.save(user);
+	}
+
 	async remove(id: number): Promise<DeleteResult>
 	{
 		const user = await this.get(id, []);
@@ -56,7 +63,7 @@ export class UserService {
 		return ret;
 	}
 
-	async activate2FA(id:number): Promise<Dfa>
+	async activate2FA(id: number): Promise<Dfa>
 	{
 		const user = await this.get(id, ["dfa"]);
 		if (user.twoauth)
