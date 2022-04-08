@@ -13,8 +13,7 @@ export class Notification
 	@Column()
 	msg: boolean
 
-	@OneToOne(() => User)
-    @JoinColumn()
+	@ManyToOne(() => User, { eager : true })
     sender?: User;
 
 	@Column({ default: false })
