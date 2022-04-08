@@ -15,7 +15,7 @@ export class AccessChannelService {
 		@Inject(forwardRef(() => UserService))
 		private readonly userService: UserService,
 		@Inject(forwardRef(() => ChannelService))
-		private readonly channelService: ChannelService
+		private readonly channelService: ChannelService,
 	) {}
 
 	async getAccess(channel: Channel): Promise<User[]>

@@ -10,6 +10,8 @@ import { Channel } from './channel.entity';
 import { ChannelInterface } from './channel.interface';
 import * as bcrypt from 'bcrypt';
 import { User } from 'src/user/user.entity';
+import { BlacklistChannelService } from 'src/blacklist-channel/blacklist-channel.service';
+import { BlacklistChannel } from 'src/blacklist-channel/blacklist-channel.entity';
 
 @Injectable()
 export class ChannelService {
@@ -21,7 +23,8 @@ export class ChannelService {
 		@Inject(forwardRef(() => AccessChannelService))
 		private readonly accessChannelService: AccessChannelService,
 		@Inject(forwardRef(() => UserService))
-		private readonly userService: UserService
+		private readonly userService: UserService,
+		private readonly blackListChannelService: BlacklistChannelService
 	) {}
 
 	async getALL(): Promise<Channel[]>
@@ -74,7 +77,8 @@ export class ChannelService {
 		if (await this.isOwner(id_user, id_channel) == true
 		|| await this.accessChannelService.isAccess(id_user, id_channel) == true
 		|| await this.adminChannelService.isAdmin(id_user, id_channel) == true)
-			return true;
+			if (await this.blackListChannelService.isBan(id_user, id_channel) == false)
+				return true;
 		return false;
 	}
 
@@ -116,5 +120,26 @@ export class ChannelService {
 		&& await this.isOwner(id_admin, id_channel) == false)
 			throw new UnauthorizedException()
 		return this.accessChannelService.remove(id_user, id_channel);
+	}
+
+	async banUser(id_user: number, id_admin: number, id_channel: number): Promise<BlacklistChannel>
+	{
+		if (await this.adminChannelService.isAdmin(id_admin, id_channel) == false
+		&& await this.isOwner(id_admin, id_channel) == false)
+			throw new UnauthorizedException();
+		return this.blackListChannelService.ban(id_user, id_channel);
+	}
+
+	async unbanUser(id_user: number, id_admin: number, id_channel: number): Promise<DeleteResult>
+	{
+		if (await this.adminChannelService.isAdmin(id_admin, id_channel) == false
+		&& await this.isOwner(id_admin, id_channel) == false)
+			throw new UnauthorizedException();
+		return this.blackListChannelService.unban(id_user, id_channel);
+	}
+
+	async getUsersBan(id_channel: number): Promise<User[]>
+	{
+		return this.blackListChannelService.listBan(id_channel);
 	}
 }

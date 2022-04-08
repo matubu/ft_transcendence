@@ -7,13 +7,15 @@ import { AdminModule } from 'src/admin-channel/admin-channel.module';
 import { AccessModule } from 'src/access-channel/access-channel.module';
 import { UserModule } from 'src/user/user.module';
 import { MessageModule } from 'src/message/message.module';
+import { BlacklistChannelModule } from 'src/blacklist-channel/blacklist-channel.module';
 
 @Module({
 	imports: [TypeOrmModule.forFeature([Channel]),
 				forwardRef(() => AdminModule),
 				forwardRef(() => AccessModule),
 				forwardRef(() => UserModule),
-				forwardRef(() => MessageModule)],
+				forwardRef(() => MessageModule),
+				BlacklistChannelModule],
 	controllers: [ChannelController],
 	providers: [ChannelService],
 	exports: [ChannelService]

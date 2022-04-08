@@ -8,6 +8,7 @@ import { Channel } from './channel.entity';
 import { ChannelInterface } from './channel.interface';
 import { ChannelService } from './channel.service';
 import { User } from 'src/user/user.entity';
+import { BlacklistChannel } from 'src/blacklist-channel/blacklist-channel.entity';
 
 @Controller('channel')
 export class ChannelController {
@@ -24,6 +25,12 @@ export class ChannelController {
 	async getUsers(@Param('id_channel', ParseIntPipe) id_channel: number): Promise<User[]>
 	{
 		return await this.channelService.getUsers(id_channel);
+	}
+
+	@Get(':id_channel/usersBan')
+	async getUsersBan(@Param('id_channel', ParseIntPipe) id_channel: number): Promise<User[]>
+	{
+		return await this.channelService.getUsersBan(id_channel);
 	}
 
 	@Post()
@@ -71,5 +78,21 @@ export class ChannelController {
 					@Body() body: { id_user: number }): Promise<DeleteResult>
 	{
 		return await this.channelService.removeAccess(body.id_user, sudo, id_channel);
+	}
+
+	@Post(':id_channel/ban')
+	async ban(@Param('id_channel', ParseIntPipe) id_channel: number,
+					@Autorization() sudo: number,
+					@Body() body: { id_user: number }): Promise<BlacklistChannel>
+	{
+		return await this.channelService.banUser(body.id_user, sudo, id_channel);
+	}
+
+	@Delete(':id_channel/unban')
+	async unban(@Param('id_channel', ParseIntPipe) id_channel: number,
+					@Autorization() sudo: number,
+					@Body() body: { id_user: number }): Promise<DeleteResult>
+	{
+		return await this.channelService.unbanUser(body.id_user, sudo, id_channel);
 	}
 }
