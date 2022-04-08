@@ -11,7 +11,7 @@ export class Notification
     receiver: User;
 
 	@Column()
-	msg: boolean
+	msg: string
 
 	@ManyToOne(() => User, { eager : true })
     sender?: User;
