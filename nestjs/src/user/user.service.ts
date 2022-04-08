@@ -32,7 +32,7 @@ export class UserService {
 	async changeNickname(id: number, nickname: string): Promise<User>
 	{
 		let user = await this.get(id, []);
-		user.nickname = nickname;
+		user.nickname = (nickname.length == 0) ? null : nickname;
 		return this.userRepository.save(user);
 	}
 

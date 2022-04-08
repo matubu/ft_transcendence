@@ -6,14 +6,17 @@ import { UserService } from './user.service';
 import { DfaModule } from 'src/dfa/dfa.module';
 import { PictureModule } from 'src/picture/picture.module';
 import { AuthModule } from 'src/auth/auth.module';
+import { UserSubscriber } from './user.subscriber';
+import { AlcoholModule } from 'src/alcohol/alcohol.module';
 
 @Module({
 	imports: [TypeOrmModule.forFeature([User]),
 				DfaModule,
 				PictureModule,
-				forwardRef(() => AuthModule)],
+				forwardRef(() => AuthModule),
+				AlcoholModule],
 	controllers: [UserController],
-	providers: [UserService],
+	providers: [UserService, UserSubscriber],
 	exports: [UserService]
 })
 export class UserModule {}
