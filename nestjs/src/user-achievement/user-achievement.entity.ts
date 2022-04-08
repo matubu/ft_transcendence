@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { User } from '../user/user.entity'
 import { Achievement } from 'src/achievement/achievement.entity';
 
@@ -8,11 +8,9 @@ export class UserAchievement
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@OneToOne(() => User)
-	@JoinColumn()
+	@ManyToOne(() => User)
 	user: User;
 
-	@OneToOne(() => Achievement)
-	@JoinColumn()
+	@ManyToOne(() => Achievement, { eager : true })
 	achievement: Achievement;
 }

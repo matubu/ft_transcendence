@@ -8,13 +8,15 @@ import { PictureModule } from 'src/picture/picture.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { UserSubscriber } from './user.subscriber';
 import { AlcoholModule } from 'src/alcohol/alcohol.module';
+import { UserAchievementModule } from 'src/user-achievement/user-achievement.module';
 
 @Module({
 	imports: [TypeOrmModule.forFeature([User]),
 				DfaModule,
 				PictureModule,
 				forwardRef(() => AuthModule),
-				AlcoholModule],
+				AlcoholModule,
+				forwardRef(() => UserAchievementModule)],
 	controllers: [UserController],
 	providers: [UserService, UserSubscriber],
 	exports: [UserService]
