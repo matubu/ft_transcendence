@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, OneToOne, Column, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 import { User } from '../user/user.entity'
 
 @Entity()
@@ -7,21 +7,18 @@ export class Match
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@OneToOne(() => User)
-    @JoinColumn()
+	@ManyToOne(() => User, { eager : true })
     player1: User;
 
-	@OneToOne(() => User)
-    @JoinColumn()
+	@ManyToOne(() => User, { eager : true })
     player2: User;
 
-	@Column()
+	@Column({ default: 0 })
 	player1_score: number;
 
-	@Column()
+	@Column({ default: 0 })
 	player2_score: number;
 
-	@OneToOne(() => User)
-    @JoinColumn()
+	@ManyToOne(() => User, { eager : true })
     victory?: User;
 }
