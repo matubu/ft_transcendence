@@ -1,5 +1,4 @@
 <script>
-	import Layout from '@components/Layout.svelte'
 	import Head from '@components/Head.svelte'
 	import Button from '@components/Button.svelte'
 	import AnimatedGradient from '@components/AnimatedGradient.svelte'
@@ -39,16 +38,15 @@
 
 <Head title="Home" />
 
-<Layout>
-	{#if mounted}
+{#if mounted}
 	<div class="hero">
 		<div>
 			<h1>Transcendence</h1>
 			<p>
 				{#each `Transcendence is a simple multiplayer tennis table game.
-The player controls a paddle by moving it vertically.
-The goal is to reach eleven points first.
-Points are earned when the other fails to return the ball.`.split(/\s/) as c, idx}
+	The player controls a paddle by moving it vertically.
+	The goal is to reach eleven points first.
+	Points are earned when the other fails to return the ball.`.split(/\s/) as c, idx}
 					<span in:fly={{ x: 10, y: -6, duration: 200, delay: idx * 70 }}>{c}</span>
 				{/each}
 			</p>
@@ -59,7 +57,6 @@ Points are earned when the other fails to return the ball.`.split(/\s/) as c, id
 			{/if}
 		</div>
 	</div>
-	{/if}
-</Layout>
+{/if}
 
 <AnimatedGradient />

@@ -1,7 +1,18 @@
+<script context="module">
+	export async function preload(page, session) {
+		if (typeof document === 'undefined' && session.user === undefined)
+			this.redirect(307, '/')
+	}
+</script>
+
 <script>
 	import { fly } from 'svelte/transition';
-	import { stores } from '@sapper/app'
+	import { stores, goto } from '@sapper/app'
 	const { page } = stores()
+	import { user } from '@lib/store'
+
+	typeof document !== 'undefined'
+		&& user.subscribe(data => data === undefined && goto('/'))
 </script>
 
 <style>
@@ -18,7 +29,9 @@
 </style>
 
 {#key $page.path}
-    <main in:fly={{ x: -30, duration: 300 }}>
-        <slot />
-    </main>
+	{#if ($user)}
+		<main in:fly={{ x: -30, duration: 300 }}>
+			<slot />
+		</main>
+	{/if}
 {/key}

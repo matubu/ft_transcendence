@@ -27,7 +27,6 @@
 		border-radius: 10px;
 		font-size: 18px;
 		border: none;
-		transition: background-position 50ms;
 		text-decoration: none;
 		user-select: none;
 		color: var(--prim);

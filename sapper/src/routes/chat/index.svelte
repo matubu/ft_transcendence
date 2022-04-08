@@ -4,8 +4,7 @@
 	import Button from '@components/Button.svelte'
 	import Room from '@components/Room.svelte'
 	import Modal from '@components/Modal.svelte'
-	import { user, useMediaQuery, waitingLogin } from '@lib/store'
-	import { logIn } from '@lib/utils'
+	import { useMediaQuery } from '@lib/store'
 	import { writable } from 'svelte/store';
 
 	let modalNewChat
@@ -31,20 +30,14 @@
 	<div>
 		<h1>Chat<span class="dim">.</span></h1>
 
-		{#if ($user)}
-			<div class="grid-layout">
-				{#each $rooms as {id, name, password, private: mode}}
-					<Room id={+id} name="{name}" type="{password ? 'protected' : (mode ? 'private' : 'public')}" joined={true}/>
-				{/each}
-			</div>
-		{:else}
-			<p>You need to login first</p>
-			<Button primary loading={$waitingLogin} on:click={logIn}>Login</Button>
-		{/if}
+		<div class="grid-layout">
+			{#each $rooms as {id, name, password, private: mode}}
+				<Room id={+id} name="{name}" type="{password ? 'protected' : (mode ? 'private' : 'public')}" joined={true}/>
+			{/each}
+		</div>
 	</div>
 </Layout>
 
-{#if ($user)}
 <Button float primary on:click={() => modalNewChat.open()}>
 	{#if ($mediaQuery)}
 	+
@@ -52,7 +45,6 @@
 	Create room
 	{/if}
 </Button>
-{/if}
 
 <Modal bind:this={modalNewChat}>
 	<h2>New chat</h2>

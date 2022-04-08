@@ -13,7 +13,7 @@
 
 <Layout>
 	{#await load()}
-		<p>...waiting</p>
+		<p>...waiting bite</p>
 	{:then data}
 		<User size=100 user={data} />
 		<h1>{data.nickname ?? data.fullname.split(' ')[0]}</h1>

@@ -77,9 +77,10 @@ export const localStorageUser = () => {
 		user.set(undefined)
 }
 
-export const send = (channel, data) => {
+export const send = async (channel, data: any = '') => {
 	console.log('send', channel, data)
-	get(sock)?.send?.(`${channel}:${JSON.stringify(data)}`)
+	if (!get(sock)) return ;
+	(await get(sock)).send(`${channel}:${JSON.stringify(data)}`)
 }
 
 if (typeof document !== 'undefined')
@@ -97,24 +98,26 @@ if (typeof document !== 'undefined')
 	window.onstorage = localStorageUser
 	user.subscribe(data => {
 		get(sock)?.close?.()
-		let ws
-		if (data)
-		{
-			ws = new WebSocket(`ws://localhost:3001`)
-			ws.onmessage = ({ data: msg }) => {
-				let idx = msg.indexOf(':')
-				if (idx === -1) return ;
-				window.dispatchEvent(new CustomEvent('wsmsg', {
-					detail: {
-						channel: msg.slice(0, idx),
-						data: JSON.parse(msg.slice(idx + 1))
-					}
-				}))
-			}
-			ws.onopen = () => {
-				send('events', ['test'])
-			}
+		if (!data)
+			return sock.set(undefined)
+		let ws = new WebSocket(`ws://localhost:3001`)
+		sock.set(new Promise(resolve => (ws.onopen = _ => resolve(ws))))
+		ws.onmessage = ({ data: msg }) => {
+			let idx = msg.indexOf(':')
+			if (idx === -1) return ;
+		
+			const channel = msg.slice(0, idx)
+			const data = JSON.parse(msg.slice(idx + 1))
+
+			if (channel === 'matchfound')
+				goto(`/play/ranked/${data.id}`)
+
+			window.dispatchEvent(new CustomEvent('wsmsg', {
+				detail: {
+					channel,
+					data
+				}
+			}))
 		}
-		sock.set(ws)
 	})
 }

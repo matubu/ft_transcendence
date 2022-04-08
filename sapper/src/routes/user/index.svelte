@@ -1,24 +1,14 @@
-<script context="module">
-	export async function preload(page, session) {
-		if (typeof document === 'undefined' && session.user === undefined)
-			this.redirect(307, '/')
-	}
-</script>
-
 <script>
 	import Layout from '@components/Layout.svelte'
 	import Modal from '@components/Modal.svelte'
 	import Head from '@components/Head.svelte'
 	import Icon from '@components/Icon.svelte'
-	import { goto } from '@sapper/app'
 	import Button from '@components/Button.svelte'
 	import User from '@components/User.svelte'
+	import { goto } from '@sapper/app'
 	import { logOut, fetchUser } from '@lib/utils'
 	import { user } from '@lib/store'
 	import { get } from 'svelte/store'
-
-	typeof document !== 'undefined'
-		&& user.subscribe(data => data === undefined && goto('/'))
 
 	let modalAvatar
 	let fileAvatar

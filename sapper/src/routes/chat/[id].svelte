@@ -1,5 +1,6 @@
 <script>
 	import Layout from '@components/Layout.svelte'
+	import Head from '@components/Head.svelte'
 	import Button from '@components/Button.svelte'
 	import { writable } from 'svelte/store';
 	import { send } from '@lib/utils';
@@ -26,6 +27,8 @@
 		$messages = [...$messages, msg];
 	};
 </script>
+
+<Head title="Chat" />
 
 <svelte:window on:wsmsg={e => {
 	const { channel, data } = e.detail

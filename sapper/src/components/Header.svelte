@@ -5,7 +5,7 @@
 	import User from '@components/User.svelte'
 	import Nav from '@components/Nav.svelte'
 	import { user, useMediaQuery, waitingLogin } from '@lib/store'
-	import { logIn } from '@lib/utils';
+	import { logIn } from '@lib/utils'
 
 	export let segment: string
 
@@ -79,7 +79,7 @@
 </style>
 
 <header>
-	{#if ($mediaQuery)}
+	{#if ($mediaQuery && $user)}
 	<div id="menu">
 			<div id="button">
 				<IconButton alt="menu">
@@ -111,7 +111,7 @@
 		</a>
 	</div>
 	<div>
-		{#if !($mediaQuery)}
+		{#if !($mediaQuery) && ($user)}
 			<Nav {segment} />
 		{/if}
 		{#if ($user)}
