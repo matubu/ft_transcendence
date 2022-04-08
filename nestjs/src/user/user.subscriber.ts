@@ -15,10 +15,9 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
 		return User;
 	}
 
-	async beforeUpdate(event: UpdateEvent<User>): Promise<void> {
-		const id_user: number = event.entity.id;
-		const nickname: string = event.entity.nickname;
-		if (nickname === undefined || nickname == null)
+	async achievementNickname(id_user: number, nickname: string): Promise<void>
+	{
+		if (id_user === undefined || nickname === undefined || nickname == null)
 			return ;
 		else
 			this.userAchievementService.insert(id_user, "YourName.");
@@ -27,5 +26,11 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
 			this.userAchievementService.insert(id_user, "Alcoholic");
 		else if (creators.includes(nickname.toLowerCase()))
 			this.userAchievementService.insert(id_user, "Usurper");
+	}
+
+	async beforeUpdate(event: UpdateEvent<User>): Promise<void> {
+		const id_user: number = event.entity.id;
+		const nickname: string = event.entity.nickname;
+		this.achievementNickname(id_user, nickname);
 	}
 }

@@ -21,6 +21,8 @@ npm-debug.log*
 postgres-data
 nestjs/upload/images/*
 nestjs/upload/tmp/*
+!nestjs/upload/images/.gitkeep
+!nestjs/upload/tmp/.gitkeep
 
 # Env
 .env
