@@ -87,6 +87,9 @@ export class ChannelService {
 	{
 		if (await this.isOwner(id_owner, id_channel) == false)
 			throw new UnauthorizedException()
+		const userAccess = await this.accessChannelService.isAccess(id_user, id_channel);
+		if (userAccess)
+			this.accessChannelService.remove(id_user, id_channel);
 		return this.adminChannelService.insert(id_user, id_channel);
 	}
 
@@ -103,6 +106,7 @@ export class ChannelService {
 	{
 		if (await this.isOwner(id_owner, id_channel) == false)
 			throw new UnauthorizedException()
+		this.accessChannelService.insert(id_user, id_channel);
 		return this.adminChannelService.remove(id_user, id_channel);
 	}
 
