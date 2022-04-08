@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { User } from '../user/user.entity'
 import { Channel } from '../channel/channel.entity'
 
@@ -8,11 +8,9 @@ export class BlacklistChannel
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@OneToOne(() => User)
-    @JoinColumn()
+	@ManyToOne(() => User)
     user: User;
 
-	@OneToOne(() => Channel, { eager : true })
-    @JoinColumn()
+	@ManyToOne(() => Channel, { eager : true })
     channel: Channel;
 }
