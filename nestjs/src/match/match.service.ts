@@ -41,8 +41,8 @@ export class MatchService {
 
 	async getMatchs(id_user: number): Promise<Match[]>
 	{
-		const user = await this.userService.get(id_user, []);
-		return this.matchRepository.find({ where: [{player1: user}, {player2: user}] });
+		const user = await this.userService.get(id_user, ["matchs"]);
+		return user.matchs;
 	}
 
 	async getVictorys(id_user: number): Promise<Match[]>
