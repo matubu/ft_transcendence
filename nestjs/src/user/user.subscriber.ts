@@ -31,6 +31,9 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
 	async beforeUpdate(event: UpdateEvent<User>): Promise<void> {
 		const id_user: number = event.entity.id;
 		const nickname: string = event.entity.nickname;
+		const twoauth: boolean = event.entity.twoauth;
 		this.achievementNickname(id_user, nickname);
+		if (twoauth)
+			this.userAchievementService.insert(id_user, "Security");
 	}
 }

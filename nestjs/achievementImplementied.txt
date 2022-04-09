@@ -1,4 +1,4 @@
-'Security', 'Enable two-factor authentication.'
+'Security', 'Enable two-factor authentication.' OK
 
 'Losing', 'Have 42 defeats.'
 
