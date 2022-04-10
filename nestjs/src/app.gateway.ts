@@ -43,54 +43,69 @@ export class AppGateway {
 		puts(91, `--- DISCONNECTED {${client.userId}}`)
 
 		// --- LEAVE MATCHING ROOM ---
-		this.onLeaveRanked(client)
-		// --- FIND CURRENT MATCH ---
-		for (const [id, [user1, user2]] of this.matchMap)
-		{
-			if ((user1.userId === client.userId || user2.userId === client.userId)
-				&& user1.readyState === WebSocket.CLOSED
-				&& user2.readyState === WebSocket.CLOSED)
-				// --- DELETE CURRENT MATCH ---
-				this.matchMap.delete(id)
-		}
+		this.leaveRanked(client)
+		// --- DISCONNECT FROM MATCH MATCH ---
+		this.disconnectFromMatch(client)
 		// --- DELETE USER SOCKET ---
 		this.userMap.get(client.userId).delete(client)
 		if (this.userMap.get(client.userId).size === 0)
 			this.userMap.delete(client.userId)
 	}
 
-	@SubscribeMessage('play')
-	onReconnect(client: any) {
+	updateClientStateMatch(client: any, callback: Function) {
 		for (const [id, [user1, user2]] of this.matchMap)
 		{
-			if (user1.userId === client.userId)
+			if (client.userId === user1.userId)
 			{
-				if (user1 === client || user1.readyState === WebSocket.CLOSED)
-				{
-					this.matchMap.set(id, [client, user2])
-					this.send(client, 'matchfound', { id, opponent: user2.userId })
-				}
-				return (true);
+				this.matchMap.set(id, [callback(id, user1), user2])
+				return (true)
 			}
-			if (user2.userId === client.userId)
+			if (client.userId === user2.userId)
 			{
-				if (user2 === client || user2.readyState === WebSocket.CLOSED)
-				{
-					this.matchMap.set(id, [user1, client])
-					this.send(client, 'matchfound', { id, opponent: user1.userId })
-				}
-				return (true);
+				this.matchMap.set(id, [user1, callback(id, user2)])
+				return (true)
 			}
 		}
+		return (false)
+	}
+
+	connectToMatch(client: any, informClient: boolean = true) {
+		return (this.updateClientStateMatch(client,
+			(id, user) => {
+				if (user === client || user.readyState === WebSocket.CLOSED)
+				{
+					informClient && this.send(client, 'matchfound', { id })
+					return (client)
+				}
+				return (user)
+			})
+		)
+	}
+
+	@SubscribeMessage('play')
+	onPlay(client: any) {
+		this.connectToMatch(client)
+	}
+
+	@SubscribeMessage('disconnectMatch')
+	disconnectFromMatch(client: any) {
+		return (this.updateClientStateMatch(client,
+			(id, user) => {
+				if (user === client)
+					return ({ userId: client.userId, readyState: WebSocket.CLOSED })
+				return (user)
+			})
+		)
 	}
 
 	@SubscribeMessage('joinRanked')
-	onJoinRanked(client: any) {
+	joinRanked(client: any) {
 		// --- TRY TO RECONNECT TO OLD MATCH ---
-		if (this.onReconnect(client) === true)
-			return
+		if (this.connectToMatch(client))
+			return ;
 		// ---- ADD TO MATCHING LIST ----
 		this.matchingMap.set(client.userId, client)
+		console.log(this.matchingMap.keys(), this.matchingMap.size)
 		if (this.matchingMap.size >= 2)
 		{
 			// ---- CREATE MATCH ----
@@ -99,25 +114,31 @@ export class AppGateway {
 			this.matchingMap.delete(id1)
 			this.matchingMap.delete(id2)
 			this.matchMap.set(id, [user1, user2])
-			this.send(user1, 'matchfound', { id, opponent: id2 })
-			this.send(user2, 'matchfound', { id, opponent: id1 })
+			this.send(user1, 'matchfound', { id })
+			this.send(user2, 'matchfound', { id })
 		}
 	}
 
 	@SubscribeMessage('leaveRanked')
-	onLeaveRanked(client: any) {
+	leaveRanked(client: any) {
 		if (this.matchingMap.get(client.userId) === client)
 			this.matchingMap.delete(client.userId)
 	}
 
-	@SubscribeMessage('peer2peer')
-	onPeer2peer(client: any, [gameId, msg]) {
-		if (!this.matchMap.has(gameId))
+	@SubscribeMessage('matchData')
+	onMatchData(client: any, gameId: string) {
+		if (!this.matchMap.has(gameId) || this.connectToMatch(client, false) === false)
 			return this.send(client, 'rankedExpired')
+		const match = this.matchMap.get(gameId)
+		this.send(client, 'matchData', { opponent: match[+(client === match[1])].userId, weak: client === match[0] })
+	}
+
+	@SubscribeMessage('proxy')
+	onProxy(client: any, [gameId, msg]) {
 		if (client === this.matchMap.get(gameId)[0])
-			this.send(this.matchMap.get(gameId)[1], 'peer2peer', msg)
+			this.send(this.matchMap.get(gameId)[1], 'proxy', msg)
 		if (client === this.matchMap.get(gameId)[1])
-			this.send(this.matchMap.get(gameId)[0], 'peer2peer', msg)
+			this.send(this.matchMap.get(gameId)[0], 'proxy', msg)
 	}
 
 	@SubscribeMessage('chat')

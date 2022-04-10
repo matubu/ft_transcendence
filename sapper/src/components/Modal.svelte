@@ -28,10 +28,10 @@
 		z-index: 999999;
 		padding: 20px;
 		box-sizing: border-box;
+		transition: display 0s .3s;
 	}
 	.closed {
-		opacity: 0;
-		pointer-events: none;
+		display: none;
 	}
 	.backdrop {
 		position: absolute;
@@ -39,13 +39,33 @@
 		left: 0;
 		width: 100%;
 		height: 100%;
-		backdrop-filter: brightness(.5);
+		background: rgb(4 4 4 / 71%);
 		z-index: -1;
+		animation: forwards modal-backdrop-fade .3s ease-in-out;
 	}
 
 	.glass-card {
 		overflow: auto;
-    	max-height: 100%;
+		max-height: 100%;
+		animation: forwards modal-card-fade .2s ease-in-out;
+	}
+	@keyframes modal-backdrop-fade {
+		0% {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
+	}
+	@keyframes modal-card-fade {
+		0% {
+			opacity: 0;
+			transform: scale(0);
+		}
+		to {
+			opacity: 1;
+			transform: scale(1);
+		}
 	}
 
 	.modal :global(label) {

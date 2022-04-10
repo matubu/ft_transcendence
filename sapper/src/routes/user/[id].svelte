@@ -1,4 +1,4 @@
-<script context="module">
+<script>
 	import Layout from '@components/Layout.svelte'
 	import User from '@components/User.svelte'
 	import Button from '@components/Button.svelte'
