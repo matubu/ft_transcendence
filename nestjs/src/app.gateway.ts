@@ -143,9 +143,9 @@ export class AppGateway {
 
 	@SubscribeMessage('chat')
 	onChat(client: any, data: any) {
-		//get all user in chat
-		//broadcast client and message to them
-		//insert new message in db
+		// get all user in chat
+		// broadcast client and message to them
+		// insert new message in db
 		this.sendTo(client.userId, 'chat', data);
 	}
 }
