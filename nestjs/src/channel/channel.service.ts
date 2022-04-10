@@ -40,6 +40,8 @@ export class ChannelService {
 	async getUsers(id_channel: number): Promise<User[]>
 	{
 		const channel = await this.get(id_channel);
+		if (channel == undefined)
+			throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
 		const owner: User = channel.owner;
 		let admins: User[] = await this.adminChannelService.getAdmins(channel);
 		let access: User[] = await this.accessChannelService.getAccess(channel);

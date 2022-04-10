@@ -33,7 +33,7 @@
 <svelte:window on:wsmsg={e => {
 	const { channel, data } = e.detail
 	console.log('here in svelte:window', channel, data)
-	addMessage( data );
+	addMessage( {id_user: data.senderId, msg: data.msg} );
 }}/>
 
 <Layout>
@@ -47,7 +47,6 @@
 		if (!msg.value) return;
 		send('chat', { room: id_room, msg: msg.value });
 		msg.value = ''
-		// reloadChat()
 	}}>
 		<input type="text" bind:this={msg}>
 		<Button primary>Send</Button>

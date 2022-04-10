@@ -5,6 +5,8 @@ import {
 	WebSocketServer
 } from '@nestjs/websockets'
 import { Server } from 'ws'
+import { ChannelService } from './channel/channel.service';
+import { MessageService } from './message/message.service';
 
 const puts = (color: number, ...args) =>
 	console.log(`\u001B[1;${color}m`, ...args, '\u001B[0m')
@@ -14,6 +16,8 @@ export class AppGateway {
 	userMap: Map<number, Set<any>> = new Map()
 	matchingMap: Map<number, any> = new Map()
 	matchMap: Map<string, any[]> = new Map()
+
+	constructor (private readonly channelService: ChannelService, private messageService: MessageService) {}
 
 	@WebSocketServer()
 	server: Server
@@ -121,10 +125,17 @@ export class AppGateway {
 	}
 
 	@SubscribeMessage('chat')
-	onChat(client: any, data: any) {
+	async onChat(client: any, data: any) {
 		//get all user in chat
 		//broadcast client and message to them
 		//insert new message in db
-		this.sendTo(client.userId, 'chat', data);
+		const {room, msg} = data;
+		const users = await this.channelService.getUsers(room);
+		const chatData = {senderId: client.userId, room: room, msg: msg}
+		for (const user of users)
+		{
+			this.sendTo(user.id, 'chat', chatData);
+		}
+		await this.messageService.insert(client.userId, room, msg)
 	}
 }
