@@ -45,7 +45,7 @@ export class ChannelController {
 		return await this.channelService.create(userId, channel);
 	}
 
-	@Get(':id_channel')
+	@Post(':id_channel')
 	async access(@Param('id_channel', ParseIntPipe) id_channel: number,
 					@Autorization() userId: number,
 					@Body() body: { password?: string }): Promise<Message[]>

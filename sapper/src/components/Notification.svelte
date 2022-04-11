@@ -1,9 +1,18 @@
 <script>
 	import IconButton from "@components/IconButton.svelte"
 	import User from '@components/User.svelte'
+	import { onMount } from 'svelte'
 
 	let container
 	let blur: boolean
+	let notifs = [];
+
+	// onMount(async () => {
+	// 	let res = await fetch(`/api/notification`)
+	// 	if (!res.ok) return ;
+	// 	let json = await res.json()
+	// 	notifs = json
+	// })
 </script>
 
 <style>
@@ -91,6 +100,12 @@
 					<User user="test" />
 					<span><strong>test</strong> invited you</span>
 				</a>
+				<div seen={notif.seen}>
+					<a href="/invite/{notif.id}">
+						<User user="{notif.sender}" />
+						<span>{notif.msg}</span>
+					</a>
+				</div>
 			{/each}
 		{#else} -->
 		<p>No notification</p>

@@ -2,19 +2,18 @@
 	import Layout from '@components/Layout.svelte'
 	import Head from '@components/Head.svelte'
 	import Button from '@components/Button.svelte'
-	import { writable } from 'svelte/store';
 	import { send } from '@lib/utils';
 
 	let msg
 	let id_room
 
-	let messages = writable([])
+	let messages = []
 
 	const reloadChat = async () => {
-		let res = await fetch(`/api/channel/${id_room}`)
+		let res = await fetch(`/api/channel/${id_room}`, {method: "POST"})
 		if (!res.ok) return ;
 		let json = await res.json()
-		messages.set(json)
+		messages = json
 	}
 	if (typeof document !== 'undefined')
 	{
@@ -24,7 +23,7 @@
 		//TODO remove listener
 	}
 	const addMessage = (msg) => {
-		$messages = [...$messages, msg];
+		messages = [...messages, msg];
 	};
 </script>
 
@@ -33,12 +32,12 @@
 <svelte:window on:wsmsg={e => {
 	const { channel, data } = e.detail
 	console.log('here in svelte:window', channel, data)
-	addMessage( {id_user: data.senderId, msg: data.msg} );
+	addMessage( {senderId: data.senderId, msg: data.msg} );
 }}/>
 
 <Layout>
-	{#each $messages as { id_user, msg }}
-		<p>{id_user}: {msg}</p>
+	{#each messages as { senderId, msg }}
+		<p>{senderId}: {msg}</p>
 	{/each}
 
 	<form on:submit={async e => {

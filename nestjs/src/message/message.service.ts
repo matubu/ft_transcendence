@@ -29,7 +29,6 @@ export class MessageService {
 	{
 		const channel = await this.channelService.get(id_channel);
 		return this.messageRepository.find({ where: {channel: channel},
-												order: { id: "DESC" },
-												take: 100 });
+												order: { id: "ASC" } });
 	}
 }

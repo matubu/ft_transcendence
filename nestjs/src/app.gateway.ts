@@ -132,6 +132,7 @@ export class AppGateway {
 		const {room, msg} = data;
 		const users = await this.channelService.getUsers(room);
 		const chatData = {senderId: client.userId, room: room, msg: msg}
+		console.log(users)
 		for (const user of users)
 		{
 			this.sendTo(user.id, 'chat', chatData);

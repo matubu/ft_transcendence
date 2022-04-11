@@ -12,6 +12,12 @@ export class NotificationService {
 		private readonly userService: UserService
 	) {}
 
+	// async find(id_user: number): Promise<Notification[]>
+	// {
+	// 	const user = await this.userService.get(id_user, []);
+	// 	return this.notificationRepository.findBy({ receiver: user });
+	// }
+
 	async insert(id_user: number, msg: string, id_sender: number ): Promise<Notification>
 	{
 		const receiver = await this.userService.get(id_user, []);
