@@ -21,10 +21,10 @@
 }
 body {
 	background: var(--back);
-	padding: 2rem;
+	padding: 1rem;
 	display: flex;
 	flex-direction: column;
-	gap: 40px;
+	gap: 20px;
 	margin: 0;
 	box-sizing: border-box;
 }
@@ -38,6 +38,15 @@ html {
 html, button, a {
 	font-family: Roboto, -apple-system, BlinkMacSystemFont, Segoe UI, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 	color: var(--whit)
+}
+header, header > div {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+}
+header {
+	padding-right: 1rem;
+	justify-content: space-between;
 }
 * {
 	font-family: 'Inter', sans-serif;

@@ -5,8 +5,10 @@
 
 	let mediaQuery = useMediaQuery('(max-width: 800px)')
 
+	import { stores } from '@sapper/app'
+	const { page } = stores()
+
 	export let vertical: boolean = false
-	export let segment: string
 </script>
 
 <style>
@@ -54,10 +56,10 @@
 <nav>
 	<ul class="{vertical !== false && 'vertical'}">
 		{#if ($mediaQuery)}
-		<li><a on:mouseup={e => dispatch('mouseup', e)} rel=prefetch aria-current="{undefined}" href="/">Home</a></li>
+			<li><a on:mouseup={e => dispatch('mouseup', e)} rel=prefetch aria-current="{undefined}" href="/">Home</a></li>
 		{/if}
-		<li><a on:mouseup={e => dispatch('mouseup', e)} rel=prefetch aria-current="{segment == 'play' ? 'page' : undefined}" href="/play">Play</a></li>
-		<li><a on:mouseup={e => dispatch('mouseup', e)} rel=prefetch aria-current="{segment == 'chat' ? 'page' : undefined}" href="/chat">Chat</a></li>
-		<li><a on:mouseup={e => dispatch('mouseup', e)} rel=prefetch aria-current="{segment == 'watch' ? 'page' : undefined}" href="/watch">Watch</a></li>
+		<li><a on:mouseup={e => dispatch('mouseup', e)} rel=prefetch aria-current="{$page.path == 'play' ? 'page' : undefined}" href="/play">Play</a></li>
+		<li><a on:mouseup={e => dispatch('mouseup', e)} rel=prefetch aria-current="{$page.path == 'chat' ? 'page' : undefined}" href="/chat">Chat</a></li>
+		<li><a on:mouseup={e => dispatch('mouseup', e)} rel=prefetch aria-current="{$page.path == 'watch' ? 'page' : undefined}" href="/watch">Watch</a></li>
 	</ul>
 </nav>

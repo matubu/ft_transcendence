@@ -6,13 +6,13 @@
 </script>
 
 <script>
-	import { fly } from 'svelte/transition';
-	import { stores, goto } from '@sapper/app'
-	const { page } = stores()
-	import { user } from '@lib/store'
+	import Header from '@components/Header.svelte'
+	import Guard from '@components/Guard.svelte'
 
-	typeof document !== 'undefined'
-		&& user.subscribe(data => data === undefined && goto('/'))
+	import { fly } from 'svelte/transition';
+
+	import { stores } from '@sapper/app'
+	const { page } = stores()
 </script>
 
 <style>
@@ -28,10 +28,12 @@
 	}
 </style>
 
+<Header />
+
 {#key $page.path}
-	{#if ($user)}
+	<Guard>
 		<main in:fly={{ x: -30, duration: 300 }}>
 			<slot />
 		</main>
-	{/if}
+	</Guard>
 {/key}

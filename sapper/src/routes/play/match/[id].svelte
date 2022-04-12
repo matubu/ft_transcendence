@@ -1,38 +1,49 @@
 <script>
+	import { goto } from '@sapper/app'
+	import User from '@components/User.svelte'
+	import Head from '@components/Head.svelte'
 	import Layout from '@components/Layout.svelte'
+	import Guard from '@components/Guard.svelte'
+	import Button from '@components/Button.svelte'
 	import { send } from '@lib/utils'
 	import { RTCConnection, sendOffer, whenReady, destroyRTC } from '@lib/webrtc'
+	import { user } from '@lib/store'
 	import { onDestroy, onMount } from 'svelte'
+	import IconButton from '@components/IconButton.svelte'
 
-	let id,
-		status,
-		RTCCallback,
+	let id: string,
+		status: string,
+		RTCCallback: Function,
 		weakPeer = true,
-		RTCSock
+		RTCSock,
+		opponent
 
 	let arena
+	let frame
 
 	// 300 * 200
-	const WIDTH = 300
-	const HEIGHT = 200
+	const WIDTH: number = 300
+	const HEIGHT: number = 200
 
-	const BALL_SPEED = 60
+	const BALL_SPEED: number = 100
 
-	const BALL_SIZE = 5
-	const BALL_RADIUS = BALL_SIZE / 2
-	const PADDLE_WIDTH = 5
-	const PADDLE_HEIGHT = 25
+	const BALL_SIZE: number = 5
+	const BALL_RADIUS: number = BALL_SIZE / 2
+	const PADDLE_WIDTH: number = 5
+	const PADDLE_HEIGHT: number = 25
 
-	const PADDLE_H_MARGIN = 10
-	const PADDLE_V_MARGIN = PADDLE_HEIGHT / 2 + 5
+	const PADDLE_X_MARGIN: number = 10
+	const PADDLE_Y_MARGIN: number = PADDLE_HEIGHT / 2 + 5
 
-	let paddleLeft = PADDLE_HEIGHT
-	let paddleRight = PADDLE_HEIGHT
+	let score: number[] = [0, 0]
 
-	let ballPosition = [WIDTH / 2, HEIGHT / 2]
-	let ballVelocity = [0, 0]
+	let paddleLeft: number = HEIGHT / 2
+	let paddleRight: number = HEIGHT / 2
 
-	const sendRTC = (channel, data) => RTCSock?.send?.(channel, data)
+	let ballPosition: number[] = [WIDTH / 2, HEIGHT / 2]
+	let ballVelocity: number[] = [0, 0]
+
+	const sendRTC = (channel, data) => RTCSock?.sock?.readyState !== 'closed' && RTCSock?.send?.(channel, data)
 	const sendProxy = data => send('proxy', [id, data])
 
 	let randomVelocity = () => {
@@ -42,10 +53,9 @@
 	}
 	let sign = (n, sign) => Math.abs(n) * (sign ? -1 : 1)
 	let resetBall = () => {
-		if (weakPeer) return ;
 		ballPosition = [WIDTH / 2, HEIGHT / 2]
 		ballVelocity = randomVelocity()
-		sendRTC('R', ballVelocity)
+		!weakPeer && sendRTC('R', ballVelocity)
 	}
 
 	export const lineLine = ([afx, afy], [atx, aty], [bfx, bfy], [btx, bty]): number => {
@@ -55,27 +65,22 @@
 			return (uA);
 		return (Infinity)
 	}
-	export const lineRect = ([x, y, w, h], f, t):
-		[
-			boolean, // vertical intersection
-			number // distance (ratio) or infinity
-		] =>
-		[
-			[true, lineLine([x, y], [x, y + h], f, t)],
-			[false, lineLine([x, y + h], [x + w, y + h], f, t)],
-			[true, lineLine([x + w, y + h], [x + w, y], f, t)],
-			[false, lineLine([x + w, y], [x, y], f, t)]
-		].reduce(
-			(min, curr) => curr[1] < min[1] ? curr[1] : min[1],
-			[false, Infinity]
+	/**
+	 * @returns
+	 * - the distance (a ratio) or infinity if no intersection
+	*/
+	export const lineRect = ([x, y, w, h], f, t): number =>
+		Math.min(
+			lineLine([x, y], [x, y + h], f, t),
+			lineLine([x, y + h], [x + w, y + h], f, t),
+			lineLine([x + w, y + h], [x + w, y], f, t),
+			lineLine([x + w, y], [x, y], f, t)
 		)
 
 	onMount(() => {
 		id = location.pathname.split('/')[3]
 
 		RTCCallback = RTCConnection(sendProxy)
-
-		send('matchData', id)
 
 		whenReady(sock => {
 			console.log('!!! RTC CONNECTION READY !!!')
@@ -86,20 +91,29 @@
 			sock.on('R', ([vx, vy]) => {
 				ballPosition = [WIDTH / 2, HEIGHT / 2]
 				ballVelocity = [-vx, vy]
+				// --- GET SCORE ---
+				send('matchScore', [])
 			})
 			// --- SYNC BALL ---
-			sock.on('S', ([x, y], [vx, vy]) => {
+			sock.on('S', ([[x, y], [vx, vy]]) => {
 				ballPosition = [WIDTH - x, y]
 				ballVelocity = [-vx, vy]
 			})
+			// --- ASKING SYNC ---
+			// sock.on('A', () => {
+			// 	sendRTC('S', [ballPosition, ballVelocity])
+			// })
 			sendRTC('P', paddleLeft)
 
 			resetBall()
 		})
 
 		let previousTimestamp
-		requestAnimationFrame(function sim(timestamp) {
-			requestAnimationFrame(sim)
+		let syncTimestamp
+		frame = requestAnimationFrame(function sim(timestamp) {
+			syncTimestamp ??= timestamp
+			let sync: boolean = (timestamp - syncTimestamp) > 3000;
+			frame = requestAnimationFrame(sim)
 			// --- COMPUTE DELTATIME ---
 			previousTimestamp ??= timestamp
 			let deltaTime = (timestamp - previousTimestamp) / 1000
@@ -109,32 +123,63 @@
 			ballPosition[1] += ballVelocity[1] * deltaTime * BALL_SPEED
 			// --- FRAME VERTICAL COLLISION ---
 			if (ballPosition[0] < BALL_RADIUS || ballPosition[0] > WIDTH - BALL_RADIUS)
+			{
+				score[+(ballPosition[0] < BALL_RADIUS)]++
 				resetBall()
+				// --- SYNC SCORE ---
+				send('matchScore', score)
+			}
 			// --- FRAME HORIZONTAL COLLISION ---
 			if (ballPosition[1] < BALL_RADIUS || ballPosition[1] > HEIGHT - BALL_RADIUS)
 				ballVelocity[1] = sign(ballVelocity[1], ballPosition[1] > HEIGHT - BALL_RADIUS)
 			// --- PADDLE COLLISION
-			for (let [paddleX, paddleY] of [])
+			for (let [paddleX, paddleY] of [[PADDLE_X_MARGIN, paddleLeft], [WIDTH - PADDLE_X_MARGIN, paddleRight]])
 			{
-				let [vertical, distance] = lineRect(
-					paddleX, paddleY,
-					PADDLE_WIDTH, PADDLE_HEIGHT,
+				let distance = lineRect(
+					[
+						paddleX - PADDLE_WIDTH / 2 - BALL_RADIUS, paddleY - PADDLE_HEIGHT / 2 - BALL_RADIUS,
+						PADDLE_WIDTH + BALL_SIZE, PADDLE_HEIGHT + BALL_SIZE
+					],
 					lastPosition,
 					ballPosition
 				)
 				if (distance === Infinity) continue ;
-				// --- UPDATE POSITION ---
+				const SIDE = ballPosition[0] < WIDTH / 2
 				// --- CHANGE VELOCITY ---
-				ballVelocity[+vertical] *= 1.05
-				ballVelocity[+!vertical] *= -1.05
+				ballVelocity[0] = sign(ballVelocity[0] * 1.05, !SIDE)
+				ballVelocity[1] *= 1.05
+				// --- UPDATE POSITION ---
+				const X = PADDLE_X_MARGIN + PADDLE_WIDTH + BALL_SIZE + 1
+				ballPosition[0] = SIDE ? X : WIDTH - X
 				// --- SYNC BALL ---
+				sync = true
+			}
+			if (sync)
+			{
 				sendRTC('S', [ballPosition, ballVelocity])
+				syncTimestamp = timestamp
 			}
 			// --- RESET TIMESTAMP
 			previousTimestamp = timestamp
 		})
+
+		send('matchData', id)
 	})
-	onDestroy(destroyRTC)
+	onDestroy(() => {
+		destroyRTC()
+		typeof document !== 'undefined' && cancelAnimationFrame(frame)
+	})
+
+	function updatePaddle(y) {
+		if (!arena) return ;
+		let rect = arena.getBoundingClientRect()
+		paddleLeft = Math.max(Math.min(
+			(y - rect.top) / rect.height * 200,
+			200 - PADDLE_Y_MARGIN),
+			PADDLE_Y_MARGIN
+		)
+		sendRTC('P', paddleLeft)
+	}
 </script>
 
 <svelte:window
@@ -142,10 +187,15 @@
 		const { channel, data } = e.detail
 
 		const handlers = {
-			matchData: ({ weak }) => {
-				status = 'game'
+			matchData: ({ w: weak, s: gameScore, o: opponentData }) => {
 				weakPeer = weak
+				score = gameScore
+				opponent = opponentData
+				status = 'game'
 				sendOffer(sendProxy, weak)
+			},
+			matchScore: (gameScore) => {
+				score = gameScore
 			},
 			rankedExpired: () => status = 'expired',
 			proxy: RTCCallback
@@ -153,22 +203,24 @@
 
 		handlers[channel]?.(data)
 	}}
-	on:mousemove={e => {
-		if (!arena) return ;
-		let rect = arena.getBoundingClientRect()
-		paddleLeft = Math.max(Math.min(
-			(e.clientY - rect.top) / rect.height * 200,
-			200 - PADDLE_V_MARGIN),
-			PADDLE_V_MARGIN
-		)
-		sendRTC('P', paddleLeft)
+	on:touchmove={e => updatePaddle(e.touches[0].clientY)}
+	on:mousemove={e => updatePaddle(e.clientY)}
+	on:visibilitychange={() => {
+		//sendRTC('A')
+		!document.hidden && send('matchScore', [])
 	}}
 />
 
 <style>
+	:global(html) {
+		overflow: hidden;
+	}
 	.container {
-		display: grid;
-		place-items: center
+		display: flex;
+		flex-direction: column;
+		margin: 0 auto;
+		width: min(100%, calc((100vh - 160px - 2rem) / 2 * 3));
+		gap: 5px;
 	}
 	.arena {
 		border: 1px solid var(--bord);
@@ -176,7 +228,7 @@
 		position: relative;
 		user-select: none;
 		background: black;
-		width: min(100%, calc((100vh - 140px - 4rem) * 3 / 2));
+		width: 100%;
 		aspect-ratio: 3 / 2;
 		overflow: hidden;
 		border-radius: 5px;
@@ -186,25 +238,62 @@
 		background: white;
 		transform: translate(-50%, -50%);
 	}
-	.ball, .right {
-		transition: 0.02s ease;
+	.score {
+		text-align: center;
+		font-size: 1em;
 	}
+	.vs {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		font-size: 35px;
+	}
+	.vs span {
+		background: linear-gradient(45deg, #00adff, #1646f5);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		text-shadow: 0 0 10px #9ccfdb6b;
+		font-weight: 900;
+	}
+	.equal { color: var(--yelo) }
+	.winning { color: var(--gree) }
+	.losing { color: var(--red) }
 </style>
 
-<Layout>
-	{#if status === 'game'}
+{#if status === 'game'}
+	<Head title="Match" />
+
+	<Guard>
+		<header>
+			<IconButton alt="surrender" on:click={() => {
+				send('surrenderMatch')
+				goto('/play/ranked')
+			}}>
+				<svg height="35" width="35" viewBox="0 0 24 24" fill="currentColor"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+			</IconButton>
+		</header>
+
 		<div class="container">
 			<div class="arena" bind:this={arena}>
+				<h2 class="score">
+					<span class="{score[0] == score[1] ? 'equal' : (score[0] > score[1] ? 'winning' : 'losing')}">
+						{score[0]}
+					</span>
+					-
+					<span class="{score[0] == score[1] ? 'equal' : (score[1] > score[0] ? 'winning' : 'losing')}">
+						{score[1]}
+					</span>
+				</h2>
 				<div class="paddle left" style="
 					height: {PADDLE_HEIGHT / 2}%;
 					width: {PADDLE_WIDTH / 3}%;
-					left: {PADDLE_H_MARGIN / 3}%;
+					left: {PADDLE_X_MARGIN / 3}%;
 					top: {paddleLeft / 2}%;
 				"></div>
 				<div class="paddle right" style="
 					height: {PADDLE_HEIGHT / 2}%;
 					width: {PADDLE_WIDTH / 3}%;
-					right: {PADDLE_H_MARGIN / 3}%;
+					left: {(WIDTH - PADDLE_X_MARGIN) / 3}%;
 					top: {paddleRight / 2}%;
 				"></div>
 				<div class="ball" style="
@@ -214,10 +303,27 @@
 					top: {ballPosition[1] / 2}%;
 				"></div>
 			</div>
+
+			<div class="vs">
+				<User user={$user} />
+				<span>VS</span>
+				<User user={opponent} />
+			</div>
 		</div>
-	{:else if status === 'expired'}
+	</Guard>
+{:else if status === 'expired'}
+	<Head title="Match expired" />
+
+	<Layout>
 		<h1>Match expired</h1>
-	{:else}
+		<div>
+			<Button primary href="/play/ranked">Replay</Button>
+		</div>
+	</Layout>
+{:else}
+	<Head title="Loading match ..." />
+
+	<Layout>
 		<h1>Loading ...</h1>
-	{/if}
-</Layout>
+	</Layout>
+{/if}

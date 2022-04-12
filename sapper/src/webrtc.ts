@@ -37,7 +37,7 @@ let createPeerConnection = (send, id) => {
 	}
 }
 
-export const RTCConnection = (send) => {
+export const RTCConnection = (send: Function): Function => {
 	return ({ step, ...data }) => {
 		const handlers = {
 			candidate: ({ candidate, id }) => {
@@ -67,7 +67,7 @@ export const RTCConnection = (send) => {
 	}
 }
 
-export const sendOffer = (send, weak) => {
+export const sendOffer = (send: Function, weak: boolean) => {
 	weakPeer = weak
 	if (weakPeer && proposalId !== -1)
 		return ;

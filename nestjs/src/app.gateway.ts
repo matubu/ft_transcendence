@@ -4,16 +4,77 @@ import {
 	WebSocketGateway,
 	WebSocketServer
 } from '@nestjs/websockets'
+import { UserService } from 'src/user/user.service';
 import { Server } from 'ws'
 
 const puts = (color: number, ...args) =>
 	console.log(`\u001B[1;${color}m`, ...args, '\u001B[0m')
 
+class Match {
+	players: any[]
+	watchers: any[] = []
+	score: number[] = [0, 0]
+
+	constructor(player1, player2) {
+		this.players = [player1, player2]
+	}
+	containsPlayer(client) {
+		return (client.userId === this.players[0].userId || client.userId === this.players[1].userId)
+	}
+	isPlayerWeak(client) {
+		return (client.userId === this.players[1].userId)
+	}
+	getOpponent(client) {
+		if (client === this.players[0])
+			return (this.players[1])
+		if (client === this.players[1])
+			return (this.players[0])
+	}
+	disconnectPlayer(client: any) {
+		if (client === this.players[0])
+			this.players[0] = { userId: client.userId, readyState: WebSocket.CLOSED }
+		if (client === this.players[1])
+			this.players[1] = { userId: client.userId, readyState: WebSocket.CLOSED }
+	}
+	connectPlayer(client: any) {
+		if (client.userId === this.players[0].userId) {
+			if (this.players[0].readyState === WebSocket.CLOSED)
+				this.players[0] = client
+			return (true)
+		}
+		if (client.userId === this.players[1].userId) {
+			if (this.players[1].readyState === WebSocket.CLOSED)
+				this.players[1] = client
+			return (true)
+		}
+		return (false)
+	}
+	updateScore(client: any, gameScore: number[]) {
+		if (client.userId === this.players[1].userId)
+			gameScore.reverse()
+		if (gameScore[0] > this.score[0])
+			this.score[0] = gameScore[0]
+		if (gameScore[1] > this.score[1])
+			this.score[1] = gameScore[1]
+		if (this.score[0] >= 11 || this.score[1] >= 11)
+			this.endGame()
+		console.log('update score', this.score)
+	}
+	getScore(client: any) {
+		return (client.userId === this.players[0].userId ? this.score : [...this.score].reverse())
+	}
+	endGame() {
+		console.log(`endGame ${this.score[0]} ${this.score[1]}`)
+	}
+}
+
 @WebSocketGateway(3001)
 export class AppGateway {
+	constructor(private readonly userService: UserService) {}
+
 	userMap: Map<number, Set<any>> = new Map()
 	matchingMap: Map<number, any> = new Map()
-	matchMap: Map<string, any[]> = new Map()
+	matchMap: Map<string, Match> = new Map()
 
 	@WebSocketServer()
 	server: Server
@@ -52,56 +113,47 @@ export class AppGateway {
 			this.userMap.delete(client.userId)
 	}
 
-	updateClientStateMatch(client: any, callback: Function) {
-		for (const [id, [user1, user2]] of this.matchMap)
-		{
-			if (client.userId === user1.userId)
-			{
-				this.matchMap.set(id, [callback(id, user1), user2])
-				return (true)
-			}
-			if (client.userId === user2.userId)
-			{
-				this.matchMap.set(id, [user1, callback(id, user2)])
-				return (true)
-			}
-		}
-		return (false)
+	getMatchByClient(client): { id?: string, match? : Match } {
+		for (const [id, match] of this.matchMap)
+			if (match.containsPlayer(client))
+				return ({ id, match })
+		return ({})
 	}
 
-	connectToMatch(client: any, informClient: boolean = true) {
-		return (this.updateClientStateMatch(client,
-			(id, user) => {
-				if (user === client || user.readyState === WebSocket.CLOSED)
-				{
-					informClient && this.send(client, 'matchfound', { id })
-					return (client)
-				}
-				return (user)
-			})
-		)
+	connectToMatch(client: any) {
+		let { id, match } = this.getMatchByClient(client)
+
+		if (match === undefined) return (false)
+		return (match.connectPlayer(client) && id)
 	}
 
+	// --- Connect to the match and let the user know ---
 	@SubscribeMessage('play')
-	onPlay(client: any) {
-		this.connectToMatch(client)
+	connectToMatchInform(client: any) {
+		let id = this.connectToMatch(client)
+		if (id !== false)
+			this.send(client, 'matchfound', { id })
+		return (id)
 	}
 
 	@SubscribeMessage('disconnectMatch')
 	disconnectFromMatch(client: any) {
-		return (this.updateClientStateMatch(client,
-			(id, user) => {
-				if (user === client)
-					return ({ userId: client.userId, readyState: WebSocket.CLOSED })
-				return (user)
-			})
-		)
+		let { id, match } = this.getMatchByClient(client)
+
+		match?.disconnectPlayer?.(client)
+	}
+
+	@SubscribeMessage('surrenderMatch')
+	surrenderFromMatch(client: any) {
+		let { id, match } = this.getMatchByClient(client)
+
+		match !== undefined && this.matchMap.delete(id)
 	}
 
 	@SubscribeMessage('joinRanked')
 	joinRanked(client: any) {
 		// --- TRY TO RECONNECT TO OLD MATCH ---
-		if (this.connectToMatch(client))
+		if (this.connectToMatch(client) !== false)
 			return ;
 		// ---- ADD TO MATCHING LIST ----
 		this.matchingMap.set(client.userId, client)
@@ -113,7 +165,7 @@ export class AppGateway {
 			const id = Math.random().toFixed(16).split('.')[1]
 			this.matchingMap.delete(id1)
 			this.matchingMap.delete(id2)
-			this.matchMap.set(id, [user1, user2])
+			this.matchMap.set(id, new Match(user1, user2))
 			this.send(user1, 'matchfound', { id })
 			this.send(user2, 'matchfound', { id })
 		}
@@ -126,19 +178,33 @@ export class AppGateway {
 	}
 
 	@SubscribeMessage('matchData')
-	onMatchData(client: any, gameId: string) {
-		if (!this.matchMap.has(gameId) || this.connectToMatch(client, false) === false)
+	async onMatchData(client: any, gameId: string) {
+		if (!this.matchMap.has(gameId) || this.connectToMatchInform(client) === false)
 			return this.send(client, 'rankedExpired')
 		const match = this.matchMap.get(gameId)
-		this.send(client, 'matchData', { opponent: match[+(client === match[1])].userId, weak: client === match[0] })
+		console.log(match.getScore(client))
+		this.send(client, 'matchData', {
+			// --- OPPONENT ---
+			o: await this.userService.get(match.getOpponent(client).userId, []),
+			// --- WEAK ---
+			w: match.isPlayerWeak(client),
+			// --- SCORE ---
+			s: match.getScore(client)
+		})
+	}
+
+	@SubscribeMessage('matchScore')
+	onMatchScore(client: any, gameScore: number[]) {
+		let { match } = this.getMatchByClient(client);
+		
+		if (match == undefined) return ;
+		match?.updateScore?.(client, gameScore)
+		this.send(client, 'matchScore', match.getScore(client))
 	}
 
 	@SubscribeMessage('proxy')
 	onProxy(client: any, [gameId, msg]) {
-		if (client === this.matchMap.get(gameId)[0])
-			this.send(this.matchMap.get(gameId)[1], 'proxy', msg)
-		if (client === this.matchMap.get(gameId)[1])
-			this.send(this.matchMap.get(gameId)[0], 'proxy', msg)
+		this.send(this.matchMap.get(gameId).getOpponent(client), 'proxy', msg)
 	}
 
 	@SubscribeMessage('chat')

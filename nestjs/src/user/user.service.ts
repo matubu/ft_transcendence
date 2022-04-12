@@ -19,13 +19,13 @@ export class UserService {
 
 	async get(id: number, relations: any[]): Promise<User>
 	{
-		return this.userRepository.findOne({ where: {id: id}, relations: relations});
+		return this.userRepository.findOne({ where: { id }, relations });
 	}
 
 	async create(id: number, fullname: string, urlImage: string): Promise<User>
 	{
 		let img = await this.pictureService.insertByURL(urlImage);
-		await this.userRepository.save({id: id, fullname: fullname, picture: img});
+		await this.userRepository.save({ id, fullname, picture: img});
 		return this.get(id, []);
 	}
 
