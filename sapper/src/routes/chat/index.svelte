@@ -28,8 +28,6 @@
 
 <Layout>
 	<div>
-		<h1>Chat<span class="dim">.</span></h1>
-
 		<div class="grid-layout">
 			{#each $rooms as {id, name, password, private: mode}}
 				<Room id={+id} name="{name}" type="{password ? 'protected' : (mode ? 'private' : 'public')}" joined={true}/>

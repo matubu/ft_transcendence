@@ -4,11 +4,18 @@ import {
 	WebSocketGateway,
 	WebSocketServer
 } from '@nestjs/websockets'
-import { UserService } from 'src/user/user.service';
+import { UserService } from 'src/user/user.service'
+import { MatchService } from 'src/match/match.service'
 import { Server } from 'ws'
 
 const puts = (color: number, ...args) =>
 	console.log(`\u001B[1;${color}m`, ...args, '\u001B[0m')
+
+const send = (client: any, channel: string, data: any = '') => {
+	const str = JSON.stringify(data)
+	puts(94, `<<< SEND {${client.userId}} ${str} in ${channel}`)
+	client.send?.(`${channel}:${str}`)
+}
 
 class Match {
 	players: any[]
@@ -49,28 +56,36 @@ class Match {
 		}
 		return (false)
 	}
-	updateScore(client: any, gameScore: number[]) {
+	isFinish() {
+		return (this.score[0] >= 11 || this.score[1] >= 11)
+	}
+	updateScore(client: any, gameScore: number[], finish: Function) {
+		if (this.isFinish()) return ;
 		if (client.userId === this.players[1].userId)
 			gameScore.reverse()
 		if (gameScore[0] > this.score[0])
-			this.score[0] = gameScore[0]
+			this.score[0] = Math.min(gameScore[0], 11)
 		if (gameScore[1] > this.score[1])
-			this.score[1] = gameScore[1]
-		if (this.score[0] >= 11 || this.score[1] >= 11)
-			this.endGame()
+			this.score[1] = Math.min(gameScore[1], 11)
+		if (this.isFinish())
+		{
+			send(this.players[0], 'matchScore', this.getScore(this.players[0]))
+			send(this.players[1], 'matchScore', this.getScore(this.players[1]))
+			finish()
+		}
 		console.log('update score', this.score)
 	}
 	getScore(client: any) {
 		return (client.userId === this.players[0].userId ? this.score : [...this.score].reverse())
 	}
-	endGame() {
-		console.log(`endGame ${this.score[0]} ${this.score[1]}`)
-	}
 }
 
 @WebSocketGateway(3001)
 export class AppGateway {
-	constructor(private readonly userService: UserService) {}
+	constructor(
+		private readonly userService: UserService,
+		private readonly matchService: MatchService,
+	) {}
 
 	userMap: Map<number, Set<any>> = new Map()
 	matchingMap: Map<number, any> = new Map()
@@ -78,12 +93,6 @@ export class AppGateway {
 
 	@WebSocketServer()
 	server: Server
-
-	send(client: any, channel: string, data: any = '') {
-		const str = JSON.stringify(data)
-		puts(94, `<<< SEND {${client.userId}} ${str} in ${channel}`)
-		client.send?.(`${channel}:${str}`)
-	}
 
 	sendTo(userId: number, channel: string, data: any = '') {
 		const str = JSON.stringify(data)
@@ -127,12 +136,12 @@ export class AppGateway {
 		return (match.connectPlayer(client) && id)
 	}
 
-	// --- Connect to the match and let the user know ---
+	// --- CONNECT TO THE MATCH AND LET THE USER KNOW ---
 	@SubscribeMessage('play')
 	connectToMatchInform(client: any) {
 		let id = this.connectToMatch(client)
 		if (id !== false)
-			this.send(client, 'matchfound', { id })
+			send(client, 'matchfound', { id })
 		return (id)
 	}
 
@@ -166,8 +175,8 @@ export class AppGateway {
 			this.matchingMap.delete(id1)
 			this.matchingMap.delete(id2)
 			this.matchMap.set(id, new Match(user1, user2))
-			this.send(user1, 'matchfound', { id })
-			this.send(user2, 'matchfound', { id })
+			send(user1, 'matchfound', { id })
+			send(user2, 'matchfound', { id })
 		}
 	}
 
@@ -180,10 +189,10 @@ export class AppGateway {
 	@SubscribeMessage('matchData')
 	async onMatchData(client: any, gameId: string) {
 		if (!this.matchMap.has(gameId) || this.connectToMatchInform(client) === false)
-			return this.send(client, 'rankedExpired')
+			return send(client, 'rankedExpired')
 		const match = this.matchMap.get(gameId)
 		console.log(match.getScore(client))
-		this.send(client, 'matchData', {
+		send(client, 'matchData', {
 			// --- OPPONENT ---
 			o: await this.userService.get(match.getOpponent(client).userId, []),
 			// --- WEAK ---
@@ -195,16 +204,20 @@ export class AppGateway {
 
 	@SubscribeMessage('matchScore')
 	onMatchScore(client: any, gameScore: number[]) {
-		let { match } = this.getMatchByClient(client);
+		let { id, match } = this.getMatchByClient(client);
 		
 		if (match == undefined) return ;
-		match?.updateScore?.(client, gameScore)
-		this.send(client, 'matchScore', match.getScore(client))
+		match?.updateScore?.(client, gameScore, () => {
+			console.log('saveMatch')
+			this.matchService.saveMatch(match.players[0].userId, match.players[1].userId, match.score[0], match.score[1])
+			this.matchMap.delete(id)
+		})
+		send(client, 'matchScore', match.getScore(client))
 	}
 
 	@SubscribeMessage('proxy')
 	onProxy(client: any, [gameId, msg]) {
-		this.send(this.matchMap.get(gameId).getOpponent(client), 'proxy', msg)
+		send(this.matchMap.get(gameId).getOpponent(client), 'proxy', msg)
 	}
 
 	@SubscribeMessage('chat')

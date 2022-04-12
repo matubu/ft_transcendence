@@ -100,9 +100,6 @@
 				ballVelocity = [-vx, vy]
 			})
 			// --- ASKING SYNC ---
-			// sock.on('A', () => {
-			// 	sendRTC('S', [ballPosition, ballVelocity])
-			// })
 			sendRTC('P', paddleLeft)
 
 			resetBall()
@@ -117,6 +114,11 @@
 			// --- COMPUTE DELTATIME ---
 			previousTimestamp ??= timestamp
 			let deltaTime = (timestamp - previousTimestamp) / 1000
+			// --- RESET TIMESTAMP ---
+			previousTimestamp = timestamp
+			// --- CHECK IF GAME ---
+			if (!arena)
+				return ;
 			// --- UPDATE POSITION
 			let lastPosition = [...ballPosition]
 			ballPosition[0] += ballVelocity[0] * deltaTime * BALL_SPEED
@@ -159,8 +161,6 @@
 				sendRTC('S', [ballPosition, ballVelocity])
 				syncTimestamp = timestamp
 			}
-			// --- RESET TIMESTAMP
-			previousTimestamp = timestamp
 		})
 
 		send('matchData', id)
@@ -205,10 +205,7 @@
 	}}
 	on:touchmove={e => updatePaddle(e.touches[0].clientY)}
 	on:mousemove={e => updatePaddle(e.clientY)}
-	on:visibilitychange={() => {
-		//sendRTC('A')
-		!document.hidden && send('matchScore', [])
-	}}
+	on:visibilitychange={() => !document.hidden && send('matchScore', [])}
 />
 
 <style>
@@ -258,9 +255,40 @@
 	.equal { color: var(--yelo) }
 	.winning { color: var(--gree) }
 	.losing { color: var(--red) }
+	.win-container {
+		flex: 1;
+		display: grid;
+		place-items: center;
+		text-align: center;
+		gap: 20px;
+	}
+	.win-container h1 {
+		margin-top: 20px;
+	}
 </style>
 
-{#if status === 'game'}
+{#if score[0] >= 11 || score[1] >= 11}
+	<Head title="{score[0] >= 11 ? 'You' : opponent?.nickname ?? opponent?.fullname} won !" />
+
+	<Guard>
+		<header>
+			<IconButton alt="surrender" on:click={() => {
+				send('surrenderMatch')
+				goto('/play/ranked')
+			}}>
+				<svg height="35" width="35" viewBox="0 0 24 24" fill="currentColor"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+			</IconButton>
+		</header>
+
+		<div class="win-container">
+			<div>
+				<User size="200" user={score[0] >= 11 ? $user : opponent} />
+				<h1>{score[0] >= 11 ? 'You' : opponent?.nickname ?? opponent?.fullname} won !</h1>
+				<div class="{score[0] >= 11 ? 'winning' : 'losing'}">{score[0] >= 11 ? '+10' : '-10'}</div>
+			</div>
+		</div>
+	</Guard>
+{:else if status === 'game'}
 	<Head title="Match" />
 
 	<Guard>
