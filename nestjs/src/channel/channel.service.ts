@@ -29,7 +29,7 @@ export class ChannelService {
 
 	async getALL(): Promise<Channel[]>
 	{
-		return this.channelRepository.find();
+		return this.channelRepository.find({select: ['id', 'name', 'description', 'private']});
 	}
 
 	async get(id: number): Promise<Channel>
