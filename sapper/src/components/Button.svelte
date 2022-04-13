@@ -19,7 +19,7 @@
 </script>
 
 <style>
-	* {
+	a, button {
 		display: inline-block;
 		position: relative;
 		padding: 15px 20px;
@@ -30,15 +30,14 @@
 		text-decoration: none;
 		user-select: none;
 		color: var(--prim);
-		background: #0000;
-		background-image: linear-gradient(90deg, #fff6, #ffffff55, #fff6);
+		background: linear-gradient(90deg, hsla(0,0%,100%,.3), rgba(255, 255, 255, 0.259), hsla(0,0%,100%,.3));
 		background-clip: padding-box;
 		box-sizing: border-box;
 		font-weight: 500;
 		background-position: var(--x, 0px) 0px;
 	}
-	*.primary {
-    	background-image: linear-gradient(90deg, var(--prim), var(--seco), var(--prim));
+	:is(a, button).primary {
+		background-image: linear-gradient(90deg, var(--prim), var(--seco), var(--prim));
 		color: var(--back);
 	}
 	.float {
@@ -46,7 +45,7 @@
 		bottom: 50px;
 		right: 50px;
 	}
-	*.loading {
+	:is(a, button).loading {
 		color: #0000
 	}
 	@keyframes loader {

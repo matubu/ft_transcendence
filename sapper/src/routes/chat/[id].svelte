@@ -36,8 +36,8 @@
 }}/>
 
 <Layout>
-	{#each messages as { senderId, msg }}
-		<p>{senderId}: {msg}</p>
+	{#each messages as { id_user, msg }}
+		<p>{id_user}: {msg}</p>
 	{/each}
 
 	<form on:submit={async e => {

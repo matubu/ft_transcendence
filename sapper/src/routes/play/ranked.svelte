@@ -4,6 +4,7 @@
 	import Layout from '@components/Layout.svelte'
 	import Button from '@components/Button.svelte'
 	import { goto } from '@sapper/app'
+
 	onMount(() => send('joinRanked'))
 	onDestroy(() => send('leaveRanked'))
 </script>

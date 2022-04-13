@@ -6,8 +6,6 @@
 <Head title="Watch" />
 
 <Layout>
-	<h1>Watch<span class="dim">.</span></h1>
-
 	<div class="grid-layout">
 		<div class="glass-card"></div>
 	</div>

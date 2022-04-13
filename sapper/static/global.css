@@ -20,12 +20,11 @@
 	--grad-gree: linear-gradient(107.56deg, #91c46a 2.2%, #167243 29.17%, #031b34 95.31%);
 }
 body {
-	font-family: Roboto, -apple-system, BlinkMacSystemFont, Segoe UI, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 	background: var(--back);
-	padding: 2em;
+	padding: 1rem;
 	display: flex;
 	flex-direction: column;
-	gap: 40px;
+	gap: 20px;
 	margin: 0;
 	box-sizing: border-box;
 }
@@ -36,7 +35,19 @@ html {
 	min-width: 250px;
 	position: relative;
 }
-body, button, a { color: var(--whit) }
+html, button, a {
+	font-family: Roboto, -apple-system, BlinkMacSystemFont, Segoe UI, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+	color: var(--whit)
+}
+header, header > div {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+}
+header {
+	padding-right: 1rem;
+	justify-content: space-between;
+}
 * {
 	font-family: 'Inter', sans-serif;
 }
@@ -62,7 +73,7 @@ textarea, input[type="text"], input[type="password"] {
 	margin: 0;
 	padding: 10px 20px;
 	box-sizing: border-box;
-	background: #ffffff13;
+	background: #938fd013;
 	border-radius: 5px;
 	border: 1px solid rgb(142 140 144 / 5%);
 	box-shadow: inset 1px 1px 0 hsl(0deg 0% 100% / 11%);
@@ -75,7 +86,7 @@ input[type="text"], input[type="password"] {
 }
 
 .glass-card {
-	background: #fff3;
+	background: hsl(216deg 75% 77% / 20%);
 	border: 1px solid rgb(142 140 144 / 5%);
 	box-shadow: inset 1px 1px 0 hsl(0deg 0% 100% / 11%);
 	backdrop-filter: blur(52px);
@@ -95,7 +106,6 @@ input[type="text"], input[type="password"] {
 
 .grad-card {
 	flex: 1;
-	border: 1px solid var(--fore);
 	border-radius: 20px;
 	padding: 25px;
 	display: flex;

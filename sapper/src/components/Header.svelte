@@ -7,21 +7,10 @@
 	import { user, useMediaQuery, waitingLogin } from '@lib/store'
 	import { logIn } from '@lib/utils'
 
-	export let segment: string
-
 	let mediaQuery = useMediaQuery('(max-width: 800px)')
 </script>
 
 <style>
-	header, header > div {
-		display: flex;
-		align-items: center;
-		gap: 20px;
-	}
-	header {
-		justify-content: space-between;
-	}
-
 	#logo a {
 		display: flex;
 		align-items: center;
@@ -100,7 +89,7 @@
 						</IconButton>
 					</div>
 				</div>
-				<Nav vertical {segment} on:mouseup={e => e.detail.target.blur()} />
+				<Nav vertical on:mouseup={e => e.detail.target.blur()} />
 			</div>
 		</div>
 	{/if}
@@ -112,7 +101,7 @@
 	</div>
 	<div>
 		{#if !($mediaQuery) && ($user)}
-			<Nav {segment} />
+			<Nav />
 		{/if}
 		{#if ($user)}
 			<Notification />

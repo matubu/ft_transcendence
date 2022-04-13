@@ -1,5 +1,6 @@
 <script>
 	import Head from '@components/Head.svelte'
+	import Header from '@components/Header.svelte'
 	import Button from '@components/Button.svelte'
 	import AnimatedGradient from '@components/AnimatedGradient.svelte'
 	import { fly } from 'svelte/transition';
@@ -37,6 +38,8 @@
 </style>
 
 <Head title="Home" />
+
+<Header />
 
 {#if mounted}
 	<div class="hero">

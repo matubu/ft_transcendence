@@ -26,10 +26,10 @@
 	<div style="--size: {size}px" on:click={() => dispatch('click')}>
 		{#if href}
 			<a href={href}>
-				<img src="{user.picture.url}" alt="">
+				<img src="{user.picture?.url}" alt="">
 			</a>
 		{:else}
-			<img src="{user.picture.url}" alt="">
+			<img src="{user.picture?.url}" alt="">
 		{/if}
 	</div>
 {/if}

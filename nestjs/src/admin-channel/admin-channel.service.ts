@@ -32,7 +32,7 @@ export class AdminChannelService {
 	{
 		const user = await this.userService.get(id_user, []);
 		const channel = await this.channelService.get(id_channel);
-		const exist = await this.adminRepository.findOne({ where: {user: user, channel: channel }});
+		const exist = await this.adminRepository.findOne({ where: { user, channel }});
 		if ((user == undefined || channel == undefined)
 			|| (insert && exist != undefined)
 			|| (!insert && exist == undefined))

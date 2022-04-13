@@ -7,4 +7,6 @@ EXPOSE 10000
 
 WORKDIR	/var/sapper
 
-ENTRYPOINT	npm i && npm run dev
+USER node
+
+ENTRYPOINT	rm -rf ./node_modules/.cache/.eslintcache && npm i && npm run dev

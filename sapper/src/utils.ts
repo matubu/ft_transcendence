@@ -78,7 +78,6 @@ export const localStorageUser = () => {
 }
 
 export const send = async (channel, data: any = '') => {
-	console.log('send', channel, data)
 	if (!get(sock)) return ;
 	(await get(sock)).send(`${channel}:${JSON.stringify(data)}`)
 }
@@ -95,12 +94,13 @@ if (typeof document !== 'undefined')
 		localStorage.removeItem('user')
 	}
 
+	window.onunload = () => send('disconnect')
 	window.onstorage = localStorageUser
 	user.subscribe(data => {
 		get(sock)?.close?.()
 		if (!data)
 			return sock.set(undefined)
-		let ws = new WebSocket(`ws://${location.hostname}:3001`)
+		let ws = new WebSocket(`ws://${location.host}:3001`)
 		sock.set(new Promise(resolve => (ws.onopen = _ => resolve(ws))))
 		ws.onmessage = ({ data: msg }) => {
 			let idx = msg.indexOf(':')
@@ -110,7 +110,7 @@ if (typeof document !== 'undefined')
 			const data = JSON.parse(msg.slice(idx + 1))
 
 			if (channel === 'matchfound')
-				goto(`/play/ranked/${data.id}`)
+				goto(`/play/match/${data.id}`)
 
 			window.dispatchEvent(new CustomEvent('wsmsg', {
 				detail: {

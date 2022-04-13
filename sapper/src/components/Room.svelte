@@ -9,6 +9,11 @@
 </script>
 
 <style>
+	h2 {
+		text-overflow: ellipsis;
+		overflow: hidden;
+		width: 100%;
+	}
 	.grad-card {
 		text-decoration: none;
 	}

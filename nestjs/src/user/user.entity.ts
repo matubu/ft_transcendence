@@ -28,31 +28,31 @@ export class User
 	nickname?: string;
 
 	@OneToOne(() => Picture, { eager : true })
-    @JoinColumn()
-    picture: Picture;
+	@JoinColumn()
+	picture: Picture;
 
 	@OneToOne(() => Dfa)
-    @JoinColumn()
-    dfa?: Dfa;
+	@JoinColumn()
+	dfa?: Dfa;
 
 	@OneToMany(() => Friend, friend => friend.user)
-    friends?: Friend[];
+	friends?: Friend[];
 
 	@OneToMany(() => Channel, channel => channel.owner)
-    ownerChannels?: Channel[];
+	ownerChannels?: Channel[];
 
 	@OneToMany(() => AdminChannel, adminChannel => adminChannel.user)
-    adminChannels?: AdminChannel[];
+	adminChannels?: AdminChannel[];
 
 	@OneToMany(() => AccessChannel, accessChannel => accessChannel.user)
-    accessChannels?: AccessChannel[];
+	accessChannels?: AccessChannel[];
 
 	@OneToMany(() => Notification, notification => notification.receiver)
-    notifications?: Notification[];
+	notifications?: Notification[];
 
 	@OneToMany(() => UserAchievement, userAchievement => userAchievement.user)
-    achievements?: UserAchievement[];
+	achievements?: UserAchievement[];
 
 	@OneToMany(() => Match, match => match.player1 || match.player2)
-    matchs?: Match[];
+	matchs?: Match[];
 }

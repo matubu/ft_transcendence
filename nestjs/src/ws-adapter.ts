@@ -41,7 +41,14 @@ export class WsAdapter implements WebSocketAdapter {
 		client.on('message', msg => {
 			let idx = msg.indexOf(':')
 			if (idx === -1) return ;
-			map[msg.slice(0, idx)]?.(JSON.parse(msg.slice(idx + 1)))
+			const channel = msg.slice(0, idx)
+			if (channel == 'disconnect')
+			{
+				client.terminate()
+				return ;
+			}
+			const data = JSON.parse(msg.slice(idx + 1))
+			map[channel]?.(data)
 		})
 	}
 
