@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryColumn, OneToOne, JoinColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryColumn, OneToOne, JoinColumn, OneToMany, ManyToMany, JoinTable } from 'typeorm';
 import { Dfa } from "../dfa/dfa.entity";
 import { Picture } from "../picture/picture.entity";
 import { Friend } from "../friend/friend.entity";
@@ -53,6 +53,7 @@ export class User
 	@OneToMany(() => UserAchievement, userAchievement => userAchievement.user)
 	achievements?: UserAchievement[];
 
-	@OneToMany(() => Match, match => match.player1)
-	matchs?: Match[];
+	@ManyToMany(() => Match, match => match.players)
+	@JoinTable()
+	matchs: Match[];
 }

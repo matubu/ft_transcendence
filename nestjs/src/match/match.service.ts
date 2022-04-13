@@ -27,8 +27,7 @@ export class MatchService {
 		const player2 = await this.userService.get(id_player2, []);
 		console.log('service save match', player1, player2)
 		return this.matchRepository.save({
-			player1,
-			player2,
+			players: [player1, player2],
 			player1_score,
 			player2_score,
 			victory: player1_score >= 11 ? player1 : player2
