@@ -5,7 +5,7 @@
 	import Layout from '@components/Layout.svelte'
 	import Guard from '@components/Guard.svelte'
 	import Button from '@components/Button.svelte'
-	import { send } from '@lib/utils'
+	import { send, fetchUser } from '@lib/utils'
 	import { RTCConnection, sendOffer, whenReady, destroyRTC } from '@lib/webrtc'
 	import { user } from '@lib/store'
 	import { onDestroy, onMount } from 'svelte'
@@ -254,9 +254,6 @@
 		text-shadow: 0 0 10px #9ccfdb6b;
 		font-weight: 900;
 	}
-	.equal { color: var(--yelo) }
-	.winning { color: var(--gree) }
-	.losing { color: var(--red) }
 	.win-container {
 		flex: 1;
 		display: grid;
@@ -290,6 +287,7 @@
 			</div>
 		</div>
 	</Guard>
+	<script> fetchUser() </script>
 {:else if status === 'game'}
 	<Head title="Match" />
 

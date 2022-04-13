@@ -1,6 +1,7 @@
 <script>
 	import Layout from '@components/Layout.svelte'
 	import Head from '@components/Head.svelte'
+	import User from '@components/User.svelte'
 	import Button from '@components/Button.svelte'
 	import Icon from '@components/Icon.svelte'
 	import { goto } from '@sapper/app'
@@ -10,6 +11,28 @@
 
 	onMount(() => send('play'))
 </script>
+
+<style>
+	.matchs {
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+	}
+	.match {
+		display: flex;
+		gap: 10px;
+		align-items: center;
+		justify-content: space-between;
+		border-radius: 5px;
+		border: 1px solid var(--bord);
+		padding: 10px;
+	}
+	.match > div {
+		display: flex;
+		align-items: center;
+		gap: 20px;
+	}
+</style>
 
 <Head title="Play" />
 
@@ -45,9 +68,22 @@
 	</div>
 	<div>
 		<h2>Match</h2>
-		{#each $user.matchs as {}}
-			<div>
-			</div>
-		{/each}
+		<div class="matchs">
+			{#each $user.matchs as { player1_score, player2_score, player1, player2 }}
+				<div class="match">
+					<div>
+						<User user="{player1}" />
+						{player1.nickname ?? player1.fullname.split(' ')[0]}
+					</div>
+					{player1_score}
+					-
+					{player2_score}
+					<div>
+						<User user="{player2}" />
+						{player2.nickname ?? player2.fullname.split(' ')[0]}
+					</div>
+				</div>
+			{/each}
+		</div>
 	</div>
 </Layout>

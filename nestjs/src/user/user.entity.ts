@@ -53,6 +53,6 @@ export class User
 	@OneToMany(() => UserAchievement, userAchievement => userAchievement.user)
 	achievements?: UserAchievement[];
 
-	@OneToMany(() => Match, match => match.player1 || match.player2)
+	@OneToMany(() => Match, match => match.player1)
 	matchs?: Match[];
 }

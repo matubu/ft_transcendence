@@ -1,7 +1,6 @@
-import { user, twoauth, waitingLogin, sock } from '@lib/store'
+import { user, twoauth, waitingLogin } from '@lib/store'
 import { get } from 'svelte/store'
 import { goto } from '@sapper/app'
-import { beforeUpdate } from 'svelte';
 
 export const getCookiesFromString = s => s && Object.fromEntries(s.split?.('; ').map(v => v.split('=')))
 
@@ -21,9 +20,14 @@ export const clearCookies = () => {
 		removeCookie(key)
 }
 
+const setUser = (newUser) => {
+	if (JSON.stringify(get(user)) !== JSON.stringify(newUser))
+		user.set(newUser)
+}
+
 export const logIn = () => {
 	waitingLogin.set(true)
-	user.set(undefined)
+	setUser(undefined)
 	clearCookies()
 	let win = window
 		.open(`https://api.intra.42.fr/oauth/authorize?client_id=5fb8cff19443b1e91c5753666fdcb12d45ecbc49c667ba7eb97150cb2590b38a&redirect_uri=${encodeURIComponent(location.origin)}%2Fapi%2Fauth&response_type=code`, 'Auth 42', 'width=500,height=700')
@@ -44,7 +48,7 @@ export const logIn = () => {
 	polling()
 }
 export const logOut = () => {
-	user.set(undefined)
+	setUser(undefined)
 	localStorage.removeItem('user')
 	clearCookies()
 }
@@ -57,7 +61,7 @@ export const resolve = async (promise) => new Promise<any[]>(resolve =>
 
 export const fetchUser = async () => {
 	let noLogged = () => {
-		user.set(undefined)
+		setUser(undefined)
 		if (typeof document !== 'undefined')
 			localStorage.removeItem('user')
 	}
@@ -66,21 +70,24 @@ export const fetchUser = async () => {
 	if (ferr || !res.ok) return noLogged()
 	const [json, jerr] = await resolve(res.json())
 	if (jerr) return noLogged()
-	user.set(json)
+	setUser(json)
 	if (typeof document !== 'undefined')
 		localStorage.setItem('user', JSON.stringify(json))
 }
 
 export const localStorageUser = () => {
 	if (localStorage.getItem('user'))
-		user.set(JSON.parse(localStorage.getItem('user')))
+		setUser(JSON.parse(localStorage.getItem('user')))
 	else
-		user.set(undefined)
+		setUser(undefined)
 }
 
+let sock
+let userId
+
 export const send = async (channel, data: any = '') => {
-	if (!get(sock)) return ;
-	(await get(sock)).send(`${channel}:${JSON.stringify(data)}`)
+	if (!sock) return ;
+	(await sock)?.send?.(`${channel}:${JSON.stringify(data)}`)
 }
 
 if (typeof document !== 'undefined')
@@ -92,18 +99,20 @@ if (typeof document !== 'undefined')
 	}
 	else
 	{
-		user.set(undefined)
+		setUser(undefined)
 		localStorage.removeItem('user')
 	}
 
 	window.onunload = () => send('disconnect')
 	window.onstorage = localStorageUser
-	user.subscribe(data => {
-		get(sock)?.close?.()
+	user.subscribe(async data => {
+		if (userId === data?.id) return ;
+		(await sock)?.close?.()
+		userId = data?.id
 		if (!data)
-			return sock.set(undefined)
+			return (sock = undefined)
 		let ws = new WebSocket(`ws://${location.host}:3001`)
-		sock.set(new Promise(resolve => (ws.onopen = _ => resolve(ws))))
+		sock = new Promise(resolve => (ws.onopen = _ => resolve(ws)))
 		ws.onmessage = ({ data: msg }) => {
 			let idx = msg.indexOf(':')
 			if (idx === -1) return ;
