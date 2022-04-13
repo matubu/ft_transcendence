@@ -3,6 +3,7 @@
 	import Head from '@components/Head.svelte'
 	import Button from '@components/Button.svelte'
 	import { send } from '@lib/utils';
+	import User from '@lib/components/User.svelte';
 
 	let msg
 	let id_room
@@ -32,12 +33,12 @@
 <svelte:window on:wsmsg={e => {
 	const { channel, data } = e.detail
 	console.log('here in svelte:window', channel, data)
-	addMessage( {senderId: data.senderId, msg: data.msg} );
+	addMessage( data );
 }}/>
 
 <Layout>
-	{#each messages as { id_user, msg }}
-		<p>{id_user}: {msg}</p>
+	{#each messages as msg}
+		<p><User user={msg.user}/>{msg.user.nickname ?? msg.user.fullname}: {msg.msg}</p>
 	{/each}
 
 	<form on:submit={async e => {

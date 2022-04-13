@@ -77,6 +77,11 @@
 	}
 </style>
 
+<svelte:window on:wsmsg={e => {
+	const { channel, data } = e.detail
+	console.log('here notifcation in svelte:window', channel, data)
+}}/>
+
 <div class="container" bind:this={container}>
 	<IconButton
 		alt="notifications"

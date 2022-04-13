@@ -87,13 +87,13 @@ export class AppGateway {
 	constructor(
 		private readonly userService: UserService,
 		private readonly matchService: MatchService,
+		private readonly channelService: ChannelService,
+		private readonly messageService: MessageService
 	) {}
 
 	userMap: Map<number, Set<any>> = new Map()
 	matchingMap: Map<number, any> = new Map()
 	matchMap: Map<string, Match> = new Map()
-
-	constructor (private readonly channelService: ChannelService, private messageService: MessageService) {}
 
 	@WebSocketServer()
 	server: Server
@@ -231,11 +231,11 @@ export class AppGateway {
 		//insert new message in db
 		const {room, msg} = data;
 		const users = await this.channelService.getUsers(room);
-		const chatData = {senderId: client.userId, room: room, msg: msg}
+		// const chatData = {senderId: client.userId, room: room, msg: msg}
+		const messageInfo =  await this.messageService.insert(client.userId, room, msg)
 		for (const user of users)
 		{
-			this.sendTo(user.id, 'chat', chatData);
+			this.sendTo(user.id, 'chat', messageInfo);
 		}
-		await this.messageService.insert(client.userId, room, msg)
 	}
 }
