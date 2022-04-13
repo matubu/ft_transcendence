@@ -9,7 +9,7 @@ export class MessageController {
 
 	@Post()
 	async insert(@Autorization() userId: number,
-		@Body() body: { id_channel: number, msg: string }): Promise<Message>
+		@Body() body: { id_channel: number, msg: string }): Promise<{userId: number, msg: string}>
 	{
 		return await this.messageService.insert(userId, body.id_channel, body.msg);
 	}

@@ -8,8 +8,12 @@ export class Message
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@ManyToOne(() => User, { eager : true })
+	@ManyToOne(() => User)
+	@JoinColumn({ name: "userId"})
     user: User;
+
+	@Column()
+	userId: number;
 
 	@ManyToOne(() => Channel)
     channel: Channel;

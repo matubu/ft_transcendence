@@ -13,6 +13,9 @@ export class Channel
 	@Column({ default: null })
 	name?: string;
 
+	@Column({ default: false })
+	password_is_set: boolean
+
 	@Column({ default: null })
 	password?: string;
 

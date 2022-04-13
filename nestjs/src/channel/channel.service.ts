@@ -59,10 +59,11 @@ export class ChannelService {
 		const owner = await this.userService.get(id_user, []);
 		if (owner === undefined)
 			throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
-		if (channel.password !== undefined && channel.password.length > 1)
+		if (channel.password !== undefined && channel.password.length >= 1)
 			channel.password = await bcrypt.hash(channel.password, 10);
 		const tmp = await this.channelRepository.save({ owner: owner,
 												name: channel.name,
+												password_is_set: channel.password === "" ? false : true,
 												password: channel.password,
 												description: channel.description,
 												private: channel.private

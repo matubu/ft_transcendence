@@ -17,7 +17,7 @@ export class AuthController {
 			const info = await this.authService.getInfo(token['access_token']);
 			if (info['id'] !== undefined)
 			{
-				const user = await this.userService.get(info['id'], []);
+				const user = await this.userService.get(info['id'], [], true);
 				if (user !== undefined)
 					this.authService.setCookie(response, "user", user.twoauth ? '' : info['id'].toString());
 				else

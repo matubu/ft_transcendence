@@ -17,9 +17,11 @@ export class UserService {
 		private readonly pictureService: PictureService
 	) {}
 
-	async get(id: number, relations: any[]): Promise<User>
+	async get(id: number, relations: any[], dfa_bool: boolean = false): Promise<User>
 	{
-		return this.userRepository.findOne({ where: { id }, relations });
+		if (dfa_bool)
+			return this.userRepository.findOne({ where: { id }, relations });
+		return this.userRepository.findOne({ where: { id }, relations, select: ["id","fullname","elo","nickname"] });
 	}
 
 	async create(id: number, fullname: string, urlImage: string): Promise<User>
