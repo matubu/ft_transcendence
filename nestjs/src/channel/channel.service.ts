@@ -59,7 +59,7 @@ export class ChannelService {
 		const owner = await this.userService.get(id_user, []);
 		if (owner === undefined)
 			throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
-		if (channel.password !== undefined)
+		if (channel.password !== undefined && channel.password.length > 1)
 			channel.password = await bcrypt.hash(channel.password, 10);
 		const tmp = await this.channelRepository.save({ owner: owner,
 												name: channel.name,
@@ -109,7 +109,7 @@ export class ChannelService {
 	async addAccess(id_user: number, id_channel: number, password?: string): Promise<AccessChannel>
 	{
 		const channel = await this.getIncludePassword(id_channel);
-		if (channel != undefined && channel.password != undefined)
+		if (channel != undefined && channel.password != "")
 			if (password == undefined || await bcrypt.compare(password, channel.password) == false)
 				throw new UnauthorizedException()
 		return this.accessChannelService.insert(id_user, id_channel);

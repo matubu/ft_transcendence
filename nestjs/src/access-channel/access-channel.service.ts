@@ -62,7 +62,7 @@ export class AccessChannelService {
 	{
 		const user = await this.userService.get(id_user, []);
 		const channel = await this.channelService.get(id_channel);
-		const access = this.accessRepository.findOne({ where: {user: user, channel: channel} });
+		const access = await this.accessRepository.findOne({ where: {user: user, channel: channel} });
 		if (access === undefined)
 			return (false);
 		return (true);
