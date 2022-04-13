@@ -48,12 +48,14 @@ export class ChannelController {
 	@Post(':id_channel')
 	async access(@Param('id_channel', ParseIntPipe) id_channel: number,
 					@Autorization() userId: number,
-					@Body() body: { password?: string }): Promise<Message[]>
+					@Body() body: { password?: string }): Promise<{users: User[], msgs: Message[]}>
 	{
 		const access = await this.channelService.isAccess(userId, id_channel);
 		if (!access)
 			await this.channelService.addAccess(userId, id_channel, body?.password);
-		return await this.messageService.getMessages(id_channel);
+		const msgs: Message[] = await this.messageService.getMessages(id_channel);
+		const users: User[] = await this.channelService.getUsers(id_channel);
+		return ({ users, msgs });
 	}
 
 	@Post(':id_channel/addAdmin')
