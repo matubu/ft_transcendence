@@ -19,25 +19,27 @@ export class NotificationService {
 		return this.notificationRepository.save({ receiver: receiver, sender: sender, msg: msg });
 	}
 
-	async removeNotification(id_notification: number): Promise<DeleteResult>
+	async removeNotification(idUser: number, id_notification: number): Promise<DeleteResult>
 	{
-		return this.notificationRepository.delete({ id: id_notification });
+		const receiver = await this.userService.get(idUser, []);
+		return this.notificationRepository.delete({ receiver, id: id_notification });
 	}
 
 	async removeAll(id_user: number): Promise<DeleteResult>
 	{
 		const receiver = await this.userService.get(id_user, []);
-		return this.notificationRepository.delete({ receiver: receiver });
+		return this.notificationRepository.delete({ receiver });
 	}
 
-	async markReadOne(id_notification: number): Promise<Notification>
+	async markReadOne(idUser: number, id_notification: number): Promise<Notification>
 	{
-		return this.notificationRepository.save({ id: id_notification, seen: true });
+		const receiver = await this.userService.get(idUser, []);
+		return this.notificationRepository.save({ where: { receiver }, id: id_notification, seen: true });
 	}
 
 	async markReadAll(id_user: number): Promise<UpdateResult>
 	{
 		const receiver = await this.userService.get(id_user, ["notifications"]);
-		return this.notificationRepository.update({ receiver: receiver }, { seen: true });
+		return this.notificationRepository.update({ receiver }, { seen: true });
 	}
 }

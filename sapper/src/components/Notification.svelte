@@ -47,12 +47,7 @@
 		z-index: 9999;
 		max-height: 50vh;
 		overflow-y: auto;
-		scrollbar-color: var(--grey);
-		scrollbar-width: thin;
 	}
-	::-webkit-scrollbar { width: 5px }
-	::-webkit-scrollbar-track { background: #0000 }
-	::-webkit-scrollbar-thumb { background: var(--grey) }
 
 	.notif a {
 		text-decoration: none;

@@ -29,13 +29,13 @@ export class ChannelService {
 
 	async getALL(): Promise<Channel[]>
 	{
-		return this.channelRepository.find({select: ['id', 'name', 'description', 'private']});
+		return this.channelRepository.find({select: ['id', 'name', 'password_is_set', 'description', 'private']});
 	}
 
 	async get(id: number): Promise<Channel>
 	{
 		return this.channelRepository.findOne({ where: { id },
-												select: ['id', 'name', 'description', 'private'] });
+												select: ['id', 'name', 'password_is_set', 'description', 'private'] });
 	}
 
 	async getIncludePassword(id: number): Promise<Channel>

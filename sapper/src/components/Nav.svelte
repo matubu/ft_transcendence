@@ -58,8 +58,8 @@
 		{#if ($mediaQuery)}
 			<li><a on:mouseup={e => dispatch('mouseup', e)} rel=prefetch aria-current="{undefined}" href="/">Home</a></li>
 		{/if}
-		<li><a on:mouseup={e => dispatch('mouseup', e)} rel=prefetch aria-current="{$page.path == 'play' ? 'page' : undefined}" href="/play">Play</a></li>
-		<li><a on:mouseup={e => dispatch('mouseup', e)} rel=prefetch aria-current="{$page.path == 'chat' ? 'page' : undefined}" href="/chat">Chat</a></li>
-		<li><a on:mouseup={e => dispatch('mouseup', e)} rel=prefetch aria-current="{$page.path == 'watch' ? 'page' : undefined}" href="/watch">Watch</a></li>
+		<li><a on:mouseup={e => dispatch('mouseup', e)} rel=prefetch aria-current="{/^\/play\b/.test($page.path) ? 'page' : undefined}" href="/play">Play</a></li>
+		<li><a on:mouseup={e => dispatch('mouseup', e)} rel=prefetch aria-current="{/^\/chat\b/.test($page.path) ? 'page' : undefined}" href="/chat">Chat</a></li>
+		<li><a on:mouseup={e => dispatch('mouseup', e)} rel=prefetch aria-current="{/^\/watch\b/.test($page.path) ? 'page' : undefined}" href="/watch">Watch</a></li>
 	</ul>
 </nav>

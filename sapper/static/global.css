@@ -50,11 +50,16 @@ header {
 }
 * {
 	font-family: 'Inter', sans-serif;
+	scrollbar-color: var(--grey);
+	scrollbar-width: thin;
 }
 h1 {
 	margin: 0 0 30px 0;
 	font-size: clamp(22px, 7vw, 4rem);
 }
+::-webkit-scrollbar { width: 5px }
+::-webkit-scrollbar-track { background: #0000 }
+::-webkit-scrollbar-thumb { background: var(--grey) }
 
 ::placeholder,
 .dim { color: var(--grey) }

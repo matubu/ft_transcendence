@@ -1,6 +1,7 @@
 import { user, twoauth, waitingLogin, sock } from '@lib/store'
 import { get } from 'svelte/store'
 import { goto } from '@sapper/app'
+import { beforeUpdate } from 'svelte';
 
 export const getCookiesFromString = s => s && Object.fromEntries(s.split?.('; ').map(v => v.split('=')))
 
@@ -85,9 +86,10 @@ export const send = async (channel, data: any = '') => {
 if (typeof document !== 'undefined')
 {
 	if (getCookie('user'))
-		localStorage.getItem('user')
-			? localStorageUser()
-			: fetchUser()
+	{
+		localStorage.getItem('user') && localStorageUser()
+		fetchUser()
+	}
 	else
 	{
 		user.set(undefined)

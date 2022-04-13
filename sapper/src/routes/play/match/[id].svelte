@@ -49,7 +49,9 @@
 	let randomVelocity = () => {
 		const x = (Math.random() * .5 + .5) * (Math.random() < .5 ? -1 : 1),
 			y = Math.sqrt(1 - x * x) * (Math.random() < .5 ? -1 : 1)
+		
 		return ([x, y])
+		//return ([0, 0])
 	}
 	let sign = (n, sign) => Math.abs(n) * (sign ? -1 : 1)
 	let resetBall = () => {

@@ -29,8 +29,8 @@
 <Layout>
 	<div>
 		<div class="grid-layout">
-			{#each $rooms as {id, name, password, private: mode}}
-				<Room id={+id} name="{name}" type="{password ? 'protected' : (mode ? 'private' : 'public')}" joined={true}/>
+			{#each $rooms as {id, name, password_is_set, private: mode}}
+				<Room id={+id} name="{name}" type="{password_is_set ? 'protected' : (mode ? 'private' : 'public')}" joined={true}/>
 			{/each}
 		</div>
 	</div>
