@@ -38,6 +38,11 @@ export class ChannelService {
 												select: ['id', 'name', 'description', 'private'] });
 	}
 
+	async getIncludePassword(id: number): Promise<Channel>
+	{
+		return this.channelRepository.findOne({ where: { id } });
+	}
+
 	async getUsers(id_channel: number): Promise<User[]>
 	{
 		const channel = await this.get(id_channel);
@@ -103,7 +108,7 @@ export class ChannelService {
 
 	async addAccess(id_user: number, id_channel: number, password?: string): Promise<AccessChannel>
 	{
-		const channel = await this.get(id_channel);
+		const channel = await this.getIncludePassword(id_channel);
 		if (channel != undefined && channel.password != undefined)
 			if (password == undefined || await bcrypt.compare(password, channel.password) == false)
 				throw new UnauthorizedException()
