@@ -1,3 +1,29 @@
+<svelte:window
+	on:wsmsg={e => {
+		const { channel, data } = e.detail
+
+		const handlers = {
+			matchData: ({ w: weak, s: gameScore, o: opponentData }) => {
+				weakPeer = weak
+				score = gameScore
+				opponent = opponentData
+				status = 'game'
+				sendOffer(sendProxy, weak)
+			},
+			matchScore: (gameScore) => {
+				score = gameScore
+			},
+			rankedExpired: () => status = 'expired',
+			proxy: RTCCallback
+		}
+
+		handlers[channel]?.(data)
+	}}
+	on:touchmove={e => updatePaddle(e.touches[0].clientY)}
+	on:mousemove={e => updatePaddle(e.clientY)}
+	on:visibilitychange={() => !document.hidden && send('matchScore', [])}
+/>
+
 <script>
 	import { goto } from '@sapper/app'
 	import User from '@components/User.svelte'
@@ -5,7 +31,7 @@
 	import Layout from '@components/Layout.svelte'
 	import Guard from '@components/Guard.svelte'
 	import Button from '@components/Button.svelte'
-	import { send, fetchUser } from '@lib/utils'
+	import { send } from '@lib/utils'
 	import { RTCConnection, sendOffer, whenReady, destroyRTC } from '@lib/webrtc'
 	import { user } from '@lib/store'
 	import { onDestroy, onMount } from 'svelte'
@@ -44,7 +70,10 @@
 	let ballVelocity: number[] = [0, 0]
 
 	const sendRTC = (channel, data) => RTCSock?.sock?.readyState !== 'closed' && RTCSock?.send?.(channel, data)
-	const sendProxy = data => send('proxy', [id, data])
+	const sendProxy = data => {
+		console.log('sendProxy', data)
+		send('proxy', [id, data])
+	}
 
 	let randomVelocity = () => {
 		const x = (Math.random() * .5 + .5) * (Math.random() < .5 ? -1 : 1),
@@ -184,36 +213,8 @@
 	}
 </script>
 
-<svelte:window
-	on:wsmsg={e => {
-		const { channel, data } = e.detail
-
-		const handlers = {
-			matchData: ({ w: weak, s: gameScore, o: opponentData }) => {
-				weakPeer = weak
-				score = gameScore
-				opponent = opponentData
-				status = 'game'
-				sendOffer(sendProxy, weak)
-			},
-			matchScore: (gameScore) => {
-				score = gameScore
-			},
-			rankedExpired: () => status = 'expired',
-			proxy: RTCCallback
-		}
-
-		handlers[channel]?.(data)
-	}}
-	on:touchmove={e => updatePaddle(e.touches[0].clientY)}
-	on:mousemove={e => updatePaddle(e.clientY)}
-	on:visibilitychange={() => !document.hidden && send('matchScore', [])}
-/>
-
 <style>
-	:global(html) {
-		overflow: hidden;
-	}
+	:global(html) { overflow: hidden; }
 	.container {
 		display: flex;
 		flex-direction: column;
@@ -287,7 +288,6 @@
 			</div>
 		</div>
 	</Guard>
-	<script> fetchUser() </script>
 {:else if status === 'game'}
 	<Head title="Match" />
 

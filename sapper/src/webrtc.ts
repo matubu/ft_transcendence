@@ -51,7 +51,7 @@ export const RTCConnection = (send: Function): Function => {
 				createPeerConnection(send, proposalId)
 
 				await pc.setRemoteDescription(new RTCSessionDescription(offer))
-				pc.createAnswer(async answer => {
+				pc.createAnswer().then(async answer => {
 					await pc.setLocalDescription(answer);
 					send({ step: 'answer', answer, id })
 				}, err => console.log('error', err))
@@ -68,9 +68,11 @@ export const RTCConnection = (send: Function): Function => {
 }
 
 export const sendOffer = (send: Function, weak: boolean) => {
+	console.log('sendOffer')
 	weakPeer = weak
 	if (weakPeer && proposalId !== -1)
 		return ;
+	console.log('createPeerConnection')
 	let id = Math.random()
 	proposalId = id
 	createPeerConnection(send, id)
@@ -82,7 +84,8 @@ export const sendOffer = (send: Function, weak: boolean) => {
 		whenReadyFunc(new RCTPeer(channel))
 	}
 
-	pc.createOffer(offer => {
+	pc.createOffer().then(offer => {
+		console.log('createOffer')
 		pc.setLocalDescription(offer)
 		const { sdp, type } = offer
 		send({ step: 'offer', offer: { sdp, type }, id })

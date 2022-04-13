@@ -35,6 +35,15 @@
 	};
 </script>
 
+<style>
+	:global(html) {
+		overflow: hidden;
+	}
+	:global(body) {
+		height: 100vh;
+	}
+</style>
+
 <Head title="Chat" />
 
 <svelte:window on:wsmsg={e => {

@@ -75,9 +75,15 @@
 						<User user="{player1}" />
 						{player1.nickname ?? player1.fullname.split(' ')[0]}
 					</div>
-					{player1_score}
-					-
-					{player2_score}
+					<div>
+						<span class="{player1_score == player2_score ? 'equal' : (player1_score > player2_score ? 'winning' : 'losing')}">
+							{player1_score}
+						</span>
+						-
+						<span class="{player1_score == player2_score ? 'equal' : (player2_score > player1_score ? 'winning' : 'losing')}">
+							{player2_score}
+						</span>
+					</div>
 					<div>
 						<User user="{player2}" />
 						{player2.nickname ?? player2.fullname.split(' ')[0]}
