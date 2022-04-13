@@ -34,7 +34,8 @@ export class ChannelService {
 
 	async get(id: number): Promise<Channel>
 	{
-		return this.channelRepository.findOne({ where: { id } });
+		return this.channelRepository.findOne({ where: { id },
+												select: ['id', 'name', 'description', 'private'] });
 	}
 
 	async getUsers(id_channel: number): Promise<User[]>
@@ -55,12 +56,13 @@ export class ChannelService {
 			throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
 		if (channel.password !== undefined)
 			channel.password = await bcrypt.hash(channel.password, 10);
-		return this.channelRepository.save({ owner: owner,
+		const tmp = await this.channelRepository.save({ owner: owner,
 												name: channel.name,
 												password: channel.password,
 												description: channel.description,
 												private: channel.private
 											});
+		return this.get(tmp.id);
 	}
 
 	async isOwner(id_user: number, id_channel: number): Promise<boolean>
