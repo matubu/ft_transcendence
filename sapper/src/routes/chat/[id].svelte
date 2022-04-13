@@ -4,17 +4,23 @@
 	import Button from '@components/Button.svelte'
 	import { send } from '@lib/utils';
 	import User from '@lib/components/User.svelte';
+	import Message from '@lib/components/Message.svelte';
 
 	let msg
 	let id_room
 
 	let messages = []
+	let userInfo = new Map<number, any>()
+
 
 	const reloadChat = async () => {
 		let res = await fetch(`/api/channel/${id_room}`, {method: "POST"})
 		if (!res.ok) return ;
 		let json = await res.json()
-		messages = json
+		messages = json.msgs
+		let infos = json.users
+		for (const info of infos)
+			userInfo.set(info.id, info)
 	}
 	if (typeof document !== 'undefined')
 	{
@@ -24,6 +30,7 @@
 		//TODO remove listener
 	}
 	const addMessage = (msg) => {
+		userInfo.set(msg.userId, msg.user)
 		messages = [...messages, msg];
 	};
 </script>
@@ -38,9 +45,8 @@
 
 <Layout>
 	{#each messages as msg}
-		<p><User user={msg.user}/>{msg.user.nickname ?? msg.user.fullname}: {msg.msg}</p>
+		<Message user={userInfo.get(msg.userId)} message={msg.msg}/>
 	{/each}
-
 	<form on:submit={async e => {
 		e.preventDefault()
 		msg.value = msg.value.trim();

@@ -8,10 +8,10 @@ export class Match
 	id: number;
 
 	@ManyToOne(() => User, { eager : true })
-    player1: User;
+	player1: User;
 
 	@ManyToOne(() => User, { eager : true })
-    player2: User;
+	player2: User;
 
 	@Column({ default: 0 })
 	player1_score: number;
@@ -20,5 +20,5 @@ export class Match
 	player2_score: number;
 
 	@ManyToOne(() => User, { eager : true })
-    victory?: User;
+	victory?: User;
 }
