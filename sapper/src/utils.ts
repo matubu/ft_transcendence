@@ -100,7 +100,7 @@ if (typeof document !== 'undefined')
 		get(sock)?.close?.()
 		if (!data)
 			return sock.set(undefined)
-		let ws = new WebSocket(`ws://localhost:3001`)
+		let ws = new WebSocket(`ws://${location.hostname}:3001`)
 		sock.set(new Promise(resolve => (ws.onopen = _ => resolve(ws))))
 		ws.onmessage = ({ data: msg }) => {
 			let idx = msg.indexOf(':')
