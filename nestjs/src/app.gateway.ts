@@ -194,7 +194,7 @@ export class AppGateway {
 		console.log(match.getScore(client))
 		send(client, 'matchData', {
 			// --- OPPONENT ---
-			o: await this.userService.get(match.getOpponent(client).userId, []),
+			o: await this.userService.get(match.getOpponent(client)?.userId, []),
 			// --- WEAK ---
 			w: match.isPlayerWeak(client),
 			// --- SCORE ---
