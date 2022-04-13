@@ -128,8 +128,11 @@ export class ChannelService {
 
 	async banUser(id_user: number, id_admin: number, id_channel: number): Promise<BlacklistChannel>
 	{
-		if (await this.adminChannelService.isAdmin(id_admin, id_channel) == false
-		&& await this.isOwner(id_admin, id_channel) == false)
+		const user_is_admin = await this.adminChannelService.isAdmin(id_user, id_channel);
+		const admin_is_admin = await this.adminChannelService.isAdmin(id_admin, id_channel);
+		const admin_is_owner = await this.isOwner(id_admin, id_channel);
+		if ((admin_is_admin == false && admin_is_owner == false)
+		|| (user_is_admin && admin_is_owner == false))
 			throw new UnauthorizedException();
 		return this.blackListChannelService.ban(id_user, id_channel);
 	}
