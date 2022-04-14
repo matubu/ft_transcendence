@@ -1,18 +1,18 @@
 <script>
 	import IconButton from "@components/IconButton.svelte"
 	import User from '@components/User.svelte'
+	import { user } from '@lib/store'
 	import { onMount } from 'svelte'
+	import { get } from "svelte/store";
 
 	let container
 	let blur: boolean
 	let notifs = [];
 
-	// onMount(async () => {
-	// 	let res = await fetch(`/api/notification`)
-	// 	if (!res.ok) return ;
-	// 	let json = await res.json()
-	// 	notifs = json
-	// })
+	onMount(() => {
+		notifs = get(user).notifications ?? []
+		console.log("loaded notifs", notifs)
+	})
 </script>
 
 <style>
@@ -74,7 +74,9 @@
 
 <svelte:window on:wsmsg={e => {
 	const { channel, data } = e.detail
-	console.log('here notifcation in svelte:window', channel, data)
+	if (channel !== "notif") return;
+	console.log('ws notifcation in svelte:window', channel, data)
+	notifs = [...notifs, data]
 }}/>
 
 <div class="container" bind:this={container}>
@@ -90,8 +92,7 @@
 		<div class="bubble"></div>
 	</IconButton>
 	<div class="notif">
-		<!-- {#if}
-			{#each notifs as notif}
+			<!-- {#each notifs as notif}
 				<a href="/invite/[uuid]">
 					<User user={{img: ''}} />
 					<span><strong>matubu</strong> invited you</span>
@@ -106,9 +107,20 @@
 						<span>{notif.msg}</span>
 					</a>
 				</div>
+			{/each} -->
+		{#if notifs.length}
+			{#each notifs as notif}
+				<div>
+					<p>
+						{#if notif.sender}
+						<User user="{notif.sender}" />
+						{/if}
+						<span>{notif.msg}</span>
+					</p>
+				</div>
 			{/each}
-		{#else} -->
-		<p>No notification</p>
-		<!-- {/if} -->
+		{:else}
+			<p>No notification</p>
+		{/if}
 	</div>
 </div>

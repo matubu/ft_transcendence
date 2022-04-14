@@ -9,6 +9,7 @@ import { MatchService } from 'src/match/match.service'
 import { Server } from 'ws'
 import { ChannelService } from './channel/channel.service';
 import { MessageService } from './message/message.service';
+import { Notification } from 'src/notification/notification.entity'
 
 const puts = (color: number, ...args) =>
 	console.log(`\u001B[1;${color}m`, ...args, '\u001B[0m')
@@ -62,15 +63,14 @@ class Match {
 		return (this.score[0] >= 11 || this.score[1] >= 11)
 	}
 	updateScore(client: any, gameScore: number[], finish: Function) {
-		if (this.isFinish()) return ;
+		if (this.isFinish()) return;
 		if (client.userId === this.players[1].userId)
 			gameScore.reverse()
 		if (gameScore[0] > this.score[0])
 			this.score[0] = Math.min(gameScore[0], 11)
 		if (gameScore[1] > this.score[1])
 			this.score[1] = Math.min(gameScore[1], 11)
-		if (this.isFinish())
-		{
+		if (this.isFinish()) {
 			send(this.players[0], 'matchScore', this.getScore(this.players[0]))
 			send(this.players[1], 'matchScore', this.getScore(this.players[1]))
 			finish()
@@ -89,7 +89,7 @@ export class AppGateway {
 		private readonly matchService: MatchService,
 		private readonly channelService: ChannelService,
 		private readonly messageService: MessageService
-	) {}
+	) { }
 
 	userMap: Map<number, Set<any>> = new Map()
 	matchingMap: Map<number, any> = new Map()
@@ -126,7 +126,7 @@ export class AppGateway {
 			this.userMap.delete(client.userId)
 	}
 
-	getMatchByClient(client): { id?: string, match? : Match } {
+	getMatchByClient(client): { id?: string, match?: Match } {
 		for (const [id, match] of this.matchMap)
 			if (match.containsPlayer(client))
 				return ({ id, match })
@@ -167,12 +167,11 @@ export class AppGateway {
 	joinRanked(client: any) {
 		// --- TRY TO RECONNECT TO OLD MATCH ---
 		if (this.connectToMatch(client) !== false)
-			return ;
+			return;
 		// ---- ADD TO MATCHING LIST ----
 		this.matchingMap.set(client.userId, client)
 		console.log(this.matchingMap.keys(), this.matchingMap.size)
-		if (this.matchingMap.size >= 2)
-		{
+		if (this.matchingMap.size >= 2) {
 			// ---- CREATE MATCH ----
 			const [[id1, user1], [id2, user2]] = this.matchingMap
 			const id = Math.random().toFixed(16).split('.')[1]
@@ -209,8 +208,8 @@ export class AppGateway {
 	@SubscribeMessage('matchScore')
 	onMatchScore(client: any, gameScore: number[]) {
 		let { id, match } = this.getMatchByClient(client);
-		
-		if (match == undefined) return ;
+
+		if (match == undefined) return;
 		match?.updateScore?.(client, gameScore, () => {
 			console.log('saveMatch')
 			this.matchService.saveMatch(match.players[0].userId, match.players[1].userId, match.score[0], match.score[1])
@@ -229,13 +228,20 @@ export class AppGateway {
 		//get all user in chat
 		//broadcast client and message to them
 		//insert new message in db
-		const {room, msg} = data;
+		const { room, msg } = data;
 		const users = await this.channelService.getUsers(room);
 		// const chatData = {senderId: client.userId, room: room, msg: msg}
-		const messageInfo =  await this.messageService.insert(client.userId, room, msg)
-		for (const user of users)
-		{
+		const messageInfo = await this.messageService.insert(client.userId, room, msg)
+		for (const user of users) {
 			this.sendTo(user.id, 'chat', messageInfo);
 		}
+	}
+
+	handleNotifcation(notif: Notification)
+	{
+		const {receiver} = notif
+		if (!receiver) return;
+		// console.log(receiver)
+		this.sendTo(receiver.id, "notif", notif);
 	}
 }

@@ -48,6 +48,7 @@
 
 <svelte:window on:wsmsg={e => {
 	const { channel, data } = e.detail
+	if (channel !== "chat") return;
 	console.log('here in svelte:window', channel, data)
 	addMessage( data );
 }}/>

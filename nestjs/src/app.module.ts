@@ -25,5 +25,6 @@ import { BlacklistChannelModule } from './blacklist-channel/blacklist-channel.mo
   imports: [TypeOrmModule.forRoot(), UserModule, PictureModule, NotificationModule, MessageModule, MatchModule, ChannelModule, AccessModule, FriendModule, DfaModule, AuthModule, AchievementModule, AdminModule, UserAchievementModule, AlcoholModule, RankModule, SearchModule, BlacklistChannelModule],
   controllers: [AppController],
   providers: [AppService, AppGateway],
+  exports: [AppGateway]
 })
 export class AppModule {}
