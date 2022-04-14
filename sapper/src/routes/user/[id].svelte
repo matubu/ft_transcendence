@@ -4,7 +4,7 @@
 	import Button from '@components/Button.svelte'
 
 	async function load() {
-		const res = await fetch(`/api/users/${+location.pathname.split('/')[2]}`)
+		const res = await fetch(`/api/user/${+location.pathname.split('/')[2]}`)
 		if (!res.ok)
 			throw 'cannot fetch'
 		return await res.json()

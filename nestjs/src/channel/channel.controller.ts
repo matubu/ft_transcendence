@@ -16,9 +16,9 @@ export class ChannelController {
 				private readonly messageService: MessageService) {}
 
 	@Get()
-	async getAll(): Promise<Channel[]>
+	async getAll(@Autorization() userId: number): Promise<Channel[]>
 	{
-		return await this.channelService.getALL();
+		return await this.channelService.getALL(userId);
 	}
 
 	@Get(':id_channel/users')

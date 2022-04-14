@@ -7,9 +7,14 @@ export class Match
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@ManyToMany(() => User, user => user.id, { eager: true })
-	@JoinTable()
+	@ManyToMany(() => User, user => user.id)
 	players: User[];
+
+	@ManyToOne(() => User, { eager : true })
+	player1?: User;
+
+	@ManyToOne(() => User, { eager : true })
+	player2?: User;
 
 	@Column({ default: 0 })
 	player1_score: number;

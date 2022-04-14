@@ -27,9 +27,19 @@ export class ChannelService {
 		private readonly blackListChannelService: BlacklistChannelService
 	) {}
 
-	async getALL(): Promise<Channel[]>
+	async getALL(userId: number): Promise<Channel[]>
 	{
-		return this.channelRepository.find({select: ['id', 'name', 'password_is_set', 'description', 'private']});
+		const user = await this.userService.get(userId, ["adminChannels", "accessChannels"]);
+		let channels = await this.channelRepository.find({ where: [{private: false},
+																	{private: true, owner: user}],
+															select: ['id', 'name', 'password_is_set', 'description', 'private'] });
+		for (let i = 0; i < user.adminChannels.length; i++)
+			if (user.adminChannels[i].channel.private)
+				channels.push(user.adminChannels[i].channel);
+		for (let i = 0; i < user.accessChannels.length; i++)
+			if (user.accessChannels[i].channel.private)
+				channels.push(user.accessChannels[i].channel);
+		return (channels);
 	}
 
 	async get(id: number): Promise<Channel>

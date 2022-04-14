@@ -17,11 +17,9 @@ export class UserService {
 		private readonly pictureService: PictureService
 	) {}
 
-	async get(id: number, relations: any[], dfa_bool: boolean = false): Promise<User>
+	async get(id: number, relations: any[]): Promise<User>
 	{
-		if (dfa_bool)
-			return this.userRepository.findOne({ where: { id }, relations });
-		return this.userRepository.findOne({ where: { id }, relations, select: ["id","fullname","elo","nickname"] });
+		return this.userRepository.findOne({ where: { id }, relations });
 	}
 
 	async create(id: number, fullname: string, urlImage: string): Promise<User>
@@ -68,20 +66,20 @@ export class UserService {
 	async activate2FA(id: number): Promise<Dfa>
 	{
 		const user = await this.get(id, ["dfa"]);
-		if (user.twoauth)
+		if (user.dfa != null)
 			return user.dfa;
 		const dfa = await this.dfaService.insert(user.nickname ?? user.fullname);
-		this.userRepository.save({id: user.id, twoauth: true, dfa: dfa});
+		this.userRepository.save({id: user.id, dfa: dfa});
 		return dfa;
 	}
 
 	async disabled2FA(id: number): Promise<User>
 	{
 		let user = await this.get(id, ["dfa"]);
-		if (!user.twoauth)
+		if (!user.dfa != null)
 			return user;
 		const id_dfa_remove = user.dfa.id;
-		const ret = await this.userRepository.save({ id: user.id, twoauth: false, dfa: null });
+		const ret = await this.userRepository.save({ id: user.id, dfa: null });
 		this.dfaService.remove(id_dfa_remove);
 		return ret;
 	}
@@ -89,7 +87,7 @@ export class UserService {
 	async checkCode(id: number, code: string): Promise<boolean>
 	{
 		let user = await this.get(id, ["dfa"]);
-		if (user.twoauth == false)
+		if (user.dfa == null)
 			return false;
 		return this.dfaService.verifySecret(user.dfa.secret, code);
 	}

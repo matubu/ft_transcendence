@@ -18,9 +18,6 @@ export class User
 	@Column()
 	fullname: string;
 
-	@Column({ default: false })
-	twoauth?: boolean;
-
 	@Column({ default: 1000 })
 	elo: number;
 
