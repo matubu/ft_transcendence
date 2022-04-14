@@ -13,6 +13,11 @@
 		notifs = get(user).notifications ?? []
 		console.log("loaded notifs", notifs)
 	})
+
+	const readNotifs = async () => {
+		let res = await fetch(`/api/notification/readAll`, {method: "PUT"})
+		if (!res.ok) return ;
+	};
 </script>
 
 <style>
@@ -85,6 +90,9 @@
 		on:mousedown={() => {
 			blur = document.activeElement == container.firstChild
 			container.firstChild.blur()
+			console.log("click notif")
+			// if (!focus)
+			readNotifs();
 		}}
 		on:focus={() => blur && container.firstChild.blur()}
 	>
