@@ -7,6 +7,5 @@
 
 <Layout>
 	<div class="grid-layout">
-		<div class="glass-card"></div>
 	</div>
 </Layout>

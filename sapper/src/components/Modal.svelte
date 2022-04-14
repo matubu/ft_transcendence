@@ -17,6 +17,22 @@
 </script>
 
 <style>
+	.card {
+		background: #0f0f1c;
+		padding: 30px;
+		border-radius: 10px;
+		width: 100%;
+		min-width: 200px;
+		max-width: 500px;
+		display: flex;
+		flex-direction: column;
+		gap: 30px;
+		box-sizing: border-box;
+	}
+	.card > :global(*) {
+		margin: 0;
+	}
+
 	.modal {
 		position: fixed;
 		top: 0;
@@ -44,7 +60,7 @@
 		animation: forwards modal-backdrop-fade .3s ease-in-out;
 	}
 
-	.glass-card {
+	.card {
 		overflow: auto;
 		max-height: 100%;
 		animation: forwards modal-card-fade .2s ease-in-out;
@@ -78,7 +94,7 @@
 </style>
 
 <div class="modal {opened || 'closed'}">
-	<div class="glass-card">
+	<div class="card">
 		<slot />
 	</div>
 	<div class="backdrop" on:click={() => close()}></div>

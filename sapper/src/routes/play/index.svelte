@@ -1,35 +1,24 @@
 <script>
 	import Layout from '@components/Layout.svelte'
 	import Head from '@components/Head.svelte'
-	import User from '@components/User.svelte'
+	import MatchScore from '@components/MatchScore.svelte'
 	import Button from '@components/Button.svelte'
 	import Icon from '@components/Icon.svelte'
 	import { goto } from '@sapper/app'
 	import { onMount } from 'svelte'
-	import { send } from '@lib/utils'
+	import { fetchUser, send } from '@lib/utils'
 	import { user } from '@lib/store'
 
-	onMount(() => send('play'))
+	onMount(() => {
+		send('play')
+		fetchUser()
+	})
 </script>
 
 <style>
 	.matchs {
 		display: flex;
 		flex-direction: column;
-		gap: 20px;
-	}
-	.match {
-		display: flex;
-		gap: 10px;
-		align-items: center;
-		justify-content: space-between;
-		border-radius: 5px;
-		border: 1px solid var(--bord);
-		padding: 10px;
-	}
-	.match > div {
-		display: flex;
-		align-items: center;
 		gap: 20px;
 	}
 </style>
@@ -69,27 +58,24 @@
 	<div>
 		<h2>Match</h2>
 		<div class="matchs">
-			{#each $user.matchs as { player1_score, player2_score, player1, player2 }}
-				<div class="match">
-					<div>
-						<User user="{player1}" />
-						{player1.nickname ?? player1.fullname.split(' ')[0]}
-					</div>
-					<div>
-						<span class="{player1_score == player2_score ? 'equal' : (player1_score > player2_score ? 'winning' : 'losing')}">
-							{player1_score}
-						</span>
-						-
-						<span class="{player1_score == player2_score ? 'equal' : (player2_score > player1_score ? 'winning' : 'losing')}">
-							{player2_score}
-						</span>
-					</div>
-					<div>
-						<User user="{player2}" />
-						{player2.nickname ?? player2.fullname.split(' ')[0]}
-					</div>
-				</div>
-			{/each}
+			{#if $user.matchs.length}
+				{#each $user.matchs as { player1_score, player2_score, player1, player2 }}
+					<MatchScore 
+						player1={
+							$user.id === player1.id
+								? [player1, player1_score]
+								: [player2, player2_score]
+						}
+						player2={
+							$user.id !== player1.id
+								? [player1, player1_score]
+								: [player2, player2_score]
+						}
+					/>
+				{/each}
+			{:else}
+				<p class="dim">No match history yet</p>
+			{/if}
 		</div>
 	</div>
 </Layout>

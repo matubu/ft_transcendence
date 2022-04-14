@@ -1,8 +1,8 @@
 :root {
 	--whit: #F1F1F1;
 	--back: hsl(240, 33%, 1%);
-	--fore: hsl(240, 33%, 6%);
-	--bord: #3c3c44;
+	--fore: #0f0f1c;
+	--bord: #1b1b1f;
 
 	--bhov: #f0f7ff09;
 	--hove: #f0f7ff07;
@@ -14,6 +14,7 @@
 	--grey: #CBCBCB;
 	--prim: #f2f4f8;
 	--seco: #d8dee9;
+	--primary: #4e38a1;
 
 	--grad-blue: linear-gradient(107.56deg, #74cabe 2.2%, #6539cd 29.17%, #24054c 95.31%);
 	--grad-purp: linear-gradient(107.56deg, #ffa7a7 2.2%, #a30cb5 29.17%, #00173a 95.31%);
@@ -76,37 +77,14 @@ textarea, input[type="text"], input[type="password"] {
 	max-width: 400px;
 	font-size: 20px;
 	margin: 0;
-	padding: 10px 20px;
+	padding: 15px 20px;
 	box-sizing: border-box;
-	background: #938fd013;
-	border-radius: 5px;
-	border: 1px solid rgb(142 140 144 / 5%);
-	box-shadow: inset 1px 1px 0 hsl(0deg 0% 100% / 11%);
+	border-radius: 7px;
 	outline: none;
 	color: var(--whit);
 	transition: .3s;
-}
-input[type="text"], input[type="password"] {
-	height: 50px;
-}
-
-.glass-card {
-	background: hsl(216deg 75% 77% / 20%);
-	border: 1px solid rgb(142 140 144 / 5%);
-	box-shadow: inset 1px 1px 0 hsl(0deg 0% 100% / 11%);
-	backdrop-filter: blur(52px);
-	padding: 30px;
-	border-radius: 10px;
-	width: 100%;
-	min-width: 200px;
-	max-width: 500px;
-	display: flex;
-	flex-direction: column;
-	gap: 30px;
-	box-sizing: border-box;
-}
-.glass-card > * {
-	margin: 0;
+	background: #0000;
+	border: 2px solid var(--bord);
 }
 
 .grad-card {
@@ -119,7 +97,7 @@ input[type="text"], input[type="password"] {
 	gap: 15px;
 	max-width: 500px;
 }
-.grad-card * {
+.grad-card > * {
 	margin: 0;
 }
 .grad-card > div:first-child {

@@ -37,12 +37,21 @@ let createPeerConnection = (send, id) => {
 	}
 }
 
+let autoRetry = (send, id) => {
+	setTimeout(() => {
+		if (proposalId !== id) return ;
+		console.log('retrying RTC connection')
+		proposalId = -1;
+		sendOffer(send, weakPeer)
+	}, 1000)
+}
+
 export const RTCConnection = (send: Function): Function => {
 	return ({ step, ...data }) => {
 		const handlers = {
 			candidate: ({ candidate, id }) => {
-				if (id === proposalId)
-					pc.addIceCandidate(new RTCIceCandidate(candidate))
+				if (id !== proposalId) return ;
+				pc.addIceCandidate(new RTCIceCandidate(candidate))
 			},
 			offer: async ({ offer, id }) => {
 				if (!weakPeer && proposalId !== -1)
@@ -55,10 +64,12 @@ export const RTCConnection = (send: Function): Function => {
 					await pc.setLocalDescription(answer);
 					send({ step: 'answer', answer, id })
 				}, err => console.log('error', err))
+
+				autoRetry(send, id)
 			},
 			answer: ({ answer, id }) => {
-				if (id === proposalId)
-					pc.setRemoteDescription(new RTCSessionDescription(answer))
+				if (id !== proposalId) return ;
+				pc.setRemoteDescription(new RTCSessionDescription(answer))
 			}
 		}
 
@@ -68,7 +79,7 @@ export const RTCConnection = (send: Function): Function => {
 }
 
 export const sendOffer = (send: Function, weak: boolean) => {
-	console.log('sendOffer')
+	console.log('sendOffer', weak ? 'weak' : 'strong')
 	weakPeer = weak
 	if (weakPeer && proposalId !== -1)
 		return ;
@@ -90,6 +101,8 @@ export const sendOffer = (send: Function, weak: boolean) => {
 		const { sdp, type } = offer
 		send({ step: 'offer', offer: { sdp, type }, id })
 	}, err => console.log('error', err))
+
+	autoRetry(send, id)
 }
 
 export const whenReady = callback => (whenReadyFunc = callback)

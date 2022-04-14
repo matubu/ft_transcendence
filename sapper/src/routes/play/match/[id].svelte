@@ -37,12 +37,27 @@
 	import { onDestroy, onMount } from 'svelte'
 	import IconButton from '@components/IconButton.svelte'
 
+	// TODO improve sound
+	// TODO fix desync score
+	// TODO watch
+	// TODO reduce lag
+	// TODO add chat navbar
+	// TODO improve winner screen
+	// TODO animation battle
+	// TODO notification change icon
+
 	let id: string,
 		status: string,
 		RTCCallback: Function,
 		weakPeer = true,
 		RTCSock,
 		opponent
+
+	let mp3
+	let playCollisionSound = (type) => {
+		try { mp3[type - 1]?.play?.() }
+		catch (err) { console.log('cannot play sound', err) }
+	}
 
 	let arena
 	let frame
@@ -70,17 +85,13 @@
 	let ballVelocity: number[] = [0, 0]
 
 	const sendRTC = (channel, data) => RTCSock?.sock?.readyState !== 'closed' && RTCSock?.send?.(channel, data)
-	const sendProxy = data => {
-		console.log('sendProxy', data)
-		send('proxy', [id, data])
-	}
+	const sendProxy = data => send('proxy', [id, data])
 
 	let randomVelocity = () => {
 		const x = (Math.random() * .5 + .5) * (Math.random() < .5 ? -1 : 1),
 			y = Math.sqrt(1 - x * x) * (Math.random() < .5 ? -1 : 1)
 		
 		return ([x, y])
-		//return ([0, 0])
 	}
 	let sign = (n, sign) => Math.abs(n) * (sign ? -1 : 1)
 	let resetBall = () => {
@@ -109,6 +120,7 @@
 		)
 
 	onMount(() => {
+		mp3 = [new Audio('ping.mp3'), new Audio('pong.mp3'), new Audio('oof.mp3')]
 		id = location.pathname.split('/')[3]
 
 		RTCCallback = RTCConnection(sendProxy)
@@ -126,9 +138,11 @@
 				send('matchScore', [])
 			})
 			// --- SYNC BALL ---
-			sock.on('S', ([[x, y], [vx, vy]]) => {
+			sock.on('S', ([[x, y], [vx, vy], collision]) => {
 				ballPosition = [WIDTH - x, y]
 				ballVelocity = [-vx, vy]
+				if (collision)
+					playCollisionSound(collision)
 			})
 			// --- ASKING SYNC ---
 			sendRTC('P', paddleLeft)
@@ -141,6 +155,7 @@
 		frame = requestAnimationFrame(function sim(timestamp) {
 			syncTimestamp ??= timestamp
 			let sync: boolean = (timestamp - syncTimestamp) > 3000;
+			let collision = 0
 			frame = requestAnimationFrame(sim)
 			// --- COMPUTE DELTATIME ---
 			previousTimestamp ??= timestamp
@@ -161,10 +176,15 @@
 				resetBall()
 				// --- SYNC SCORE ---
 				send('matchScore', score)
+				collision = 3
 			}
 			// --- FRAME HORIZONTAL COLLISION ---
 			if (ballPosition[1] < BALL_RADIUS || ballPosition[1] > HEIGHT - BALL_RADIUS)
+			{
 				ballVelocity[1] = sign(ballVelocity[1], ballPosition[1] > HEIGHT - BALL_RADIUS)
+				// --- SOUND ---
+				collision = 1
+			}
 			// --- PADDLE COLLISION
 			for (let [paddleX, paddleY] of [[PADDLE_X_MARGIN, paddleLeft], [WIDTH - PADDLE_X_MARGIN, paddleRight]])
 			{
@@ -186,12 +206,16 @@
 				ballPosition[0] = SIDE ? X : WIDTH - X
 				// --- SYNC BALL ---
 				sync = true
+				// --- SOUND ---
+				collision = 2
 			}
 			if (sync)
 			{
-				sendRTC('S', [ballPosition, ballVelocity])
+				sendRTC('S', [ballPosition, ballVelocity, collision])
 				syncTimestamp = timestamp
 			}
+			if (collision)
+				playCollisionSound(collision)
 		})
 
 		send('matchData', id)
@@ -219,8 +243,7 @@
 		display: flex;
 		flex-direction: column;
 		margin: 0 auto;
-		width: min(100%, calc((100vh - 160px - 2rem) / 2 * 3));
-		gap: 5px;
+		gap: 20px;
 	}
 	.arena {
 		border: 1px solid var(--bord);
@@ -228,8 +251,9 @@
 		position: relative;
 		user-select: none;
 		background: black;
-		width: 100%;
-		aspect-ratio: 3 / 2;
+		--width:  min(calc(100vw - 2rem), calc((100vh - 160px - 2rem) / 2 * 3));
+		width: var(--width);
+		height: calc(var(--width) / 3 * 2);
 		overflow: hidden;
 		border-radius: 5px;
 	}
@@ -262,6 +286,11 @@
 		text-align: center;
 		gap: 20px;
 	}
+	.win-container > div {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
 	.win-container h1 {
 		margin-top: 20px;
 	}
@@ -283,7 +312,7 @@
 		<div class="win-container">
 			<div>
 				<User size="200" user={score[0] >= 11 ? $user : opponent} />
-				<h1>{score[0] >= 11 ? 'You' : opponent?.nickname ?? opponent?.fullname} won !</h1>
+				<h1>{score[0] >= 11 ? 'You' : opponent?.nickname ?? opponent?.fullname.split(' ')[0]} won !</h1>
 				<div class="{score[0] >= 11 ? 'winning' : 'losing'}">{score[0] >= 11 ? '+10' : '-10'}</div>
 			</div>
 		</div>
