@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, ManyToMany, JoinTable } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, ManyToMany } from 'typeorm';
 import { User } from '../user/user.entity'
 
 @Entity()
@@ -22,6 +22,13 @@ export class Match
 	@Column({ default: 0 })
 	player2_score: number;
 
+	@Column('timestamp', { 
+		name: 'date', 
+		default: (): string => 'LOCALTIMESTAMP'
+	})
+	date?: Date;
+
 	@ManyToOne(() => User, { eager : true })
 	victory?: User;
 }
+

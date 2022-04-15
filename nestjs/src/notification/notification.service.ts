@@ -12,11 +12,11 @@ export class NotificationService {
 		private readonly userService: UserService
 	) {}
 
-	async insert(id_user: number, msg: string, id_sender: number ): Promise<Notification>
+	async insert(id_user: number, msg: string, id_sender: number, url: string ): Promise<Notification>
 	{
 		const receiver = await this.userService.get(id_user, []);
 		const sender = await this.userService.get(id_sender, []);
-		return this.notificationRepository.save({ receiver: receiver, sender: sender, msg: msg });
+		return this.notificationRepository.save({ receiver, sender, msg, url });
 	}
 
 	async removeNotification(idUser: number, id_notification: number): Promise<DeleteResult>

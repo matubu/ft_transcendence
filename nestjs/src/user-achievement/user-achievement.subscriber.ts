@@ -18,6 +18,6 @@ export class UserAchievementSubscriber implements EntitySubscriberInterface<User
 	async afterInsert(event: InsertEvent<UserAchievement>): Promise<void> {
 		const receiver: User = event.entity.user;
 		const achievement: Achievement = event.entity.achievement;
-		this.notificationService.insert(receiver.id, "Your are unlock achievement " + achievement.title, undefined);
+		this.notificationService.insert(receiver.id, "Your are unlock achievement " + achievement.title, undefined, undefined);
 	}
 }

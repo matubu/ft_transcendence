@@ -18,4 +18,7 @@ export class Notification
 
 	@Column({ default: false })
 	seen?: boolean
+
+	@Column()
+	url?: string
 }
