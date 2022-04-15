@@ -1,10 +1,10 @@
 'Security', 'Enable two-factor authentication.' OK
 
-'Losing', 'Have 42 defeats.'
+'Losing', 'Have 42 defeats.' OK
 
-'Win', 'Have 42 victoire.'
+'Win', 'Have 42 victoire.' OK
 
-'Small player', 'Play a game'
+'Small player', 'Play a game' OK
 
 'I am the boss', 'Create a channel'
 
