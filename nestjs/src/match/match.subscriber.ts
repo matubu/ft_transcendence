@@ -18,6 +18,8 @@ export class MatchSubscriber implements EntitySubscriberInterface<Match> {
 	async afterUpdate(event: UpdateEvent<Match>): Promise<void> {
 		const idPlayer1 = event.entity.player1;
 		const idPlayer2 = event.entity.player2;
+		const scorePlayer1 = event.entity.player1_score;
+		const scorePlayer2 = event.entity.player2_score;
 		const victoryPlayer1 = await this.matchService.getVictorys(idPlayer1);
 		const victoryPlayer2 = await this.matchService.getVictorys(idPlayer2);
 		const defaitePlayer1 = await this.matchService.getDefaites(idPlayer1);
@@ -32,5 +34,14 @@ export class MatchSubscriber implements EntitySubscriberInterface<Match> {
 			this.userAchievementService.insert(idPlayer1, "Losing");
 		if (defaitePlayer2.length >= 42)
 			this.userAchievementService.insert(idPlayer2, "Losing");
+		if ((scorePlayer1 == 11 && scorePlayer2 == 0) || (scorePlayer2 == 11 && scorePlayer2 == 0))
+		{
+			this.userAchievementService.insert(
+				(scorePlayer1 == 11 && scorePlayer2 == 0) ?
+					idPlayer1 : idPlayer2, "Under the table");
+			this.userAchievementService.insert(
+				(scorePlayer1 == 11 && scorePlayer2 == 0) ?
+					idPlayer2 : idPlayer1, "Fanny");
+		}
 	}
 }

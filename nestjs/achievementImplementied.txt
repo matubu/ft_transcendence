@@ -24,9 +24,9 @@
 
 'HackerMan', 'Make private achievements visible'
 
-'Under the table', 'Take Fanny'
+'Under the table', 'Take Fanny' OK
 
-'Fanny', 'Put Fanny'
+'Fanny', 'Put Fanny' OK
 
 'Take the top position', 'Winning while you were in trouble'
                     
