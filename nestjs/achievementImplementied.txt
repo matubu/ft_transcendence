@@ -16,7 +16,7 @@
 
 'YourName.', 'Change his nickname' OK
 
-'Mona Lisa', 'Change your photo'
+'Mona Lisa', 'Change your photo' OK
 
 'Alcoholic', 'Change your nickname to an alcohol name' OK
 
@@ -29,5 +29,5 @@
 'Fanny', 'Put Fanny'
 
 'Take the top position', 'Winning while you were in trouble'
-
+                    
 'The end', 'Achieve all the achievement'

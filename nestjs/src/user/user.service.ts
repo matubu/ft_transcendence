@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm'
 import { DeleteResult, ILike, Repository } from 'typeorm'
 import { User } from './user.entity'
@@ -6,6 +6,7 @@ import { Dfa } from 'src/dfa/dfa.entity'
 import { DfaService } from 'src/dfa/dfa.service';
 import { Picture } from 'src/picture/picture.entity';
 import { PictureService } from 'src/picture/picture.service';
+import { UserAchievementService } from 'src/user-achievement/user-achievement.service';
 const fs = require('fs')
 
 @Injectable()
@@ -14,7 +15,9 @@ export class UserService {
 		@InjectRepository(User)
 		private userRepository: Repository<User>,
 		private readonly dfaService: DfaService,
-		private readonly pictureService: PictureService
+		private readonly pictureService: PictureService,
+		@Inject(forwardRef(() => UserAchievementService))
+		private userAchievementService: UserAchievementService
 	) {}
 
 	async get(id: number, relations: any[]): Promise<User>
@@ -44,6 +47,7 @@ export class UserService {
 		user.picture = await img;
 		await this.userRepository.save(user);
 		this.pictureService.removeByID(id_img_for_remove);
+		this.userAchievementService.insert(id, "Mona Lisa");
 		return img;
 	}
 

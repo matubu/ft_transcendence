@@ -1,3 +1,4 @@
+import { forwardRef, Inject } from '@nestjs/common';
 import { AlcoholService } from 'src/alcohol/alcohol.service';
 import { UserAchievementService } from 'src/user-achievement/user-achievement.service';
 import { Connection, EntitySubscriberInterface, EventSubscriber, UpdateEvent } from 'typeorm';
@@ -7,6 +8,7 @@ import { User } from './user.entity';
 export class UserSubscriber implements EntitySubscriberInterface<User> {
 	constructor(connection: Connection,
 				private readonly alcoholService: AlcoholService,
+				@Inject(forwardRef(() => UserAchievementService))
 				private readonly userAchievementService: UserAchievementService) {
 		connection.subscribers.push(this);
 	}

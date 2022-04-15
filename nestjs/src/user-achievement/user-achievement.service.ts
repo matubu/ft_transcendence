@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AchievementService } from 'src/achievement/achievement.service';
 import { User } from 'src/user/user.entity';
@@ -12,6 +12,7 @@ export class UserAchievementService {
 		@InjectRepository(UserAchievement)
 		private userAchievementRepository: Repository<UserAchievement>,
 		private readonly achievementService: AchievementService,
+		@Inject(forwardRef(() => UserService))
 		private readonly userService: UserService
 	) {}
 

@@ -19,6 +19,6 @@ export class Notification
 	@Column({ default: false })
 	seen?: boolean
 
-	@Column()
+	@Column({ nullable: true })
 	url?: string
 }
