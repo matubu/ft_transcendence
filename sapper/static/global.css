@@ -14,7 +14,7 @@
 	--grey: #CBCBCB;
 	--prim: #f2f4f8;
 	--seco: #d8dee9;
-	--primary: #4e38a1;
+	--primary: #4c4ccd;
 
 	--grad-blue: linear-gradient(107.56deg, #74cabe 2.2%, #6539cd 29.17%, #24054c 95.31%);
 	--grad-purp: linear-gradient(107.56deg, #ffa7a7 2.2%, #a30cb5 29.17%, #00173a 95.31%);
@@ -75,7 +75,7 @@ label {
 textarea, input[type="text"], input[type="password"] {
 	width: 100%;
 	max-width: 400px;
-	font-size: 20px;
+	font-size: 17px;
 	margin: 0;
 	padding: 15px 20px;
 	box-sizing: border-box;

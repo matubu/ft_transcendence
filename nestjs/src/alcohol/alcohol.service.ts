@@ -15,7 +15,7 @@ export class AlcoholService {
 		const name: string = result[0]['strIngredient'];
 		const alcohol: boolean = result[0]['strAlcohol'] == "Yes" ? true : false;
 		
-		if (alcohol && name.toLowerCase === search.toLowerCase)
+		if (alcohol && name.toLowerCase() === search.toLowerCase())
 			return true;
 		
 		return false;

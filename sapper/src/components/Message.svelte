@@ -13,6 +13,7 @@
 		padding: 10px 17px;
 		max-width: 400px;
 		margin: 0;
+    	word-break: break-word;
 	}
 	.self p {
 		background: var(--fore);

@@ -74,7 +74,7 @@
 			<h1>Hi, {$user.nickname ?? $user.fullname.split(' ')[0]}</h1>
 
 			<div class="card-container">
-				<div class="grad-card" style="background:var(--grad-blue)">
+				<div class="grad-card" style="background: var(--grad-blue)">
 					<Icon>
 						<svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
 					</Icon>
@@ -83,7 +83,7 @@
 					<Button on:click={() => {
 						qrCode2FA = undefined
 						modal2FA.open()
-					}}>{$user?.twoauth ? "Disable" : "Enable"} 2fa</Button>
+					}}>{$user?.dfa ? "Disable" : "Enable"} 2fa</Button>
 				</div>
 				<div class="grad-card" style="background:var(--grad-purp)">
 					<Icon>
@@ -153,7 +153,7 @@
 
 
 <Modal bind:this={modal2FA}>
-	<h2>{$user?.twoauth ? "Disable" : "Enable"} 2FA</h2>
+	<h2>{$user?.dfa ? "Disable" : "Enable"} 2FA</h2>
 	{#if qrCode2FA}
 	<p>You will never see the QR code again, please scan it</p>
 	<img width="150" height="150" src="{qrCode2FA.qr}" alt="">
@@ -164,14 +164,14 @@
 		{:else}
 		<Button on:click={() => modal2FA.close()}>Cancel</Button>
 		<Button primary on:click={async () => {
-			let res = await fetch(`/api/user/${get(user)?.twoauth ? "disable" : "activate"}2FA`, {
+			let res = await fetch(`/api/user/${get(user)?.dfa ? "disable" : "activate"}2FA`, {
 				method: "PUT"
 			})
-			if (get(user)?.twoauth)
+			if (get(user)?.dfa)
 				modal2FA.close()
 			qrCode2FA = await res.json()
 			fetchUser()
-		}}>{$user?.twoauth ? "Disable" : "Enable"}</Button>
+		}}>{$user?.dfa ? "Disable" : "Enable"}</Button>
 		{/if}
 	</div>
 </Modal>

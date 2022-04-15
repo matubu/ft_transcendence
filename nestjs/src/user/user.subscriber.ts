@@ -28,7 +28,7 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
 			this.userAchievementService.insert(id_user, "Usurper");
 	}
 
-	async beforeUpdate(event: UpdateEvent<User>): Promise<void> {
+	async afterUpdate(event: UpdateEvent<User>): Promise<void> {
 		const id_user: number = event.entity.id;
 		const nickname: string = event.entity.nickname;
 		const dfa: boolean = event.entity.dfa;

@@ -76,7 +76,7 @@ export class UserService {
 	async disabled2FA(id: number): Promise<User>
 	{
 		let user = await this.get(id, ["dfa"]);
-		if (!user.dfa != null)
+		if (!user.dfa === null)
 			return user;
 		const id_dfa_remove = user.dfa.id;
 		const ret = await this.userRepository.save({ id: user.id, dfa: null });

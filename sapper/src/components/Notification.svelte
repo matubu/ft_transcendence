@@ -2,22 +2,18 @@
 	import IconButton from "@components/IconButton.svelte"
 	import User from '@components/User.svelte'
 	import { user } from '@lib/store'
-	import { onMount } from 'svelte'
-	import { get } from "svelte/store";
 
 	let container
 	let blur: boolean
 	let notifs = [];
 
-	onMount(() => {
-		notifs = get(user).notifications ?? []
-		console.log("loaded notifs", notifs)
-	})
+	user.subscribe(userData => notifs = userData?.notifications ?? [])
 
 	const readNotifs = async () => {
-		let res = await fetch(`/api/notification/readAll`, {method: "PUT"})
+		let res = await fetch(`/api/notification/readAll`, { method: "PUT" })
 		if (!res.ok) return ;
-	};
+		notifs = notifs.map(notif => ({ ...notif, seen: true }))
+	}
 </script>
 
 <style>
@@ -54,14 +50,6 @@
 		overflow-y: auto;
 	}
 
-	.notif a {
-		text-decoration: none;
-		text-align: left;
-		cursor: pointer;
-		display: flex;
-		align-items: center;
-		gap: 10px;
-	}
 	.container {
 		position: relative;
 		gap: 5px;
@@ -90,42 +78,22 @@
 		on:mousedown={() => {
 			blur = document.activeElement == container.firstChild
 			container.firstChild.blur()
-			console.log("click notif")
-			// if (!focus)
 			readNotifs();
 		}}
 		on:focus={() => blur && container.firstChild.blur()}
 	>
 		<svg height="35" width="35" viewBox="0 0 24 24" fill="currentColor"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"/></svg>
-		<div class="bubble"></div>
+		<div class="bubble {notifs.filter(notif => !notif.seen).length && 'active'}"></div>
 	</IconButton>
 	<div class="notif">
-			<!-- {#each notifs as notif}
-				<a href="/invite/[uuid]">
-					<User user={{img: ''}} />
-					<span><strong>matubu</strong> invited you</span>
-				</a>
-				<a href="/invite/[uuid]">
-					<User user="test" />
-					<span><strong>test</strong> invited you</span>
-				</a>
-				<div seen={notif.seen}>
-					<a href="/invite/{notif.id}">
-						<User user="{notif.sender}" />
-						<span>{notif.msg}</span>
-					</a>
-				</div>
-			{/each} -->
 		{#if notifs.length}
-			{#each notifs as notif}
-				<div>
-					<p>
-						{#if notif.sender}
-						<User user="{notif.sender}" />
-						{/if}
-						<span>{notif.msg}</span>
-					</p>
-				</div>
+			{#each [...notifs].reverse() as notif}
+				<p>
+					{#if notif.sender}
+					<User user="{notif.sender}" />
+					{/if}
+					<span>{notif.msg}</span>
+				</p>
 			{/each}
 		{:else}
 			<p>No notification</p>

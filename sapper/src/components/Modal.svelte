@@ -46,9 +46,6 @@
 		box-sizing: border-box;
 		transition: display 0s .3s;
 	}
-	.closed {
-		display: none;
-	}
 	.backdrop {
 		position: absolute;
 		top: 0;
@@ -93,7 +90,7 @@
 	}
 </style>
 
-<div class="modal {opened || 'closed'}">
+<div class="modal" style="{!opened && 'display: none'}">
 	<div class="card">
 		<slot />
 	</div>

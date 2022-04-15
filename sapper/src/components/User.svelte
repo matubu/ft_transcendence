@@ -1,4 +1,5 @@
 <script>
+	import { user as loggedUser } from '@lib/store'
 	import { createEventDispatcher } from 'svelte'
 
 	export let user = undefined
@@ -24,8 +25,8 @@
 
 {#if user}
 	<div style="--size: {size}px" on:click={() => dispatch('click')}>
-		{#if href}
-			<a href={href}>
+		{#if (href || user.id !== $loggedUser?.id)}
+			<a href={href ?? `/user/${user.id}`}>
 				<img src="{user.picture?.url}" alt="">
 			</a>
 		{:else}

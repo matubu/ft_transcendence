@@ -37,6 +37,8 @@
 	import { onDestroy, onMount } from 'svelte'
 	import IconButton from '@components/IconButton.svelte'
 
+	// TODO friends
+	// TODO user status
 	// TODO improve sound
 	// TODO fix desync score
 	// TODO watch
