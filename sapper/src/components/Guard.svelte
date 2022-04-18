@@ -1,11 +1,10 @@
 <script>
 	import { user } from '@lib/store'
-	import { goto } from '@sapper/app'
-
-	typeof document !== 'undefined'
-		&& user.subscribe(data => data === undefined && goto('/'))
+	import Home from '@lib/routes/index.svelte'
 </script>
 
 {#if ($user)}
 	<slot />
+{:else}
+	<Home />
 {/if}

@@ -1,6 +1,6 @@
 <script>
 	import { createEventDispatcher } from 'svelte'
-	import { status, user as current } from '@lib/store'
+	import { status } from '@lib/store'
 	import { addStatusListener } from '@lib/utils';
 
 	export let user = undefined
@@ -8,8 +8,7 @@
 
 	const dispatch = createEventDispatcher()
 
-	if (user.id !== $current?.id)
-		addStatusListener(user.id)
+	addStatusListener(user.id)
 </script>
 
 <style>
@@ -31,6 +30,7 @@
 	.online, .in-game {
 		border: 2px solid var(--gree);
 		border-radius: 50%;
+		background: var(--back);
 	}
 	.in-game { border-color: var(--blue) }
 </style>

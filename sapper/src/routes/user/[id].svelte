@@ -29,6 +29,8 @@
 		{#if $user?.id !== data.id}
 			<div>
 				<Button href="/api/channel/friend/{data.id}">Chat</Button>
+				<Button>Duel</Button>
+				<Button>Block</Button>
 				{#if ($user.friends.find(({ friend }) => friend.id === data.id))}
 					<Button primary on:click={() => removeFriend(data.id)}>Remove friend</Button>
 				{:else}

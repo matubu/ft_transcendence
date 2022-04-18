@@ -37,6 +37,9 @@
 	import { onDestroy, onMount } from 'svelte'
 	import IconButton from '@components/IconButton.svelte'
 
+	// TODO modal wrong input error message
+	// TODO block
+	// TODO pong duel
 	// TODO achivments
 	// TODO search
 	// TODO improve sound
@@ -44,6 +47,9 @@
 	// TODO watch
 	// TODO reduce lag
 	// TODO add chat side navbar
+	// TODO change favicon notification
+	// TODO pong loader
+	// TODO 404 pong
 	// TODO improve winner screen
 	// TODO animation battle
 

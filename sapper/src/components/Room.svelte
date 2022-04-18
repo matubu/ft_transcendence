@@ -52,11 +52,14 @@
 			{#await res.json()}
 				loading...
 			{:then users}
-				{#each users as user}
+				{#each users.slice(0, 3) as user}
 					<div style="margin-left: -20px">
 						<User {user} />
 					</div>
 				{/each}
+				{#if users.length > 3}
+					<span class="dim" style="margin-left: 10px">+{users.length - 3}</span>
+				{/if}
 			{/await}
 		{/await}
 	</div>

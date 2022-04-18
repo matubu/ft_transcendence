@@ -40,7 +40,10 @@
 
 	let typing = false
 	let timeout
-	const updateTyping = typing => send('typing', { room: id_room, typing })
+	const updateTyping = type => {
+		typing = type
+		send('typing', { room: id_room, typing })
+	}
 	function isTyping() {
 		if (!typing)
 			updateTyping(true)
@@ -66,6 +69,12 @@
 	form > input {
 		flex: 1;
 		max-width: none;
+	}
+
+	.is-typing {
+		margin: 3px 0 0 7px;
+		height: 1.3em;
+		font-size: .75rem;
 	}
 </style>
 
@@ -94,11 +103,6 @@
 			<Message user={userInfo.get(msg.userId)} message={msg.msg}/>
 		{/each}
 	</div>
-	{#if userTyping.size}
-		<p class="dim">
-			{[...userTyping.keys()].map(id => userInfo.get(id).nickname ?? userInfo.get(id).fullname.split(' ')[0]).join(', ')} {userTyping.size > 1 ? 'are' : 'is'} typing...
-		</p>
-	{/if}
 	<form on:submit={async e => {
 		e.preventDefault()
 		msg.value = msg.value.trim();
@@ -112,4 +116,9 @@
 			<svg xmlns="http://www.w3.org/2000/svg" height="35" width="35" viewBox="0 0 24 24" fill="var(--primary)"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M3.4 20.4l17.45-7.48c.81-.35.81-1.49 0-1.84L3.4 3.6c-.66-.29-1.39.2-1.39.91L2 9.12c0 .5.37.93.87.99L17 12 2.87 13.88c-.5.07-.87.5-.87 1l.01 4.61c0 .71.73 1.2 1.39.91z"/></svg>
 		</IconButton>
 	</form>
+	<p class="is-typing dim">
+		{#if userTyping.size}
+			{[...userTyping.keys()].map(id => userInfo.get(id).nickname ?? userInfo.get(id).fullname.split(' ')[0]).join(', ')} {userTyping.size > 1 ? 'are' : 'is'} typing...	
+		{/if}
+	</p>
 </Layout>

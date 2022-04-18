@@ -15,13 +15,13 @@
 		margin: 0;
     	word-break: break-word;
 	}
-	.self p {
+	.other p {
 		background: var(--fore);
 	}
-	.other p {
+	.self p {
 		background: var(--primary);
 	}
-	.other {
+	.self {
 		flex-direction: row-reverse;
 	}
 	div {

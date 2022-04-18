@@ -1,18 +1,8 @@
-<script context="module">
-	export async function preload(page, session) {
-		if (typeof document === 'undefined' && session.user === undefined)
-			this.redirect(307, '/')
-	}
-</script>
-
 <script>
 	import Header from '@components/Header.svelte'
 	import Guard from '@components/Guard.svelte'
 
 	import { fly } from 'svelte/transition';
-
-	import { stores } from '@sapper/app'
-	const { page } = stores()
 </script>
 
 <style>
@@ -28,12 +18,10 @@
 	}
 </style>
 
-<Header />
+<Guard>
+	<Header />
 
-{#key $page.path}
-	<Guard>
-		<main in:fly={{ x: -30, duration: 300 }}>
-			<slot />
-		</main>
-	</Guard>
-{/key}
+	<main in:fly={{ x: -30, duration: 300 }}>
+		<slot />
+	</main>
+</Guard>

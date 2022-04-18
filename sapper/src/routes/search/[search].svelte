@@ -13,8 +13,9 @@
 	.bord-card {
 		gap: 20px;
 	}
-	h2 {
+	h3 {
 		flex: 1;
+		margin: 0
 	}
 </style>
 
@@ -32,7 +33,7 @@
 					{#each results as result}
 						<a class="bord-card" href="/user/{result.id}">
 							<User user={result} />
-							<h2>{result.nickname ?? result.fullname.split(' ')[0]}</h2>
+							<h3>{result.nickname ?? result.fullname.split(' ')[0]}</h3>
 						</a>
 					{/each}
 				</div>

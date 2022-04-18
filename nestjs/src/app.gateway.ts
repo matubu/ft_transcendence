@@ -283,9 +283,10 @@ export class AppGateway {
 	{
 		const users = await this.channelService.getUsers(data.room);
 		const typingUser = await this.userService.get(userId, []);
+		console.log(userId)
 		for (const user of users)
-			// if (userId !== user.id)
+			if (userId !== user.id)
 				this.sendTo(user.id, 'typing',
-				{ user: typingUser, isTyping: data.typing, room: data.room });
+					{ user: typingUser, isTyping: data.typing, room: data.room });
 	}
 }
