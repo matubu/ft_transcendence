@@ -2,6 +2,7 @@
 	import Layout from '@components/Layout.svelte'
 	import User from '@components/User.svelte'
 	import Button from '@components/Button.svelte'
+	import Head from '@components/Head.svelte'
 	import { user } from '@lib/store'
 	import { removeFriend, addFriend } from '@lib/utils'
 
@@ -15,20 +16,25 @@
 	console.log($user?.friends)
 </script>
 
+<Head title="User profile"/>
+
 <Layout>
 	{#await load()}
 		<p>Loading ...</p>
 	{:then data}
 		<User size=100 user={data} />
 		<h1>{data.nickname ?? data.fullname.split(' ')[0]}</h1>
-		<p>Fullname: {data.fullname}</p>
+		<p>{data.fullname}</p>
 		<p>Elo: {data.elo}</p>
 		{#if $user?.id !== data.id}
-			{#if ($user.friends.find(({ friend }) => friend.id === data.id))}
-			<Button primary on:click={() => removeFriend(data.id)}>Remove friend</Button>
-			{:else}
-				<Button primary on:click={() => addFriend(data.id)}>Add friend</Button>
-			{/if}
+			<div>
+				<Button href="/api/channel/friend/{data.id}">Chat</Button>
+				{#if ($user.friends.find(({ friend }) => friend.id === data.id))}
+					<Button primary on:click={() => removeFriend(data.id)}>Remove friend</Button>
+				{:else}
+					<Button primary on:click={() => addFriend(data.id)}>Add friend</Button>
+				{/if}
+			</div>
 		{/if}
 	{:catch err}
 		<p>Error: {err}</p>

@@ -37,7 +37,9 @@
 	import { onDestroy, onMount } from 'svelte'
 	import IconButton from '@components/IconButton.svelte'
 
-	// TODO improve sound && fix error
+	// TODO achivments
+	// TODO search
+	// TODO improve sound
 	// TODO fix desync score
 	// TODO watch
 	// TODO reduce lag
@@ -54,8 +56,8 @@
 
 	let mp3
 	let playCollisionSound = (type) => {
-		try { mp3[type - 1]?.play?.() }
-		catch (err) { console.log('cannot play sound', err) }
+		mp3[type - 1]?.play?.()
+			?.catch?.(err => console.log('cannot play sound'))
 	}
 
 	let arena

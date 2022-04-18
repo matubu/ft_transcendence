@@ -24,19 +24,25 @@
 		reloadChatList()
 </script>
 
+<style>
+	.rooms {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
+</style>
+
 <Head title="Chat" />
 
 <Layout>
-	<div>
-		<div class="grid-layout">
-			{#if $rooms?.length}
-				{#each $rooms as {id, name, password_is_set, private: mode}}
-					<Room id={id} name="{name}" type="{password_is_set ? 'protected' : (mode ? 'private' : 'public')}" joined={true}/>
-				{/each}
-			{:else}
-				<p class="dim">No rooms yet</p>
-			{/if}
-		</div>
+	<div class="rooms">
+		{#if $rooms?.length}
+			{#each $rooms as {id, name, password_is_set, private: mode, description: desc}}
+				<Room id={id} name="{name}" type="{password_is_set ? 'protected' : (mode ? 'private' : 'public')}" {desc}/>
+			{/each}
+		{:else}
+			<p class="dim">No rooms yet</p>
+		{/if}
 	</div>
 </Layout>
 

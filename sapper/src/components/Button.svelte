@@ -6,7 +6,7 @@
 	export let float: boolean = false
 	export let href: string = undefined
 	export let loading: boolean = false
-	export let type
+	export let type: string = undefined
 	const dispatch = createEventDispatcher()
 
 	let button

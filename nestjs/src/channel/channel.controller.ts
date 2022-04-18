@@ -40,12 +40,15 @@ export class ChannelController {
 		{
 			const tmp = await this.channelService.getUsers(channels[i]);
 			if (tmp.length == 2)
+			{
 				res.status(302).redirect(`/chat/${channels[i]}`);
+				return ;
+			}
 		}
 		const channel: ChannelInterface = {
 			name: "Private Message",
-			password: undefined,
-			description: undefined,
+			password: '',
+			description: '',
 			private: true
 		};
 		const createChannel = await this.channelService.create(userId, channel);
