@@ -13,6 +13,8 @@
 	let messages = []
 	let userInfo = new Map<number, any>()
 
+	let userTyping: Map<number, string> = new Map();
+
 	const loadChat = async () => {
 		let res = await fetch(`/api/channel/${id_room}`, {method: "POST"})
 		if (!res.ok) return ;
@@ -33,6 +35,27 @@
 	{
 		id_room = location.pathname.split('/')[2]
 		loadChat()
+	}
+
+	let timeout;
+	let wait = false;
+	function update() {
+		send('typing', { room: id_room, typing: msg.value.length ? true : false });
+	}
+	function isTyping() {
+		if (wait == true)
+		{
+			clearTimeout(timeout)
+			timeout = setTimeout(() => {
+				update()
+				wait = false;
+			}, 1000)
+		}
+		else
+		{
+			wait = true;
+			requestAnimationFrame(update);
+		}
 	}
 </script>
 
@@ -59,14 +82,28 @@
 <Head title="Chat" />
 
 <svelte:window on:wsmsg={e => {
-	const { channel, data } = e.detail
+	const { channel, data } = e.detail;
+	if (data.room !== id_room)
+		return ;
 	channel === 'chat' && addMessage(data);
+	if (channel === 'typing')
+	{
+		if (data.isTyping == false)
+			userTyping.delete(data.user.id)
+		else
+			userTyping.set(data.user.id, data.user.nickname ?? data.user.fullname.split(' ')[0])
+		userTyping = userTyping
+		console.log(userTyping);
+	}
 }}/>
 
 <Layout>
 	<div class="container" bind:this={container}>
 		{#each messages as msg}
 			<Message user={userInfo.get(msg.userId)} message={msg.msg}/>
+		{/each}
+		{#each [...userTyping.values()] as user}
+			{user}, 
 		{/each}
 	</div>
 	<form on:submit={async e => {
@@ -75,8 +112,9 @@
 		if (!msg.value) return;
 		send('chat', { room: id_room, msg: msg.value });
 		msg.value = ''
+		send('typing', { room: id_room, typing: false });
 	}}>
-		<input type="text" bind:this={msg} placeholder="Write a message">
+		<input on:keydown|capture={isTyping} type="text" bind:this={msg} placeholder="Write a message">
 		<IconButton>
 			<svg xmlns="http://www.w3.org/2000/svg" height="35" width="35" viewBox="0 0 24 24" fill="var(--primary)"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M3.4 20.4l17.45-7.48c.81-.35.81-1.49 0-1.84L3.4 3.6c-.66-.29-1.39.2-1.39.91L2 9.12c0 .5.37.93.87.99L17 12 2.87 13.88c-.5.07-.87.5-.87 1l.01 4.61c0 .71.73 1.2 1.39.91z"/></svg>
 		</IconButton>

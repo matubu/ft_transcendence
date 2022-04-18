@@ -242,9 +242,8 @@ export class AppGateway {
 		const users = await this.channelService.getUsers(room);
 		// const chatData = {senderId: client.userId, room: room, msg: msg}
 		const messageInfo = await this.messageService.insert(client.userId, room, msg)
-		for (const user of users) {
-			this.sendTo(user.id, 'chat', messageInfo);
-		}
+		for (const user of users)
+			this.sendTo(user.id, 'chat', { ...messageInfo, room });
 	}
 
 	updateStatusListener(userId: number) {
@@ -280,5 +279,16 @@ export class AppGateway {
 		if (!receiver) return ;
 		// console.log(receiver)
 		this.sendTo(receiver.id, "notif", notif);
+	}
+
+	@SubscribeMessage('typing')
+	async isTyping({ userId }, data: { room: string, typing: boolean })
+	{
+		const users = await this.channelService.getUsers(data.room);
+		const typingUser = await this.userService.get(userId, []);
+		for (const user of users)
+			// if (userId !== user.id)
+				this.sendTo(user.id, 'typing',
+				{ user: typingUser, isTyping: data.typing, room: data.room });
 	}
 }
