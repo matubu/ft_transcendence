@@ -6,7 +6,7 @@
 	import Button from '@components/Button.svelte'
 	import User from '@components/User.svelte'
 	import { goto } from '@sapper/app'
-	import { logOut, fetchUser } from '@lib/utils'
+	import { logOut, fetchUser, removeFriend } from '@lib/utils'
 	import { user } from '@lib/store'
 	import { get } from 'svelte/store'
 
@@ -24,6 +24,10 @@
 	.container {
 		display: grid;
 		place-items: center;
+		gap: 20px;
+	}
+	.container > * {
+		margin: 0;
 	}
 	.profile {
 		position: relative;
@@ -32,11 +36,10 @@
 		overflow: hidden;
 	}
 	.profile div {
-		margin-top: 100px;
 		height: 50px;
 		position: absolute;
 		width: 100%;
-		top: 0;
+		bottom: 0;
 		left: 0;
 		display: grid;
 		place-items: center;
@@ -50,13 +53,17 @@
 		display: flex;
 		gap: 30px;
 		padding: 20px;
-		margin-bottom: 30px;
 	}
 	@media (max-width: 800px) {
 		.card-container { flex-direction: column; }
 	}
 	h1 {
 		overflow-wrap: anywhere;
+	}
+	.friends {
+		display: flex;
+		gap: 5px;
+		flex-direction: column;
 	}
 </style>
 
@@ -95,11 +102,22 @@
 				</div>
 			</div>
 
+			<div class="friends">
+				{#each $user.friends as { friend }}
+					<a class="bord-card" href="/user/{friend.id}">
+						<User user={friend} />
+						{friend.nickname ?? friend.fullname.split(' ')[0]}
+						<Button primary on:click={e => {
+							e.stopPropagation(0)
+							removeFriend(friend.id)
+						}}>Remove friend</Button>
+					</a>
+				{/each}
+			</div>
+
 			<div>
 				<Button on:click={async () => {
-					await fetch('/api/user', {
-						method: 'DELETE'
-					})
+					await fetch('/api/user', { method: 'DELETE' })
 					logOut()
 					goto('/')
 				}}>Delete</Button>
@@ -130,25 +148,34 @@
 	</div>
 </Modal>
 
-<Modal bind:this={modalNickname}>
-	<h2>Change nickname</h2>
-	<input bind:this={inputNickname} type="text" required>
-	<div style="text-align: right">
-		<Button on:click={() => modalNickname.close()}>Cancel</Button>
-		<Button primary on:click={async () => {
-			modalNickname.close()
-			await fetch('/api/user/changeNickname', {
-				method: "POST",
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					nickname: inputNickname.value
-				})
+<Modal bind:this={modalNickname} on:open={() => {
+		console.log('focus')
+		inputNickname.focus()
+	}}>
+	<form on:submit={async e => {
+		e.preventDefault()
+		modalNickname.close()
+		await fetch('/api/user/changeNickname', {
+			method: "POST",
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				nickname: inputNickname.value
 			})
-			fetchUser()
-		}}>Change nickname</Button>
-	</div>
+		})
+		fetchUser()
+	}}>
+		<h2>Change nickname</h2>
+		<input bind:this={inputNickname} type="text" required>
+		<div style="text-align: right">
+			<Button type="button" on:click={e => {
+				e.preventDefault()
+				modalNickname.close()
+			}}>Cancel</Button>
+			<Button primary>Change nickname</Button>
+		</div>
+	</form>
 </Modal>
 
 

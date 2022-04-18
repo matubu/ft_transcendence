@@ -29,9 +29,13 @@
 <Layout>
 	<div>
 		<div class="grid-layout">
-			{#each $rooms as {id, name, password_is_set, private: mode}}
-				<Room id={+id} name="{name}" type="{password_is_set ? 'protected' : (mode ? 'private' : 'public')}" joined={true}/>
-			{/each}
+			{#if $rooms?.length}
+				{#each $rooms as {id, name, password_is_set, private: mode}}
+					<Room id={id} name="{name}" type="{password_is_set ? 'protected' : (mode ? 'private' : 'public')}" joined={true}/>
+				{/each}
+			{:else}
+				<p class="dim">No rooms yet</p>
+			{/if}
 		</div>
 	</div>
 </Layout>
@@ -49,12 +53,7 @@
 	<form bind:this={formNewChat} on:submit={async e => {
 		e.preventDefault()
 		console.log('submit')
-		const { password, repeatPassword, mode, ...args } = Object.fromEntries([...formNewChat.querySelectorAll('input, textarea')].map(elm => [elm.name, elm.name === 'mode' ? elm.checked : elm.value]))
-		if (password !== repeatPassword)
-		{
-			console.log('wrong password')
-			return ;
-		}
+		const { password, mode, ...args } = Object.fromEntries([...formNewChat.querySelectorAll('input, textarea')].map(elm => [elm.name, elm.name === 'mode' ? elm.checked : elm.value]))
 		await fetch('/api/channel', {
 			method: "POST",
 			headers: {
@@ -76,10 +75,6 @@
 		<label>
 			Password<br>
 			<input type="password" placeholder="Password" name="password">
-		</label>
-		<label>
-			Repeat password<br>
-			<input type="password" placeholder="Password" name="repeatPassword">
 		</label>
 		<label>
 			Private<br>

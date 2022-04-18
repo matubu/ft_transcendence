@@ -28,8 +28,11 @@ class Match {
 	constructor(player1, player2) {
 		this.players = [player1, player2]
 	}
+	containsPlayerId(id) {
+		return (id === this.players[0].userId || id === this.players[1].userId)
+	}
 	containsPlayer(client) {
-		return (client.userId === this.players[0].userId || client.userId === this.players[1].userId)
+		return (this.containsPlayerId(client.userId))
 	}
 	isPlayerWeak(client) {
 		return (client.userId === this.players[1].userId)
@@ -94,6 +97,7 @@ export class AppGateway {
 	userMap: Map<number, Set<any>> = new Map()
 	matchingMap: Map<number, any> = new Map()
 	matchMap: Map<string, Match> = new Map()
+	listenerMap: Map<number, Set<any>> = new Map()
 
 	@WebSocketServer()
 	server: Server
@@ -111,11 +115,15 @@ export class AppGateway {
 		if (!this.userMap.has(client.userId))
 			this.userMap.set(client.userId, new Set())
 		this.userMap.get(client.userId).add(client)
+		this.updateStatusListener(client.userId)
 	}
 
 	handleDisconnect(client: any) {
 		puts(91, `--- DISCONNECTED {${client.userId}}`)
 
+		// --- DELETE LISTENER ---
+		for (let [_, set] of this.listenerMap)
+			set.delete(client)
 		// --- LEAVE MATCHING ROOM ---
 		this.leaveRanked(client)
 		// --- DISCONNECT FROM MATCH MATCH ---
@@ -124,6 +132,7 @@ export class AppGateway {
 		this.userMap.get(client.userId).delete(client)
 		if (this.userMap.get(client.userId).size === 0)
 			this.userMap.delete(client.userId)
+		this.updateStatusListener(client.userId)
 	}
 
 	getMatchByClient(client): { id?: string, match?: Match } {
@@ -180,6 +189,7 @@ export class AppGateway {
 			this.matchMap.set(id, new Match(user1, user2))
 			send(user1, 'matchfound', { id })
 			send(user2, 'matchfound', { id })
+			this.updateStatusListener(client.userId)
 		}
 	}
 
@@ -237,10 +247,37 @@ export class AppGateway {
 		}
 	}
 
+	updateStatusListener(userId: number) {
+		if (!this.listenerMap.has(userId)) return ;
+		let status: string = this.getStatus(userId)
+		for (let listener of this.listenerMap.get(userId))
+			this.sendStatus(listener, userId, status)
+	}
+
+	getStatus(userId: number) {
+		if (this.userMap.get(userId)?.size == 0)
+			return ('offline')
+		if ([...this.matchMap.values()].find((match: Match) => match.containsPlayer(userId)))
+			return ('in-game')
+		return ('online')
+	}
+
+	sendStatus(client: any, userId: number, status = this.getStatus(userId)) {
+		send(client, 'userstatus', [userId, status])
+	}
+
+	@SubscribeMessage('addStatusListener')
+	addStatusListener(client: any, listened: number) {
+		this.sendStatus(client, listened)
+		if (!this.listenerMap.has(listened))
+			this.listenerMap.set(listened, new Set())
+		this.listenerMap.get(listened).add(client)
+	}
+
 	handleNotifcation(notif: Notification)
 	{
-		const {receiver} = notif
-		if (!receiver) return;
+		const { receiver } = notif
+		if (!receiver) return ;
 		// console.log(receiver)
 		this.sendTo(receiver.id, "notif", notif);
 	}

@@ -13,13 +13,19 @@
 		send('play')
 		fetchUser()
 	})
+
+	let fmtDate = new Intl.DateTimeFormat(undefined, { dateStyle: 'full' }).format
 </script>
 
 <style>
+	.date {
+		text-align: center;
+		margin-top: 10px;
+	}
 	.matchs {
 		display: flex;
 		flex-direction: column;
-		gap: 20px;
+		gap: 10px;
 	}
 </style>
 
@@ -59,7 +65,10 @@
 		<h2>Match</h2>
 		<div class="matchs">
 			{#if $user.matchs.length}
-				{#each $user.matchs as { player1_score, player2_score, player1, player2 }}
+				{#each $user.matchs as { player1_score, player2_score, player1, player2, date }, i}
+					{#if fmtDate(new Date($user.matchs[i - 1]?.date ?? null)) !== fmtDate(new Date(date))}
+						<span class="date dim">{fmtDate(new Date(date))}</span>
+					{/if}
 					<MatchScore 
 						player1={
 							$user.id === player1.id

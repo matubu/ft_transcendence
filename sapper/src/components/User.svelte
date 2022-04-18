@@ -1,36 +1,42 @@
 <script>
-	import { user as loggedUser } from '@lib/store'
 	import { createEventDispatcher } from 'svelte'
+	import { status, user as current } from '@lib/store'
+	import { addStatusListener } from '@lib/utils';
 
 	export let user = undefined
-	export let href: string = undefined
 	export let size: number | string = 50
 
 	const dispatch = createEventDispatcher()
+
+	if (user.id !== $current?.id)
+		addStatusListener(user.userId)
 </script>
 
 <style>
-	div, a, img {
+	div, img {
+		border-radius: 50%;
+	}
+	div {
+		padding: 3px;
 		width: var(--size);
 		height: var(--size);
-		border-radius: 50%;
+		box-sizing: border-box;
+	}
+	img {
+		width: 100%;
+		height: 100%;
 		object-fit: cover;
 	}
-	/* div {
-		padding: 3px;
-		border: 3px solid var(--gree);
+
+	.online, .in-game {
+		border: 2px solid var(--gree);
 		border-radius: 50%;
-	} */
+	}
+	.in-game { border-color: var(--blue) }
 </style>
 
 {#if user}
-	<div style="--size: {size}px" on:click={() => dispatch('click')}>
-		{#if (href || user.id !== $loggedUser?.id)}
-			<a href={href ?? `/user/${user.id}`}>
-				<img src="{user.picture?.url}" alt="">
-			</a>
-		{:else}
-			<img src="{user.picture?.url}" alt="">
-		{/if}
+	<div style="--size: {size}px" on:click={() => dispatch('click')} class={ $status[user.userId] }>
+		<img src="{user.picture?.url}" alt="">
 	</div>
 {/if}

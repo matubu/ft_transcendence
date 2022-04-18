@@ -17,7 +17,7 @@ export class BlacklistChannelService {
 		private readonly channelService: ChannelService
 	) {}
 
-	async isBan(id_user: number, id_channel: number): Promise<boolean>
+	async isBan(id_user: number, id_channel: string): Promise<boolean>
 	{
 		const user = await this.userService.get(id_user, []);
 		const channel = await this.channelService.get(id_channel);
@@ -27,7 +27,7 @@ export class BlacklistChannelService {
 		return true;
 	}
 
-	async listBan(id_channel: number): Promise<User[]>
+	async listBan(id_channel: string): Promise<User[]>
 	{
 		const channel = await this.channelService.get(id_channel);
 		const listBan = await this.blackListRepository.find({ where: { channel: channel},
@@ -38,14 +38,14 @@ export class BlacklistChannelService {
 		return (users);
 	}
 
-	async ban(id_user: number, id_channel: number): Promise<BlacklistChannel>
+	async ban(id_user: number, id_channel: string): Promise<BlacklistChannel>
 	{
 		const user = await this.userService.get(id_user, []);
 		const channel = await this.channelService.get(id_channel);
 		return this.blackListRepository.save({ user: user, channel: channel });
 	}
 
-	async unban(id_user: number, id_channel: number): Promise<DeleteResult>
+	async unban(id_user: number, id_channel: string): Promise<DeleteResult>
 	{
 		const user = await this.userService.get(id_user, []);
 		const channel = await this.channelService.get(id_channel);

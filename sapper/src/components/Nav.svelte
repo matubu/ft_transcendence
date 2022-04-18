@@ -23,7 +23,6 @@
 	a {
 		display: block;
 		color: var(--grey);
-		text-decoration: none;
 		font-size: 20px;
 		transition: .2s;
 	}

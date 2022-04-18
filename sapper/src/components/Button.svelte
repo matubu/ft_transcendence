@@ -6,6 +6,7 @@
 	export let float: boolean = false
 	export let href: string = undefined
 	export let loading: boolean = false
+	export let type
 	const dispatch = createEventDispatcher()
 
 	let button
@@ -27,7 +28,6 @@
 		border-radius: 10px;
 		font-size: 18px;
 		border: none;
-		text-decoration: none;
 		user-select: none;
 		color: var(--prim);
 		background: linear-gradient(90deg, hsla(0,0%,100%,.3), rgba(255, 255, 255, 0.259), hsla(0,0%,100%,.3));
@@ -84,6 +84,7 @@
 	class="{primary !== false && 'primary'} {float !== false && 'float'} {loading !== false && 'loading'}"
 	style="{full !== false && 'width: 100%; text-align: center'}"
 	on:click={() => dispatch('click')}
+	{type}
 	bind:this={button}
 >
 	<slot />

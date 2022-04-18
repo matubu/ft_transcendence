@@ -1,4 +1,4 @@
-import { user, twoauth, waitingLogin } from '@lib/store'
+import { user, twoauth, waitingLogin, status } from '@lib/store'
 import { get } from 'svelte/store'
 import { goto } from '@sapper/app'
 
@@ -82,12 +82,41 @@ export const localStorageUser = () => {
 		setUser(undefined)
 }
 
+export const removeFriend = async (friend) => {
+	await fetch('/api/friend', {
+		method: 'DELETE',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({ friend })
+	})
+	fetchUser()
+}
+
+export const addFriend = async (friend) => {
+	await fetch('/api/friend', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({ friend })
+	})
+	fetchUser()
+}
+
 let sock
 let userId
 
 export const send = async (channel, data: any = '') => {
 	if (!sock) return ;
 	(await sock)?.send?.(`${channel}:${JSON.stringify(data)}`)
+}
+
+export const addStatusListener = (userId) => {
+	if (get(status)[userId] === undefined) {
+		status.set({ ...get(status),  userId: 'offline' })
+		send('addStatusListener', userId)
+	}
 }
 
 if (typeof document !== 'undefined')
@@ -121,7 +150,15 @@ if (typeof document !== 'undefined')
 			const data = JSON.parse(msg.slice(idx + 1))
 
 			if (channel === 'matchfound')
-				goto(`/play/match/${data.id}`)
+				return (goto(`/play/match/${data.id}`))
+			if (channel === 'userstatus')
+			{
+				let updateStatus = get(status)
+				updateStatus[data[0]] = data[1]
+				status.set(updateStatus)
+				return ;
+			}
+
 
 			window.dispatchEvent(new CustomEvent('wsmsg', {
 				detail: {

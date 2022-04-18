@@ -28,7 +28,7 @@ export class AccessChannelService {
 		return (users);
 	}
 
-	async found(id_user: number, id_channel: number, insert: boolean): Promise<{ user: User, channel: Channel }>
+	async found(id_user: number, id_channel: string, insert: boolean): Promise<{ user: User, channel: Channel }>
 	{
 		const user = await this.userService.get(id_user, []);
 		const channel = await this.channelService.get(id_channel);
@@ -40,7 +40,7 @@ export class AccessChannelService {
 		return { user, channel };
 	}
 
-	async insert(id_user: number, id_channel: number): Promise<AccessChannel>
+	async insert(id_user: number, id_channel: string): Promise<AccessChannel>
 	{
 		return this.found(id_user, id_channel, true)
 			.then(data => {
@@ -49,7 +49,7 @@ export class AccessChannelService {
 			});
 	}
 
-	async remove(id_user: number, id_channel: number): Promise<DeleteResult>
+	async remove(id_user: number, id_channel: string): Promise<DeleteResult>
 	{
 		return this.found(id_user, id_channel, false)
 			.then(data => {
@@ -58,7 +58,7 @@ export class AccessChannelService {
 			});
 	}
 
-	async isAccess(id_user: number, id_channel: number): Promise<boolean>
+	async isAccess(id_user: number, id_channel: string): Promise<boolean>
 	{
 		const user = await this.userService.get(id_user, []);
 		const channel = await this.channelService.get(id_channel);

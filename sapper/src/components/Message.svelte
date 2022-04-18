@@ -31,7 +31,9 @@
 </style>
 
 <div class="{$current.id === user.id ? 'self' : 'other'}">
-	<User user={user} size="40"/>
+	<a href="/user/{user.id}">
+		<User user={user} size="40"/>
+	</a>
 	<p>
 		{message}
 	</p>

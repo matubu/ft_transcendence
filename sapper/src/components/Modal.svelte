@@ -6,11 +6,11 @@
 	export let opened = false
 
 	export function toggle(_opened = !opened) {
-		dispatch('toggle')
 		if (opened = _opened)
-			dispatch('open')
+			requestAnimationFrame(() => dispatch('open'))
 		else
-			dispatch('close')
+			requestAnimationFrame(() => dispatch('close'))
+		requestAnimationFrame(() => dispatch('toggle'))
 	}
 	export function close() { toggle(false) }
 	export function open() { toggle(true) }
@@ -24,12 +24,15 @@
 		width: 100%;
 		min-width: 200px;
 		max-width: 500px;
+		box-sizing: border-box;
+	}
+	.card, .card > :global(form) {
 		display: flex;
 		flex-direction: column;
 		gap: 30px;
-		box-sizing: border-box;
 	}
-	.card > :global(*) {
+	.card > :global(*),
+	.card > :global(form > *) {
 		margin: 0;
 	}
 
@@ -89,6 +92,8 @@
 		font-size: 20px;
 	}
 </style>
+
+<svelte:window on:keydown={e => e.key === 'Escape' && close()} />
 
 <div class="modal" style="{!opened && 'display: none'}">
 	<div class="card">

@@ -27,9 +27,10 @@
 			radial-gradient(#fff0, #fff1),
 			var(--red);
 		border-radius: 50%;
-	}
-	.bubble:not(.active) {
 		display: none;
+	}
+	.bubble.active {
+		display: block;
 	}
 	.notif {
 		position: absolute;
@@ -54,10 +55,15 @@
 		position: relative;
 		gap: 5px;
 	}
-	.container:not(:focus-within) .notif
+	.container .notif
 	{
 		opacity: 0;
 		pointer-events: none;
+	}
+	.container:focus-within .notif
+	{
+		opacity: 1;
+		pointer-events: all;
 	}
 
 	p {
@@ -72,15 +78,23 @@
 	notifs = [...notifs, data]
 }}/>
 
-<div class="container" bind:this={container}>
+<div class="container" bind:this={container}
+	on:focusin={e => {
+		console.log('focus', e)
+		blur && container.firstChild.blur()
+	}}
+	on:focusout={e => {
+		console.log('blur', e)
+	}}
+>
 	<IconButton
 		alt="notifications"
-		on:mousedown={() => {
+		on:mousedown={e => {
+			console.log('mousedown', e)
 			blur = document.activeElement == container.firstChild
 			container.firstChild.blur()
 			readNotifs();
 		}}
-		on:focus={() => blur && container.firstChild.blur()}
 	>
 		<svg height="35" width="35" viewBox="0 0 24 24" fill="currentColor"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"/></svg>
 		<div class="bubble {notifs.filter(notif => !notif.seen).length && 'active'}"></div>
@@ -90,7 +104,9 @@
 			{#each [...notifs].reverse() as notif}
 				<p>
 					{#if notif.sender}
-					<User user="{notif.sender}" />
+					<a href="/user/{notif.sender.id}">
+						<User user="{notif.sender}" />
+					</a>
 					{/if}
 					<span>{notif.msg}</span>
 				</p>

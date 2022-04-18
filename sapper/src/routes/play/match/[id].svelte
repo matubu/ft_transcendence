@@ -37,16 +37,14 @@
 	import { onDestroy, onMount } from 'svelte'
 	import IconButton from '@components/IconButton.svelte'
 
-	// TODO friends
 	// TODO user status
 	// TODO improve sound
 	// TODO fix desync score
 	// TODO watch
 	// TODO reduce lag
-	// TODO add chat navbar
+	// TODO add chat side navbar
 	// TODO improve winner screen
 	// TODO animation battle
-	// TODO notification change icon
 
 	let id: string,
 		status: string,
@@ -62,6 +60,7 @@
 	}
 
 	let arena
+	let fullscreenArena
 	let frame
 
 	// 300 * 200
@@ -240,7 +239,6 @@
 </script>
 
 <style>
-	:global(html) { overflow: hidden; }
 	.container {
 		display: flex;
 		flex-direction: column;
@@ -252,12 +250,16 @@
 		box-sizing: border-box;
 		position: relative;
 		user-select: none;
-		background: black;
+		background: var(--fore);
 		--width:  min(calc(100vw - 2rem), calc((100vh - 160px - 2rem) / 2 * 3));
 		width: var(--width);
 		height: calc(var(--width) / 3 * 2);
 		overflow: hidden;
-		border-radius: 5px;
+		border-radius: 2px;
+	}
+	:fullscreen .arena {
+		--width: min(calc(100vw), calc(100vh / 2 * 3));
+		margin: 0 auto;
 	}
 	.ball, .paddle {
 		position: absolute;
@@ -305,7 +307,7 @@
 		<header>
 			<IconButton alt="surrender" on:click={() => {
 				send('surrenderMatch')
-				goto('/play/ranked')
+				goto('/play/')
 			}}>
 				<svg height="35" width="35" viewBox="0 0 24 24" fill="currentColor"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
 			</IconButton>
@@ -313,7 +315,9 @@
 
 		<div class="win-container">
 			<div>
-				<User size="200" user={score[0] >= 11 ? $user : opponent} />
+				<a href="/user/{score[0] >= 11 ? $user.id : opponent.id}">
+					<User size="200" user={score[0] >= 11 ? $user : opponent} />
+				</a>
 				<h1>{score[0] >= 11 ? 'You' : opponent?.nickname ?? opponent?.fullname.split(' ')[0]} won !</h1>
 				<div class="{score[0] >= 11 ? 'winning' : 'losing'}">{score[0] >= 11 ? '+10' : '-10'}</div>
 			</div>
@@ -326,47 +330,53 @@
 		<header>
 			<IconButton alt="surrender" on:click={() => {
 				send('surrenderMatch')
-				goto('/play/ranked')
+				goto('/play/')
 			}}>
 				<svg height="35" width="35" viewBox="0 0 24 24" fill="currentColor"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
 			</IconButton>
 		</header>
 
 		<div class="container">
-			<div class="arena" bind:this={arena}>
-				<h2 class="score">
-					<span class="{score[0] == score[1] ? 'equal' : (score[0] > score[1] ? 'winning' : 'losing')}">
-						{score[0]}
-					</span>
-					-
-					<span class="{score[0] == score[1] ? 'equal' : (score[1] > score[0] ? 'winning' : 'losing')}">
-						{score[1]}
-					</span>
-				</h2>
-				<div class="paddle left" style="
-					height: {PADDLE_HEIGHT / 2}%;
-					width: {PADDLE_WIDTH / 3}%;
-					left: {PADDLE_X_MARGIN / 3}%;
-					top: {paddleLeft / 2}%;
-				"></div>
-				<div class="paddle right" style="
-					height: {PADDLE_HEIGHT / 2}%;
-					width: {PADDLE_WIDTH / 3}%;
-					left: {(WIDTH - PADDLE_X_MARGIN) / 3}%;
-					top: {paddleRight / 2}%;
-				"></div>
-				<div class="ball" style="
-					height: {BALL_SIZE / 2}%;
-					width: {BALL_SIZE / 3}%;
-					left: {ballPosition[0] / 3}%;
-					top: {ballPosition[1] / 2}%;
-				"></div>
+			<div on:click={() => fullscreenArena.requestFullscreen()} bind:this={fullscreenArena}>
+				<div class="arena" bind:this={arena}>
+					<h2 class="score">
+						<span class="{score[0] == score[1] ? 'equal' : (score[0] > score[1] ? 'winning' : 'losing')}">
+							{score[0]}
+						</span>
+						-
+						<span class="{score[0] == score[1] ? 'equal' : (score[1] > score[0] ? 'winning' : 'losing')}">
+							{score[1]}
+						</span>
+					</h2>
+					<div class="paddle left" style="
+						height: {PADDLE_HEIGHT / 2}%;
+						width: {PADDLE_WIDTH / 3}%;
+						left: {PADDLE_X_MARGIN / 3}%;
+						top: {paddleLeft / 2}%;
+					"></div>
+					<div class="paddle right" style="
+						height: {PADDLE_HEIGHT / 2}%;
+						width: {PADDLE_WIDTH / 3}%;
+						left: {(WIDTH - PADDLE_X_MARGIN) / 3}%;
+						top: {paddleRight / 2}%;
+					"></div>
+					<div class="ball" style="
+						height: {BALL_SIZE / 2}%;
+						width: {BALL_SIZE / 3}%;
+						left: {ballPosition[0] / 3}%;
+						top: {ballPosition[1] / 2}%;
+					"></div>
+				</div>
 			</div>
 
 			<div class="vs">
-				<User user={$user} />
+				<a href="/user/{$user.id}">
+					<User user={$user} />
+				</a>
 				<span>VS</span>
-				<User user={opponent} />
+				<a href="/user/{opponent.id}">
+					<User user={opponent} />
+				</a>
 			</div>
 		</div>
 	</Guard>

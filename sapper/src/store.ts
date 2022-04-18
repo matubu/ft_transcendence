@@ -5,6 +5,8 @@ export let user = writable(undefined)
 export let waitingLogin = writable(false)
 export let twoauth = writable(undefined)
 
+export let status = writable({})
+
 export const useMediaQuery = query =>
 	readable(null, (set) => {
 		let match

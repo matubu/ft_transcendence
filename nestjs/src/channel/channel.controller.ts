@@ -22,13 +22,13 @@ export class ChannelController {
 	}
 
 	@Get(':id_channel/users')
-	async getUsers(@Param('id_channel', ParseIntPipe) id_channel: number): Promise<User[]>
+	async getUsers(@Param('id_channel') id_channel: string): Promise<User[]>
 	{
 		return await this.channelService.getUsers(id_channel);
 	}
 
 	@Get(':id_channel/usersBan')
-	async getUsersBan(@Param('id_channel', ParseIntPipe) id_channel: number): Promise<User[]>
+	async getUsersBan(@Param('id_channel') id_channel: string): Promise<User[]>
 	{
 		return await this.channelService.getUsersBan(id_channel);
 	}
@@ -46,7 +46,7 @@ export class ChannelController {
 	}
 
 	@Post(':id_channel')
-	async access(@Param('id_channel', ParseIntPipe) id_channel: number,
+	async access(@Param('id_channel') id_channel: string,
 					@Autorization() userId: number,
 					@Body() body: { password?: string }): Promise<{users: User[], msgs: Message[]}>
 	{
@@ -59,7 +59,7 @@ export class ChannelController {
 	}
 
 	@Post(':id_channel/addAdmin')
-	async addAdmin(@Param('id_channel', ParseIntPipe) id_channel: number,
+	async addAdmin(@Param('id_channel') id_channel: string,
 					@Autorization() owner: number,
 					@Body() body: { id_user: number }): Promise<AdminChannel>
 	{
@@ -67,7 +67,7 @@ export class ChannelController {
 	}
 
 	@Delete(':id_channel/removeAdmin')
-	async removeAdmin(@Param('id_channel', ParseIntPipe) id_channel: number,
+	async removeAdmin(@Param('id_channel') id_channel: string,
 					@Autorization() owner: number,
 					@Body() body: { id_user: number }): Promise<DeleteResult>
 	{
@@ -75,7 +75,7 @@ export class ChannelController {
 	}
 
 	@Delete(':id_channel/removeAccess')
-	async removeAccess(@Param('id_channel', ParseIntPipe) id_channel: number,
+	async removeAccess(@Param('id_channel') id_channel: string,
 					@Autorization() sudo: number,
 					@Body() body: { id_user: number }): Promise<DeleteResult>
 	{
@@ -83,7 +83,7 @@ export class ChannelController {
 	}
 
 	@Post(':id_channel/ban')
-	async ban(@Param('id_channel', ParseIntPipe) id_channel: number,
+	async ban(@Param('id_channel') id_channel: string,
 					@Autorization() sudo: number,
 					@Body() body: { id_user: number }): Promise<BlacklistChannel>
 	{
@@ -91,7 +91,7 @@ export class ChannelController {
 	}
 
 	@Delete(':id_channel/unban')
-	async unban(@Param('id_channel', ParseIntPipe) id_channel: number,
+	async unban(@Param('id_channel') id_channel: string,
 					@Autorization() sudo: number,
 					@Body() body: { id_user: number }): Promise<DeleteResult>
 	{

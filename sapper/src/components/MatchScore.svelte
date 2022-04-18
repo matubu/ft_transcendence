@@ -9,27 +9,18 @@
 </script>
 
 <style>
-	.match {
-		display: flex;
-		gap: 10px;
-		align-items: center;
-		justify-content: space-between;
-		border-radius: 5px;
-		border: 1px solid var(--bord);
-		padding: 10px 15px;
-	}
-	.match > div {
+	.bord-card > a {
 		display: flex;
 		align-items: center;
 		gap: 20px;
 	}
 </style>
 
-<div class="match">
-	<div>
+<div class="bord-card">
+	<a href="/user/{user1.id}">
 		<User user="{user1}" />
 		{user1.nickname ?? user1.fullname.split(' ')[0]}
-	</div>
+	</a>
 	<div>
 		<span class="{score1 == score2 ? 'equal' : (score1 > score2 ? 'winning' : 'losing')}">
 			{score1}
@@ -39,8 +30,8 @@
 			{score2}
 		</span>
 	</div>
-	<div>
+	<a href="/user/{user2.id}">
 		<User user="{user2}" />
 		{user2.nickname ?? user2.fullname.split(' ')[0]}
-	</div>
+	</a>
 </div>

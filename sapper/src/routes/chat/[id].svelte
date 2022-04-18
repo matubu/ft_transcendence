@@ -7,7 +7,7 @@
 	import { afterUpdate } from 'svelte';
 
 	let msg
-	let id_room
+	let id_room: string
 	let container: HTMLDivElement
 
 	let messages = []
@@ -31,18 +31,12 @@
 
 	if (typeof document !== 'undefined')
 	{
-		id_room = +location.pathname.split('/')[2]
+		id_room = location.pathname.split('/')[2]
 		loadChat()
 	}
 </script>
 
 <style>
-	:global(html, main) {
-		overflow: hidden !important;
-	}
-	:global(body) {
-		height: 100vh;
-	}
 	.container {
 		display: flex;
 		flex-direction: column;

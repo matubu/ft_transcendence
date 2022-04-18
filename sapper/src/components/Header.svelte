@@ -15,7 +15,6 @@
 		display: flex;
 		align-items: center;
 		color: var(--grey);
-		text-decoration: none;
 		font-size: 20px;
 	}
 	#logo span {
@@ -43,7 +42,6 @@
 		align-items: center;
 		gap: 20px;
 		font-size: 20px;
-		text-decoration: none;
 		flex: 1;
 	}
 	#top {
@@ -78,7 +76,7 @@
 			<div id="inner">
 				<div id="top">
 					{#if ($user)}
-						<a id="user" href="/user" rel=prefetch  on:mouseup={e => e.target.blur()}>
+						<a id="user" href="/user" rel=prefetch on:mouseup={e => e.target.blur()}>
 							<User user={$user} size=50 />
 							{$user.nickname ?? $user.fullname.split(' ')[0]}
 						</a>
@@ -106,7 +104,9 @@
 		{#if ($user)}
 			<Notification />
 			{#if !($mediaQuery)}
-				<User user={$user} href="/user" />
+				<a href="/user">
+					<User user={$user} />
+				</a>
 			{/if}
 		{:else}
 			<Button primary loading={$waitingLogin} on:click={logIn}>Login</Button>

@@ -16,7 +16,7 @@ export class MessageService {
 		private readonly channelService: ChannelService
 	) {}
 
-	async insert(id_user: number, id_channel: number, msg: string): Promise<Message>
+	async insert(id_user: number, id_channel: string, msg: string): Promise<Message>
 	{
 		if (await this.channelService.isAccess(id_user, id_channel) == false)
 			throw new UnauthorizedException();
@@ -26,12 +26,11 @@ export class MessageService {
 		return this.messageRepository.findOne({ where: { id: ret.id }, relations: ['user'] });
 	}
 
-	async getMessages(id_channel: number): Promise<Message[]>
+	async getMessages(id_channel: string): Promise<Message[]>
 	{
 		const channel = await this.channelService.get(id_channel);
 		return (await this.messageRepository.find({ where: {channel: channel},
 												order: { id: "DESC"},
-												take: 100,
 												select: ["userId", "msg"] })).reverse();
 	}
 }

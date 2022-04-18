@@ -2,7 +2,7 @@
 	import Button from '@components/Button.svelte'
 	import Icon from '@components/Icon.svelte'
 
-	export let id: number
+	export let id: string
 	export let name: string
 	export let type: string
 	export let joined: boolean = false
@@ -13,9 +13,6 @@
 		text-overflow: ellipsis;
 		overflow: hidden;
 		width: 100%;
-	}
-	.grad-card {
-		text-decoration: none;
 	}
 </style>
 

@@ -20,7 +20,6 @@
 		flex-direction: column;
 		gap: 25px;
 		text-align: center;
-		margin-bottom: 140px;
 	}
 
 	h1 {

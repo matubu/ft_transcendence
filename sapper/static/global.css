@@ -1,6 +1,6 @@
 :root {
 	--whit: #F1F1F1;
-	--back: hsl(240, 33%, 1%);
+	--back: #020203;
 	--fore: #0f0f1c;
 	--bord: #1b1b1f;
 
@@ -11,6 +11,7 @@
 	--red : #ee4f4f;
 	--yelo: #eec44f;
 	--gree: #80e295;
+	--blue: #46baff;
 	--grey: #CBCBCB;
 	--prim: #f2f4f8;
 	--seco: #d8dee9;
@@ -30,7 +31,7 @@ body {
 	box-sizing: border-box;
 }
 html, body {
-	min-height: 100vh;
+	height: 100vh;
 }
 html {
 	min-width: 250px;
@@ -49,14 +50,15 @@ header {
 	padding-right: 1rem;
 	justify-content: space-between;
 }
+a { text-decoration: none }
 * {
 	font-family: 'Inter', sans-serif;
-	scrollbar-color: var(--grey) #0000;
+	scrollbar-color: var(--bord) #0000;
 	scrollbar-width: thin;
 }
 ::-webkit-scrollbar { width: 5px }
 ::-webkit-scrollbar-track { background: #0000 }
-::-webkit-scrollbar-thumb { background: var(--grey) }
+::-webkit-scrollbar-thumb { background: var(--bord) }
 h1 {
 	margin: 0 0 30px 0;
 	font-size: clamp(22px, 7vw, 4rem);
@@ -101,6 +103,21 @@ textarea, input[type="text"], input[type="password"] {
 	margin: 0;
 }
 .grad-card > div:first-child {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+}
+
+.bord-card {
+	display: flex;
+	gap: 10px;
+	align-items: center;
+	justify-content: space-between;
+	border-radius: 5px;
+	border: 1px solid var(--bord);
+	padding: 10px 15px;
+}
+.bord-card > div {
 	display: flex;
 	align-items: center;
 	gap: 20px;

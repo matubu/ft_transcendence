@@ -42,18 +42,18 @@ export class ChannelService {
 		return (channels);
 	}
 
-	async get(id: number): Promise<Channel>
+	async get(id: string): Promise<Channel>
 	{
 		return this.channelRepository.findOne({ where: { id },
 												select: ['id', 'name', 'password_is_set', 'description', 'private'] });
 	}
 
-	async getIncludePassword(id: number): Promise<Channel>
+	async getIncludePassword(id: string): Promise<Channel>
 	{
 		return this.channelRepository.findOne({ where: { id } });
 	}
 
-	async getUsers(id_channel: number): Promise<User[]>
+	async getUsers(id_channel: string): Promise<User[]>
 	{
 		const channel = await this.get(id_channel);
 		if (channel == undefined)
@@ -81,7 +81,7 @@ export class ChannelService {
 		return this.get(tmp.id);
 	}
 
-	async isOwner(id_user: number, id_channel: number): Promise<boolean>
+	async isOwner(id_user: number, id_channel: string): Promise<boolean>
 	{
 		const channel = await this.get(id_channel);
 		const user = await this.userService.get(id_user, []);
@@ -92,7 +92,7 @@ export class ChannelService {
 		return false;
 	}
 
-	async isAccess(id_user: number, id_channel: number): Promise<boolean>
+	async isAccess(id_user: number, id_channel: string): Promise<boolean>
 	{
 		if (await this.isOwner(id_user, id_channel) == true
 		|| await this.accessChannelService.isAccess(id_user, id_channel) == true
@@ -102,12 +102,12 @@ export class ChannelService {
 		return false;
 	}
 
-	async remove(id_channel: number): Promise<DeleteResult>
+	async remove(id_channel: string): Promise<DeleteResult>
 	{
 		return this.channelRepository.delete({ id: id_channel });	
 	}
 	
-	async addAdmin(id_user: number, id_owner: number, id_channel: number): Promise<AdminChannel>
+	async addAdmin(id_user: number, id_owner: number, id_channel: string): Promise<AdminChannel>
 	{
 		if (await this.isOwner(id_owner, id_channel) == false)
 			throw new UnauthorizedException()
@@ -117,7 +117,7 @@ export class ChannelService {
 		return this.adminChannelService.insert(id_user, id_channel);
 	}
 
-	async addAccess(id_user: number, id_channel: number, password?: string): Promise<AccessChannel>
+	async addAccess(id_user: number, id_channel: string, password?: string): Promise<AccessChannel>
 	{
 		const channel = await this.getIncludePassword(id_channel);
 		if (channel != undefined && channel.password != "")
@@ -126,7 +126,7 @@ export class ChannelService {
 		return this.accessChannelService.insert(id_user, id_channel);
 	}
 
-	async removeAdmin(id_user: number, id_owner: number, id_channel: number): Promise<DeleteResult>
+	async removeAdmin(id_user: number, id_owner: number, id_channel: string): Promise<DeleteResult>
 	{
 		if (await this.isOwner(id_owner, id_channel) == false)
 			throw new UnauthorizedException()
@@ -134,7 +134,7 @@ export class ChannelService {
 		return this.adminChannelService.remove(id_user, id_channel);
 	}
 
-	async removeAccess(id_user: number, id_admin: number, id_channel: number): Promise<DeleteResult>
+	async removeAccess(id_user: number, id_admin: number, id_channel: string): Promise<DeleteResult>
 	{
 		if (await this.adminChannelService.isAdmin(id_admin, id_channel) == false
 		&& await this.isOwner(id_admin, id_channel) == false)
@@ -142,7 +142,7 @@ export class ChannelService {
 		return this.accessChannelService.remove(id_user, id_channel);
 	}
 
-	async banUser(id_user: number, id_admin: number, id_channel: number): Promise<BlacklistChannel>
+	async banUser(id_user: number, id_admin: number, id_channel: string): Promise<BlacklistChannel>
 	{
 		const user_is_admin = await this.adminChannelService.isAdmin(id_user, id_channel);
 		const admin_is_admin = await this.adminChannelService.isAdmin(id_admin, id_channel);
@@ -153,7 +153,7 @@ export class ChannelService {
 		return this.blackListChannelService.ban(id_user, id_channel);
 	}
 
-	async unbanUser(id_user: number, id_admin: number, id_channel: number): Promise<DeleteResult>
+	async unbanUser(id_user: number, id_admin: number, id_channel: string): Promise<DeleteResult>
 	{
 		if (await this.adminChannelService.isAdmin(id_admin, id_channel) == false
 		&& await this.isOwner(id_admin, id_channel) == false)
@@ -161,7 +161,7 @@ export class ChannelService {
 		return this.blackListChannelService.unban(id_user, id_channel);
 	}
 
-	async getUsersBan(id_channel: number): Promise<User[]>
+	async getUsersBan(id_channel: string): Promise<User[]>
 	{
 		return this.blackListChannelService.listBan(id_channel);
 	}
