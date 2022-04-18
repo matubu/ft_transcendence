@@ -23,37 +23,25 @@ INSERT INTO "public"."achievement" ("id","title","description","private")
 VALUES ('5', 'I am the boss', 'Create a channel', FALSE);
 
 INSERT INTO "public"."achievement" ("id","title","description","private")
-VALUES ('6', 'I would fuck you all', 'Become a channel admin', FALSE);
+VALUES ('6', 'I would ban you all', 'Become a channel admin', FALSE);
 
 INSERT INTO "public"."achievement" ("id","title","description","private")
-VALUES ('7', 'I have a friend', 'Get followed', FALSE);
+VALUES ('7', 'YourName.', 'Change his nickname', FALSE);
 
 INSERT INTO "public"."achievement" ("id","title","description","private")
-VALUES ('8', 'Best friend', 'Follow a person who has followed us', FALSE);
+VALUES ('8', 'Mona Lisa', 'Change your photo', FALSE);
 
 INSERT INTO "public"."achievement" ("id","title","description","private")
-VALUES ('9', 'YourName.', 'Change his nickname', FALSE);
+VALUES ('9', 'Alcoholic', 'Change your nickname to an alcohol name', TRUE);
 
 INSERT INTO "public"."achievement" ("id","title","description","private")
-VALUES ('10', 'Mona Lisa', 'Change your photo', FALSE);
+VALUES ('10', 'Usurper', 'Change your nickname by intra 42 of one of the creators', TRUE);
 
 INSERT INTO "public"."achievement" ("id","title","description","private")
-VALUES ('11', 'Alcoholic', 'Change your nickname to an alcohol name', TRUE);
+VALUES ('11', 'Under the table', 'Take Fanny', FALSE);
 
 INSERT INTO "public"."achievement" ("id","title","description","private")
-VALUES ('12', 'Usurper', 'Change your nickname by intra 42 of one of the creators', TRUE);
+VALUES ('12', 'Fanny', 'Put Fanny', FALSE);
 
 INSERT INTO "public"."achievement" ("id","title","description","private")
-VALUES ('13', 'HackerMan', 'Make private achievements visible', FALSE);
-
-INSERT INTO "public"."achievement" ("id","title","description","private")
-VALUES ('14', 'Under the table', 'Take Fanny', FALSE);
-
-INSERT INTO "public"."achievement" ("id","title","description","private")
-VALUES ('15', 'Fanny', 'Put Fanny', FALSE);
-
-INSERT INTO "public"."achievement" ("id","title","description","private")
-VALUES ('16', 'Take the top position', 'Winning while you were in trouble', FALSE);
-
-INSERT INTO "public"."achievement" ("id","title","description","private")
-VALUES ('17', 'The end', 'Achieve all the achievement', TRUE);
+VALUES ('13', 'The end', 'Achieve all the achievement', TRUE);
