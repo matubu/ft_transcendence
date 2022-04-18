@@ -22,7 +22,9 @@ export class UserService {
 
 	async get(id: number, relations: any[]): Promise<User>
 	{
-		return this.userRepository.findOne({ where: { id }, relations });
+		let user = await this.userRepository.findOne({ where: { id }, relations });
+		user?.matchs?.reverse?.();
+		return (user);
 	}
 
 	async create(id: number, fullname: string, urlImage: string): Promise<User>
