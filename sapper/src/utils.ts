@@ -114,7 +114,9 @@ export const send = async (channel, data: any = '') => {
 
 export const addStatusListener = (userId) => {
 	if (get(status)[userId] === undefined) {
-		status.set({ ...get(status),  userId: 'offline' })
+		let updatedStatus = get(status)
+		updatedStatus[userId] = 'offline'
+		status.set(updatedStatus)
 		send('addStatusListener', userId)
 	}
 }
@@ -153,9 +155,10 @@ if (typeof document !== 'undefined')
 				return (goto(`/play/match/${data.id}`))
 			if (channel === 'userstatus')
 			{
-				let updateStatus = get(status)
-				updateStatus[data[0]] = data[1]
-				status.set(updateStatus)
+				let updatedStatus = get(status)
+				updatedStatus[data[0]] = data[1]
+				status.set(updatedStatus)
+				console.log(get(status))
 				return ;
 			}
 

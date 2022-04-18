@@ -37,8 +37,7 @@
 	import { onDestroy, onMount } from 'svelte'
 	import IconButton from '@components/IconButton.svelte'
 
-	// TODO user status
-	// TODO improve sound
+	// TODO improve sound && fix error
 	// TODO fix desync score
 	// TODO watch
 	// TODO reduce lag
@@ -257,9 +256,12 @@
 		overflow: hidden;
 		border-radius: 2px;
 	}
+	.arena-container {
+		display: grid;
+		place-items: center;
+	}
 	:fullscreen .arena {
 		--width: min(calc(100vw), calc(100vh / 2 * 3));
-		margin: 0 auto;
 	}
 	.ball, .paddle {
 		position: absolute;
@@ -337,7 +339,7 @@
 		</header>
 
 		<div class="container">
-			<div on:click={() => fullscreenArena.requestFullscreen()} bind:this={fullscreenArena}>
+			<div class="arena-container" on:click={() => fullscreenArena.requestFullscreen()} bind:this={fullscreenArena}>
 				<div class="arena" bind:this={arena}>
 					<h2 class="score">
 						<span class="{score[0] == score[1] ? 'equal' : (score[0] > score[1] ? 'winning' : 'losing')}">

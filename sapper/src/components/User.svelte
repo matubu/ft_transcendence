@@ -9,7 +9,7 @@
 	const dispatch = createEventDispatcher()
 
 	if (user.id !== $current?.id)
-		addStatusListener(user.userId)
+		addStatusListener(user.id)
 </script>
 
 <style>
@@ -36,7 +36,7 @@
 </style>
 
 {#if user}
-	<div style="--size: {size}px" on:click={() => dispatch('click')} class={ $status[user.userId] }>
+	<div style="--size: {size}px" on:click={() => dispatch('click')} class={$status[user.id]}>
 		<img src="{user.picture?.url}" alt="">
 	</div>
 {/if}

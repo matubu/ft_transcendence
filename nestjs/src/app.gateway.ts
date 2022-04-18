@@ -78,7 +78,6 @@ class Match {
 			send(this.players[1], 'matchScore', this.getScore(this.players[1]))
 			finish()
 		}
-		console.log('update score', this.score)
 	}
 	getScore(client: any) {
 		return (client.userId === this.players[0].userId ? this.score : [...this.score].reverse())
@@ -160,7 +159,7 @@ export class AppGateway {
 
 	@SubscribeMessage('disconnectMatch')
 	disconnectFromMatch(client: any) {
-		let { id, match } = this.getMatchByClient(client)
+		let { match } = this.getMatchByClient(client)
 
 		match?.disconnectPlayer?.(client)
 	}
@@ -170,6 +169,7 @@ export class AppGateway {
 		let { id, match } = this.getMatchByClient(client)
 
 		match !== undefined && this.matchMap.delete(id)
+		this.updateStatusListener(client.userId)
 	}
 
 	@SubscribeMessage('joinRanked')
@@ -179,7 +179,6 @@ export class AppGateway {
 			return;
 		// ---- ADD TO MATCHING LIST ----
 		this.matchingMap.set(client.userId, client)
-		console.log(this.matchingMap.keys(), this.matchingMap.size)
 		if (this.matchingMap.size >= 2) {
 			// ---- CREATE MATCH ----
 			const [[id1, user1], [id2, user2]] = this.matchingMap
@@ -189,7 +188,8 @@ export class AppGateway {
 			this.matchMap.set(id, new Match(user1, user2))
 			send(user1, 'matchfound', { id })
 			send(user2, 'matchfound', { id })
-			this.updateStatusListener(client.userId)
+			this.updateStatusListener(user1.userId)
+			this.updateStatusListener(user2.userId)
 		}
 	}
 
@@ -204,7 +204,6 @@ export class AppGateway {
 		if (!this.matchMap.has(gameId) || this.connectToMatchInform(client) === false)
 			return send(client, 'rankedExpired')
 		const match = this.matchMap.get(gameId)
-		console.log(match.getScore(client))
 		send(client, 'matchData', {
 			// --- OPPONENT ---
 			o: await this.userService.get(match.getOpponent(client)?.userId, []),
@@ -221,7 +220,6 @@ export class AppGateway {
 
 		if (match == undefined) return;
 		match?.updateScore?.(client, gameScore, () => {
-			console.log('saveMatch')
 			this.matchService.saveMatch(match.players[0].userId, match.players[1].userId, match.score[0], match.score[1])
 			this.matchMap.delete(id)
 		})
@@ -255,11 +253,11 @@ export class AppGateway {
 	}
 
 	getStatus(userId: number) {
-		if (this.userMap.get(userId)?.size == 0)
-			return ('offline')
-		if ([...this.matchMap.values()].find((match: Match) => match.containsPlayer(userId)))
+		if ([...this.matchMap.values()].find((match: Match) => match.containsPlayerId(userId)))
 			return ('in-game')
-		return ('online')
+		if (this.userMap.get(userId)?.size)
+			return ('online')
+		return ('offline')
 	}
 
 	sendStatus(client: any, userId: number, status = this.getStatus(userId)) {
@@ -278,7 +276,6 @@ export class AppGateway {
 	{
 		const { receiver } = notif
 		if (!receiver) return ;
-		// console.log(receiver)
 		this.sendTo(receiver.id, "notif", notif);
 	}
 }
