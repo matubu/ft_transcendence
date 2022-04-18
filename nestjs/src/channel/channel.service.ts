@@ -165,4 +165,17 @@ export class ChannelService {
 	{
 		return this.blackListChannelService.listBan(id_channel);
 	}
+
+	async getChannels(id_user: number): Promise<string[]>
+	{
+		const user = await this.userService.get(id_user, ["ownerChannels", "adminChannels", "accessChannels"]);
+		let channelIDS: string[] = [];
+		for (let i = 0; i < user.ownerChannels.length; i++)
+			channelIDS.push(user.ownerChannels[i].id)
+		for (let i = 0; i < user.adminChannels.length; i++)
+			channelIDS.push(user.adminChannels[i].channel.id)
+		for (let i = 0; i < user.accessChannels.length; i++)
+			channelIDS.push(user.accessChannels[i].channel.id)
+		return (channelIDS);
+	}
 }
