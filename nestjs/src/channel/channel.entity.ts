@@ -4,8 +4,6 @@ import { User } from '../user/user.entity'
 @Entity()
 export class Channel
 {
-	// @PrimaryGeneratedColumn()
-	// id: number;
 	@PrimaryGeneratedColumn("uuid")
 	id: string;
 

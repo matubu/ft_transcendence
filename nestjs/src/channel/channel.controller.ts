@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
+import { Body, Controller, Delete, forwardRef, Get, Inject, Param, Post, Res } from '@nestjs/common';
 import { AdminChannel } from 'src/admin-channel/admin-channel.entity';
 import { Autorization } from 'src/auth.guard';
 import { Message } from 'src/message/message.entity';
@@ -9,6 +9,7 @@ import { ChannelInterface } from './channel.interface';
 import { ChannelService } from './channel.service';
 import { User } from 'src/user/user.entity';
 import { BlacklistChannel } from 'src/blacklist-channel/blacklist-channel.entity';
+import { UserService } from 'src/user/user.service';
 
 @Controller('channel')
 export class ChannelController {
@@ -26,6 +27,32 @@ export class ChannelController {
 	{
 		return await this.channelService.getUsers(id_channel);
 	}
+
+	@Get('friend/:id_friend')
+	async getChannelMP(@Autorization() userId: number,
+						@Param('id_friend') friendId: number,
+						@Res() res: any): Promise<void>
+	{
+		const userChannels = await this.channelService.getChannels(userId);
+		const friendChannels = await this.channelService.getChannels(friendId);
+		const channels = userChannels.filter(channel => friendChannels.includes(channel))
+		for (let i = 0; i < channels.length; i++)
+		{
+			const tmp = await this.channelService.getUsers(channels[i]);
+			if (tmp.length == 2)
+				res.status(302).redirect(`/chat/${channels[i]}`);
+		}
+		const channel: ChannelInterface = {
+			name: "Private Message",
+			password: undefined,
+			description: undefined,
+			private: true
+		};
+		const createChannel = await this.channelService.create(userId, channel);
+		await this.channelService.addAccess(friendId, createChannel.id, undefined);
+		res.status(302).redirect(`/chat/${createChannel.id}`);
+	}
+	
 
 	@Get(':id_channel/usersBan')
 	async getUsersBan(@Param('id_channel') id_channel: string): Promise<User[]>
