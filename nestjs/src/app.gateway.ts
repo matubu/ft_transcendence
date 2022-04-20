@@ -66,11 +66,13 @@ class Match {
 		return (this.score[0] >= 11 || this.score[1] >= 11)
 	}
 
-	eloWon(elo_diff: number, K: number = 42): number
+	eloWon(winnerElo: number, loserElo: number, K: number = 42): number
 	{
-		// assert(elo_diff >= 0, "elo_diff must be positive!")
-		const proba = 1 / (1 + Math.pow(10, elo_diff / 400))
-		return Math.round(K * (1 - proba))
+		const elo_diff = Math.abs(winnerElo - loserElo)
+		let proba = 1 / (1 + Math.pow(10, elo_diff / 400))
+		if (loserElo > winnerElo)
+			proba = 1 - proba
+		return Math.round(K * proba)
 	}
 
 	updateScore(client: any, gameScore: number[], finish: Function) {
@@ -232,7 +234,7 @@ export class AppGateway {
 			let l = match.getOpponent(w)
 			let winner = await this.userService.get(w.userId, [])
 			let loser = await this.userService.get(l.userId, [])
-			const d_elo = match.eloWon(Math.abs((winner.elo - loser.elo)))
+			const d_elo = match.eloWon(winner.elo, loser.elo)
 			winner.elo += d_elo
 			loser.elo -= d_elo
 			send(w, "eloDiff", `+${d_elo}`)
