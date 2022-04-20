@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, forwardRef, Get, Inject, Param, Post, Res } from '@nestjs/common';
+import { BadGatewayException, Body, Controller, Delete, forwardRef, Get, Inject, Param, Post, Res } from '@nestjs/common';
 import { AdminChannel } from 'src/admin-channel/admin-channel.entity';
 import { Autorization } from 'src/auth.guard';
 import { Message } from 'src/message/message.entity';
@@ -115,9 +115,12 @@ export class ChannelController {
 	@Post(':id_channel/ban')
 	async ban(@Param('id_channel') id_channel: string,
 					@Autorization() sudo: number,
-					@Body() body: { id_user: number }): Promise<BlacklistChannel>
+					@Body() body: { id_user: number, date: string }): Promise<BlacklistChannel>
 	{
-		return await this.channelService.banUser(body.id_user, sudo, id_channel);
+		let dateBan: string = null;
+		if (body.date !== "" && body.date !== null && body.date !== undefined)
+			dateBan = body.date;
+		return await this.channelService.banUser(body.id_user, sudo, id_channel, dateBan);
 	}
 
 	@Delete(':id_channel/unban')

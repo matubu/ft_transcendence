@@ -142,7 +142,7 @@ export class ChannelService {
 		return this.accessChannelService.remove(id_user, id_channel);
 	}
 
-	async banUser(id_user: number, id_admin: number, id_channel: string): Promise<BlacklistChannel>
+	async banUser(id_user: number, id_admin: number, id_channel: string, dateBan: string): Promise<BlacklistChannel>
 	{
 		const user_is_admin = await this.adminChannelService.isAdmin(id_user, id_channel);
 		const admin_is_admin = await this.adminChannelService.isAdmin(id_admin, id_channel);
@@ -150,7 +150,7 @@ export class ChannelService {
 		if ((admin_is_admin == false && admin_is_owner == false)
 		|| (user_is_admin && admin_is_owner == false))
 			throw new UnauthorizedException();
-		return this.blackListChannelService.ban(id_user, id_channel);
+		return this.blackListChannelService.ban(id_user, id_channel, new Date(dateBan));
 	}
 
 	async unbanUser(id_user: number, id_admin: number, id_channel: string): Promise<DeleteResult>
