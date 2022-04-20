@@ -18,6 +18,7 @@
 		border-radius: 50%;
 	}
 	div {
+		flex-shrink: 0;
 		padding: 3px;
 		width: var(--size);
 		height: var(--size);

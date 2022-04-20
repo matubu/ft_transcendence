@@ -64,10 +64,6 @@
 			<input type="text" placeholder="Chat name" required name="name">
 		</label>
 		<label>
-			Description<br>
-			<textarea cols="30" rows="10" name="description"></textarea>
-		</label>
-		<label>
 			Password<br>
 			<input type="password" placeholder="Password" name="password">
 		</label>

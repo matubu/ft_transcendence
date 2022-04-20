@@ -44,14 +44,12 @@
 
 	// TODO modal wrong input error message
 	// TODO pong duel
-	// TODO search
 	// TODO improve sound
 	// TODO fix desync score
 	// TODO watch
 	// TODO reduce lag
 	// TODO add chat side navbar
 	// TODO change favicon notification
-	// TODO 404 pong
 	// TODO improve winner screen
 	// TODO animation battle
 	// TODO fix bug score home
@@ -68,7 +66,7 @@
 	let mp3
 	let playCollisionSound = (type) => {
 		mp3[type - 1]?.play?.()
-			?.catch?.(err => console.log('cannot play sound'))
+			?.catch?.(() => console.log('cannot play sound'))
 	}
 
 	let arena

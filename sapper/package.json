@@ -1,5 +1,5 @@
 {
-	"name": "transcendence_sapper",
+	"name": "ft_transcendence_sapper",
 	"scripts": {
 		"dev": "sapper dev",
 

@@ -168,13 +168,13 @@
 	</div>
 </Modal>
 
-<Modal bind:this={modalNickname} on:open={inputNickname.focus}>
+<Modal bind:this={modalNickname} on:open={inputNickname.focus()}>
 	<form on:submit={async e => {
 		e.preventDefault()
 		modalNickname.close()
 		await postjson('/api/user/changeNickname', {
-				nickname: inputNickname.value
-			})
+			nickname: inputNickname.value
+		})
 		fetchUser()
 	}}>
 		<h2>Change nickname</h2>

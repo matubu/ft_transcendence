@@ -18,7 +18,7 @@
 
 <style>
 	.card {
-		background: #0f0f1c;
+		background: var(--fore);
 		padding: 30px;
 		border-radius: 10px;
 		width: 100%;

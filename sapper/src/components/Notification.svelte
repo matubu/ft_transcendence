@@ -43,7 +43,7 @@
 		transition: .1s;
 		box-shadow: 0 0 20px #ffffff05;
 		font-size: 15px;
-		z-index: 9999;
+		z-index: 99999;
 		max-height: 50vh;
 		overflow-y: auto;
 	}

@@ -2,6 +2,7 @@
 	import Layout from '@components/Layout.svelte'
 	import Head from '@components/Head.svelte'
 	import { send } from '@lib/utils'
+	import { user } from '@lib/store'
 	import IconButton from '@lib/components/IconButton.svelte'
 	import Message from '@lib/components/Message.svelte'
 	import { afterUpdate } from 'svelte'
@@ -97,7 +98,7 @@
 <Layout>
 	<div class="vflex container" bind:this={container}>
 		{#each messages as msg}
-			<Message user={userInfo.get(msg.userId)} message={msg.msg}/>
+			<Message user={userInfo.get(msg.userId)} message={msg.msg} blocked={$user.blockList.find(({ blockedId }) => blockedId === msg.userId)}/>
 		{/each}
 	</div>
 	<form on:submit={async e => {

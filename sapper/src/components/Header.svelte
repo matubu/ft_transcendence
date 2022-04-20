@@ -2,6 +2,7 @@
 	import Button from '@components/Button.svelte'
 	import IconButton from '@components/IconButton.svelte'
 	import Notification from '@components/Notification.svelte'
+	import SearchBar from '@components/SearchBar.svelte'
 	import User from '@components/User.svelte'
 	import Nav from '@components/Nav.svelte'
 	import { user, useMediaQuery, waitingLogin } from '@lib/store'
@@ -30,7 +31,7 @@
 		padding: 50px;
 		box-sizing: border-box;
 		background: var(--fore);
-		z-index: 10000;
+		z-index: 9999;
 		transition: .35s cubic-bezier(0.68, 0.06, 0.35, 0.99);
 		transform: translate(-100%)
 	}
@@ -112,4 +113,5 @@
 			<Button primary loading={$waitingLogin} on:click={logIn}>Login</Button>
 		{/if}
 	</div>
+	<SearchBar />
 </header>

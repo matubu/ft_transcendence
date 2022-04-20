@@ -5,12 +5,15 @@
 	import Head from '@components/Head.svelte'
 	import { user } from '@lib/store'
 	import { removeFriend, addFriend, fetchUser, postjson, getjson } from '@lib/utils'
+	import { stores } from '@sapper/app'
+	
+	const { page } = stores()
 </script>
 
 <Head title="User profile"/>
 
 <Layout>
-	{#await getjson(`/api/user/${+location.pathname.split('/')[2]}`)}
+	{#await getjson(`/api/user/${$page.path.split('/')[2]}`)}
 		<p>Loading ...</p>
 	{:then data}
 		<User size=100 user={data} />

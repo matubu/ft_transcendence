@@ -74,12 +74,13 @@ label {
 	display: block;
 }
 
-textarea, input[type="text"], input[type="password"] {
+input[type="text"], input[type="password"] {
 	width: 100%;
 	max-width: 400px;
 	font-size: 17px;
 	margin: 0;
-	padding: 15px 20px;
+	padding: 0 20px;
+	line-height: 3;
 	box-sizing: border-box;
 	border-radius: 7px;
 	outline: none;
