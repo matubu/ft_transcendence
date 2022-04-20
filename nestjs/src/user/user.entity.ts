@@ -8,6 +8,7 @@ import { Notification } from "../notification/notification.entity";
 import { AdminChannel } from 'src/admin-channel/admin-channel.entity';
 import { UserAchievement } from 'src/user-achievement/user-achievement.entity';
 import { Match } from 'src/match/match.entity';
+import { Block } from 'src/block/block.entity';
 
 @Entity()
 export class User
@@ -53,4 +54,7 @@ export class User
 	@ManyToMany(() => Match, match => match.players)
 	@JoinTable()
 	matchs: Match[];
+
+	@OneToMany(() => Block, block => block.user)
+	blockList: Block[];
 }

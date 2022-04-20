@@ -46,7 +46,7 @@ export class UserController {
 		return await this.userService.get(userId,
 			["dfa", "friends", "ownerChannels",
 			"adminChannels", "accessChannels", "notifications",
-			"achievements", "matchs"]);
+			"achievements", "matchs", "blockList"]);
 	}
 
 	@Post('changePicture')
