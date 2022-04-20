@@ -60,6 +60,12 @@
 	h1 {
 		overflow-wrap: anywhere;
 	}
+	.achievements > .bord-card {
+		gap: 30px;
+	}
+	.achievements > .bord-card > :last-child {
+		text-align: right;
+	}
 </style>
 
 <Head title="User" />
@@ -97,18 +103,37 @@
 				</div>
 			</div>
 
-			<div class="vflex">
-				{#each $user.friends as { friend }}
-					<a class="bord-card" href="/user/{friend.id}">
-						<User user={friend} />
-						{friend.nickname ?? friend.fullname.split(' ')[0]}
-						<Button primary on:click={e => {
-							e.stopPropagation(0)
-							removeFriend(friend.id)
-						}}>Remove friend</Button>
-					</a>
-				{/each}
-			</div>
+			<h2>Friends</h2>
+			{#if $user.friends.length}
+				<div class="vflex">
+					{#each $user.friends as { friend }}
+						<a class="bord-card" href="/user/{friend.id}">
+							<User user={friend} />
+							{friend.nickname ?? friend.fullname.split(' ')[0]}
+							<Button primary on:click={e => {
+								e.stopPropagation(0)
+								removeFriend(friend.id)
+							}}>Remove friend</Button>
+						</a>
+					{/each}
+				</div>
+			{:else}
+				<p class="dim">You have no friends</p>
+			{/if}
+
+			<h2>Achievements</h2>
+			{#if $user.achievements.length}
+				<div class="vflex achievements">
+					{#each $user.achievements as { achievement }}
+						<div class="bord-card">
+							{achievement.title}
+							<span class="dim">{achievement.description}</span>
+						</div>
+					{/each}
+				</div>
+			{:else}
+				<p class="dim">You have no friends</p>
+			{/if}
 
 			<div>
 				<Button on:click={async () => {

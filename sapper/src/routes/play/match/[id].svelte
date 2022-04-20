@@ -45,7 +45,6 @@
 	// TODO modal wrong input error message
 	// TODO block
 	// TODO pong duel
-	// TODO achivments
 	// TODO search
 	// TODO improve sound
 	// TODO fix desync score
