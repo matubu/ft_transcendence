@@ -5,7 +5,8 @@
 	import Room from '@components/Room.svelte'
 	import Modal from '@components/Modal.svelte'
 	import { useMediaQuery } from '@lib/store'
-	import { writable } from 'svelte/store';
+	import { writable } from 'svelte/store'
+	import { postjson } from '@lib/utils'
 
 	let modalNewChat
 	let formNewChat
@@ -53,15 +54,8 @@
 	<h2>New chat</h2>
 	<form bind:this={formNewChat} on:submit={async e => {
 		e.preventDefault()
-		console.log('submit')
 		const { password, mode, ...args } = Object.fromEntries([...formNewChat.querySelectorAll('input, textarea')].map(elm => [elm.name, elm.name === 'mode' ? elm.checked : elm.value]))
-		await fetch('/api/channel', {
-			method: "POST",
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({ password, private: mode, ...args })
-		})
+		await postjson('/api/channel', { password, private: mode, ...args })
 		modalNewChat.close()
 		reloadChatList()
 	}}>
@@ -83,7 +77,6 @@
 		</label>
 		<div style="text-align: right">
 			<Button on:click={e => {
-				console.log(e)
 				e.preventDefault()
 				modalNewChat.close()
 			}}>Cancel</Button>

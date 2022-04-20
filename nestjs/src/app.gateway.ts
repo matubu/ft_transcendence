@@ -237,8 +237,8 @@ export class AppGateway {
 			const d_elo = match.eloWon(winner.elo, loser.elo)
 			winner.elo += d_elo
 			loser.elo -= d_elo
-			send(w, "eloDiff", `+${d_elo}`)
-			send(l, "eloDiff", `-${d_elo}`)
+			send(w, "winner", [true, match.score, `+${d_elo}`])
+			send(l, "winner", [false, match.score, `-${d_elo}`])
 			this.userService.updateUser(winner)
 			this.userService.updateUser(loser)
 			this.matchService.saveMatch(match.players[0].userId, match.players[1].userId, match.score[0], match.score[1])

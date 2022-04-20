@@ -1,14 +1,14 @@
 <script>
 	import Head from '@components/Head.svelte'
-	import Header from '@components/Header.svelte'
 	import Button from '@components/Button.svelte'
 	import AnimatedGradient from '@components/AnimatedGradient.svelte'
 	import { fly } from 'svelte/transition';
 	import { onMount } from 'svelte';
 	import { user, waitingLogin } from '@lib/store'
 	import { logIn } from '@lib/utils';
+	import Layout from '@lib/components/Layout.svelte';
 
-	let mounted = false
+	let mounted
 	onMount(() => mounted = true)
 </script>
 
@@ -39,27 +39,27 @@
 
 <Head title="Home" />
 
-<Header />
-
-{#if mounted}
-	<div class="hero">
-		<div>
-			<h1>Transcendence</h1>
-			<p>
-				{#each `Transcendence is a simple multiplayer tennis table game.
-	The player controls a paddle by moving it vertically.
-	The goal is to reach eleven points first.
-	Points are earned when the other fails to return the ball.`.split(/\s/) as c, idx}
-					<span in:fly={{ x: 10, y: -6, duration: 200, delay: idx * 70 }}>{c}</span>
-				{/each}
-			</p>
-			{#if ($user)}
-				<Button primary href="/play">Play now</Button>
-			{:else}
-				<Button primary loading={$waitingLogin} on:click={logIn}>Login</Button>
-			{/if}
+<Layout>
+	{#if mounted}
+		<div class="hero">
+			<div>
+				<h1>Transcendence</h1>
+				<p>
+					{#each `Transcendence is a simple multiplayer tennis table game.
+		The player controls a paddle by moving it vertically.
+		The goal is to reach eleven points first.
+		Points are earned when the other fails to return the ball.`.split(/\s/) as c, idx}
+						<span in:fly={{ x: 10, y: -6, duration: 200, delay: idx * 70 }}>{c}</span>
+					{/each}
+				</p>
+				{#if ($user)}
+					<Button primary href="/play">Play now</Button>
+				{:else}
+					<Button primary loading={$waitingLogin} on:click={logIn}>Login</Button>
+				{/if}
+			</div>
 		</div>
-	</div>
-{/if}
+	{/if}
+</Layout>
 
 <AnimatedGradient />

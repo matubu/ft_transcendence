@@ -7,7 +7,7 @@
 	import Icon from '@components/Icon.svelte'
 	import { goto } from '@sapper/app'
 	import { onMount } from 'svelte'
-	import { fetchUser, send } from '@lib/utils'
+	import { fetchUser, getjson, send } from '@lib/utils'
 	import { user } from '@lib/store'
 
 	onMount(() => {
@@ -72,36 +72,34 @@
 	</div>
 	<div>
 		<h2>Match</h2>
-		{#await fetch("/api/rank")}
+		{#await getjson("/api/rank")}
 			<div class="bord-card">loading...</div>
-		{:then res} 
-			{#await res.json()}
-				<div class="bord-card">loading...</div>
-			{:then ranks}
-				<div class="vflex">
-					{#each ranks as user, i}
-						<a class="bord-card" style="{[
-								'background: var(--grad-gree); border: none',
-								'background: var(--grad-blue); border: none',
-								'background: var(--grad-purp); border: none']
-							[i]}" href="/user/{user.id}">
-							<div>
-								<div>{i + 1}</div>
-								<User {user} nostatus />
-								{user.nickname ?? user.fullname.split(' ')[0]}
-							</div>
-							<div>
-								{user.elo}
-							</div>
-						</a>
-					{/each}
-				</div>
-			{/await}
+		{:then ranks}
+			<div class="vflex">
+				{#each ranks as user, i}
+					<a class="bord-card" style="{[
+							'background: var(--grad-gree); border: none',
+							'background: var(--grad-blue); border: none',
+							'background: var(--grad-purp); border: none']
+						[i]}" href="/user/{user.id}">
+						<div>
+							<div>{i + 1}</div>
+							<User {user} nostatus />
+							{user.nickname ?? user.fullname.split(' ')[0]}
+						</div>
+						<div>
+							{user.elo}
+						</div>
+					</a>
+				{/each}
+			</div>
+		{:catch err}
+			<p>Error: {err.message}</p>
 		{/await}
 		<progress max={$user.matchs.length} value={$user.matchs.filter(({ victory }) => victory.id === $user.id).length}/>
 		<div class="vflex">
-			{#if $user.matchs.length}
-				{#each $user.matchs as { player1_score, player2_score, player1, player2, date }, i}
+			{#if ($user.matchs.length)}
+				{#each ($user.matchs) as { player1_score, player2_score, player1, player2, date }, i}
 					{#if fmtDate(new Date($user.matchs[i - 1]?.date ?? null)) !== fmtDate(new Date(date))}
 						<span class="date dim">{fmtDate(new Date(date))}</span>
 					{/if}

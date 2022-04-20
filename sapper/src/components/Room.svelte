@@ -1,5 +1,6 @@
 <script>
 	import User from '@components/User.svelte'
+	import { getjson } from '@lib/utils'
 
 	export let id: string
 	export let name: string
@@ -46,21 +47,19 @@
 		<p class="dim">{desc}</p>
 	</div>
 	<div style="gap: 0">
-		{#await fetch(`/api/channel/${id}/users`)}
+		{#await getjson(`/api/channel/${id}/users`)}
 			loading...
-		{:then res}
-			{#await res.json()}
-				loading...
-			{:then users}
-				{#each users.slice(0, 3) as user}
-					<div style="margin-left: -20px">
-						<User {user} />
-					</div>
-				{/each}
-				{#if users.length > 3}
-					<span class="dim" style="margin-left: 10px">+{users.length - 3}</span>
-				{/if}
-			{/await}
+		{:then users}
+			{#each users.slice(0, 3) as user}
+				<div style="margin-left: -20px">
+					<User {user} />
+				</div>
+			{/each}
+			{#if users.length > 3}
+				<span class="dim" style="margin-left: 10px">+{users.length - 3}</span>
+			{/if}
+		{:catch err}
+			<p>Error: {err.message}</p>
 		{/await}
 	</div>
 </a>

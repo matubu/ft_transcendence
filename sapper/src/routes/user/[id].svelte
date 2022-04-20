@@ -4,33 +4,40 @@
 	import Button from '@components/Button.svelte'
 	import Head from '@components/Head.svelte'
 	import { user } from '@lib/store'
-	import { removeFriend, addFriend } from '@lib/utils'
-
-	async function load() {
-		const res = await fetch(`/api/user/${+location.pathname.split('/')[2]}`)
-		if (!res.ok)
-			throw 'cannot fetch'
-		return await res.json()
-	}
-
-	console.log($user?.friends)
+	import { removeFriend, addFriend, fetchUser, postjson, getjson } from '@lib/utils'
 </script>
 
 <Head title="User profile"/>
 
 <Layout>
-	{#await load()}
+	{#await getjson(`/api/user/${+location.pathname.split('/')[2]}`)}
 		<p>Loading ...</p>
 	{:then data}
 		<User size=100 user={data} />
 		<h1>{data.nickname ?? data.fullname.split(' ')[0]}</h1>
 		<p>{data.fullname}</p>
 		<p>Elo: {data.elo}</p>
-		{#if $user?.id !== data.id}
+		{#if ($user?.id !== data.id)}
 			<div>
 				<Button href="/api/channel/friend/{data.id}">Chat</Button>
 				<Button>Duel</Button>
-				<Button>Block</Button>
+				{#if ($user.blockList.find(({ blockedId }) => blockedId === data.id))}
+					<Button on:click={async () => {
+						await postjson('/api/block', {
+								blocked: false,
+								blockedId: data.id
+							})
+						fetchUser()
+					}}>Unblock</Button>
+				{:else}
+					<Button on:click={async () => {
+						await postjson('/api/block', {
+								blocked: true,
+								blockedId: data.id
+							})
+						fetchUser()
+					}}>Block</Button>
+				{/if}
 				{#if ($user.friends.find(({ friend }) => friend.id === data.id))}
 					<Button primary on:click={() => removeFriend(data.id)}>Remove friend</Button>
 				{:else}
@@ -39,6 +46,6 @@
 			</div>
 		{/if}
 	{:catch err}
-		<p>Error: {err}</p>
+		<p>Error: {err.message}</p>
 	{/await}
 </Layout>

@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, ManyToOne, Column, JoinColumn } from 'typeorm';
 import { User } from '../user/user.entity'
 
 @Entity()
@@ -10,6 +10,10 @@ export class Block
 	@ManyToOne(() => User)
     user: User;
 
-	@ManyToOne(() => User, { eager: true })
+	@ManyToOne(() => User)
+	@JoinColumn({ name: 'blockedId' })
     blocked: User;
+
+	@Column()
+	blockedId: number;
 }

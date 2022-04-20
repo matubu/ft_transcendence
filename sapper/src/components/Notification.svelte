@@ -70,24 +70,16 @@
 
 <svelte:window on:wsmsg={e => {
 	const { channel, data } = e.detail
-	if (channel !== "notif") return;
-	console.log('ws notifcation in svelte:window', channel, data)
+	if (channel !== "notif") return ;
 	notifs = [...notifs, data]
 }}/>
 
 <div class="container" bind:this={container}
-	on:focusin={e => {
-		console.log('focus', e)
-		blur && container.firstChild.blur()
-	}}
-	on:focusout={e => {
-		console.log('blur', e)
-	}}
+	on:focusin={e => blur && container.firstChild.blur()}
 >
 	<IconButton
 		alt="notifications"
 		on:mousedown={e => {
-			console.log('mousedown', e)
 			blur = document.activeElement == container.firstChild
 			container.firstChild.blur()
 			readNotifs();

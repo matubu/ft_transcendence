@@ -1,5 +1,5 @@
 <script>
-	import { fetchUser, getCookie } from '@lib/utils'
+	import { fetchUser, getCookie, postjson } from '@lib/utils'
 	import Modal from '@components/Modal.svelte'
 	import { twoauth } from '@lib/store'
 	import { useMediaQuery } from '@lib/store'
@@ -15,15 +15,9 @@
 	let submit = async () => {
 		for (let elm of input.querySelectorAll('input'))
 			elm.disabled = true
-		await fetch('/api/user/checkCode', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
+		await postjson('/api/user/checkCode', {
 				code: [...input.querySelectorAll('input')].reduce((acc, elm) => acc + elm.value, '')
 			})
-		})
 		reset()
 		for (let elm of input.querySelectorAll('input'))
 			elm.disabled = false

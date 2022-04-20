@@ -6,7 +6,7 @@
 	import Button from '@components/Button.svelte'
 	import User from '@components/User.svelte'
 	import { goto } from '@sapper/app'
-	import { logOut, fetchUser, removeFriend } from '@lib/utils'
+	import { logOut, fetchUser, removeFriend, postjson } from '@lib/utils'
 	import { user } from '@lib/store'
 	import { get } from 'svelte/store'
 
@@ -104,9 +104,9 @@
 			</div>
 
 			<h2>Friends</h2>
-			{#if $user.friends.length}
+			{#if ($user.friends.length)}
 				<div class="vflex">
-					{#each $user.friends as { friend }}
+					{#each ($user.friends) as { friend }}
 						<a class="bord-card" href="/user/{friend.id}">
 							<User user={friend} />
 							{friend.nickname ?? friend.fullname.split(' ')[0]}
@@ -122,9 +122,9 @@
 			{/if}
 
 			<h2>Achievements</h2>
-			{#if $user.achievements.length}
+			{#if ($user.achievements.length)}
 				<div class="vflex achievements">
-					{#each $user.achievements as { achievement }}
+					{#each ($user.achievements) as { achievement }}
 						<div class="bord-card">
 							{achievement.title}
 							<span class="dim">{achievement.description}</span>
@@ -168,22 +168,13 @@
 	</div>
 </Modal>
 
-<Modal bind:this={modalNickname} on:open={() => {
-		console.log('focus')
-		inputNickname.focus()
-	}}>
+<Modal bind:this={modalNickname} on:open={inputNickname.focus}>
 	<form on:submit={async e => {
 		e.preventDefault()
 		modalNickname.close()
-		await fetch('/api/user/changeNickname', {
-			method: "POST",
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
+		await postjson('/api/user/changeNickname', {
 				nickname: inputNickname.value
 			})
-		})
 		fetchUser()
 	}}>
 		<h2>Change nickname</h2>

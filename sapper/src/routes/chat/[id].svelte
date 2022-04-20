@@ -16,7 +16,7 @@
 	let userTyping: Set<number> = new Set();
 
 	const loadChat = async () => {
-		let res = await fetch(`/api/channel/${id_room}`, {method: "POST"})
+		let res = await fetch(`/api/channel/${id_room}`, { method: 'POST' })
 		if (!res.ok) return ;
 		let json = await res.json()
 		messages = json.msgs
@@ -110,7 +110,7 @@
 	}}>
 		<input on:keydown={isTyping} type="text" bind:this={msg} placeholder="Write a message">
 		<IconButton>
-			<svg xmlns="http://www.w3.org/2000/svg" height="35" width="35" viewBox="0 0 24 24" fill="var(--primary)"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M3.4 20.4l17.45-7.48c.81-.35.81-1.49 0-1.84L3.4 3.6c-.66-.29-1.39.2-1.39.91L2 9.12c0 .5.37.93.87.99L17 12 2.87 13.88c-.5.07-.87.5-.87 1l.01 4.61c0 .71.73 1.2 1.39.91z"/></svg>
+			<svg height="35" width="35" viewBox="0 0 24 24" fill="var(--primary)"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M3.4 20.4l17.45-7.48c.81-.35.81-1.49 0-1.84L3.4 3.6c-.66-.29-1.39.2-1.39.91L2 9.12c0 .5.37.93.87.99L17 12 2.87 13.88c-.5.07-.87.5-.87 1l.01 4.61c0 .71.73 1.2 1.39.91z"/></svg>
 		</IconButton>
 	</form>
 	<p class="is-typing dim">

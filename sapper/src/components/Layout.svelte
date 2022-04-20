@@ -1,7 +1,5 @@
 <script>
 	import Header from '@components/Header.svelte'
-	import Guard from '@components/Guard.svelte'
-
 	import { fly } from 'svelte/transition';
 </script>
 
@@ -18,10 +16,8 @@
 	}
 </style>
 
-<Guard>
-	<Header />
+<Header />
 
-	<main in:fly={{ x: -30, duration: 300 }}>
-		<slot />
-	</main>
-</Guard>
+<main in:fly={{ x: -30, duration: 300 }}>
+	<slot />
+</main>

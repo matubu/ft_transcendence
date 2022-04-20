@@ -1,22 +1,4 @@
-<style>
-	@keyframes loading {
-		0% { content:  '   ' }
-		25% { content: '.  ' }
-		50% { content: '.. ' }
-		75% { content: '...' }
-	}
-	p:before {
-		content: '   ';
-		display: block;
-		white-space: pre;
-		height: 1.5em;
-		font-size: 5rem;
-		animation: loading .75s linear infinite;
-		font-family: "Fira mono";
-	}
-</style>
-
-<svg width="400" height="400" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg width="400" height="400" viewBox="0 0 100 100" fill="none">
 	<rect x="0" height="50" width="15" rx="5" fill="#F1F1F1">
 		<animate
 			attributeName="y"
@@ -45,4 +27,3 @@
 		/>
 	</rect>
 </svg>
-<p class="dim" />

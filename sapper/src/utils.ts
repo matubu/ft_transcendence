@@ -121,6 +121,24 @@ export const addStatusListener = (userId) => {
 	}
 }
 
+export const getjson = (url): Promise<any> => new Promise((resolve, reject) => fetch(url)
+	.then(res => {
+		if (res.ok === false)
+			throw new Error(res.statusText)
+		res.json()
+			.then(resolve)
+			.catch(reject)
+	})
+	.catch(reject))
+
+export const postjson = (url, body) => fetch(url, {
+	method: 'POST',
+	headers: {
+		'Content-Type': 'application/json'
+	},
+	body: JSON.stringify(body)
+})
+
 if (typeof document !== 'undefined')
 {
 	if (getCookie('user'))
