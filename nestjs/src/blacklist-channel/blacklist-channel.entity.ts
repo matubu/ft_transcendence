@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, ManyToOne, Column } from 'typeorm';
 import { User } from '../user/user.entity'
 import { Channel } from '../channel/channel.entity'
 
@@ -13,4 +13,7 @@ export class BlacklistChannel
 
 	@ManyToOne(() => Channel, { eager : true })
     channel: Channel;
+
+	@Column({ nullable: true })
+	date?: Date;
 }
