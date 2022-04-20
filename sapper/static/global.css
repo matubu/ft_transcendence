@@ -128,6 +128,11 @@ textarea, input[type="text"], input[type="password"] {
 	gap: 20px;
 	grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
 }
+.vflex {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
 .equal { color: var(--yelo) }
 .winning { color: var(--gree) }
 .losing { color: var(--red) }

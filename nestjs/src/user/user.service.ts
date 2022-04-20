@@ -99,7 +99,7 @@ export class UserService {
 	async rank(): Promise<User[]>
 	{
 		return this.userRepository.find({ order: {elo: "DESC"},
-											take: 100  });
+											take: 5  });
 	}
 
 	async search(search: string): Promise<User[]>

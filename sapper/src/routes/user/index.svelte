@@ -60,10 +60,11 @@
 	h1 {
 		overflow-wrap: anywhere;
 	}
-	.friends {
-		display: flex;
-		gap: 5px;
-		flex-direction: column;
+	.achievements > .bord-card {
+		gap: 30px;
+	}
+	.achievements > .bord-card > :last-child {
+		text-align: right;
 	}
 </style>
 
@@ -73,7 +74,7 @@
 	{#if $user}
 		<div class="container">
 			<div class="profile" on:click={() => modalAvatar.open()}>
-				<User user={$user} size=150 />
+				<User user={$user} size=150 nostatus />
 				<div>
 					<svg height="30" width="30" viewBox="0 0 24 24" fill="currentColor"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M14.12 4l1.83 2H20v12H4V6h4.05l1.83-2h4.24M15 2H9L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2zm-3 7c1.65 0 3 1.35 3 3s-1.35 3-3 3-3-1.35-3-3 1.35-3 3-3m0-2c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5z"/></svg>
 				</div>
@@ -102,18 +103,37 @@
 				</div>
 			</div>
 
-			<div class="friends">
-				{#each $user.friends as { friend }}
-					<a class="bord-card" href="/user/{friend.id}">
-						<User user={friend} />
-						{friend.nickname ?? friend.fullname.split(' ')[0]}
-						<Button primary on:click={e => {
-							e.stopPropagation(0)
-							removeFriend(friend.id)
-						}}>Remove friend</Button>
-					</a>
-				{/each}
-			</div>
+			<h2>Friends</h2>
+			{#if $user.friends.length}
+				<div class="vflex">
+					{#each $user.friends as { friend }}
+						<a class="bord-card" href="/user/{friend.id}">
+							<User user={friend} />
+							{friend.nickname ?? friend.fullname.split(' ')[0]}
+							<Button primary on:click={e => {
+								e.stopPropagation(0)
+								removeFriend(friend.id)
+							}}>Remove friend</Button>
+						</a>
+					{/each}
+				</div>
+			{:else}
+				<p class="dim">You have no friends</p>
+			{/if}
+
+			<h2>Achievements</h2>
+			{#if $user.achievements.length}
+				<div class="vflex achievements">
+					{#each $user.achievements as { achievement }}
+						<div class="bord-card">
+							{achievement.title}
+							<span class="dim">{achievement.description}</span>
+						</div>
+					{/each}
+				</div>
+			{:else}
+				<p class="dim">You have no friends</p>
+			{/if}
 
 			<div>
 				<Button on:click={async () => {

@@ -3,6 +3,7 @@
 	import Head from '@components/Head.svelte'
 	import MatchScore from '@components/MatchScore.svelte'
 	import Button from '@components/Button.svelte'
+	import User from '@components/User.svelte'
 	import Icon from '@components/Icon.svelte'
 	import { goto } from '@sapper/app'
 	import { onMount } from 'svelte'
@@ -22,10 +23,18 @@
 		text-align: center;
 		margin-top: 10px;
 	}
-	.matchs {
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
+
+	progress {
+		width: 100%;
+		margin: 30px 0;
+		-webkit-appearance: none;
+		border: 0;
+		background: var(--red);
+		border-radius: 5px;
+		overflow: hidden;
+	}
+	::-webkit-progress-bar {
+		background: var(--blue);
 	}
 </style>
 
@@ -63,7 +72,34 @@
 	</div>
 	<div>
 		<h2>Match</h2>
-		<div class="matchs">
+		{#await fetch("/api/rank")}
+			<div class="bord-card">loading...</div>
+		{:then res} 
+			{#await res.json()}
+				<div class="bord-card">loading...</div>
+			{:then ranks}
+				<div class="vflex">
+					{#each ranks as user, i}
+						<a class="bord-card" style="{[
+								'background: var(--grad-gree); border: none',
+								'background: var(--grad-blue); border: none',
+								'background: var(--grad-purp); border: none']
+							[i]}" href="/user/{user.id}">
+							<div>
+								<div>{i + 1}</div>
+								<User {user} nostatus />
+								{user.nickname ?? user.fullname.split(' ')[0]}
+							</div>
+							<div>
+								{user.elo}
+							</div>
+						</a>
+					{/each}
+				</div>
+			{/await}
+		{/await}
+		<progress max={$user.matchs.length} value={$user.matchs.filter(({ victory }) => victory.id === $user.id).length}/>
+		<div class="vflex">
 			{#if $user.matchs.length}
 				{#each $user.matchs as { player1_score, player2_score, player1, player2, date }, i}
 					{#if fmtDate(new Date($user.matchs[i - 1]?.date ?? null)) !== fmtDate(new Date(date))}

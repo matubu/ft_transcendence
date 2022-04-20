@@ -25,17 +25,12 @@
 </script>
 
 <style>
-	.rooms {
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
-	}
 </style>
 
 <Head title="Chat" />
 
 <Layout>
-	<div class="rooms">
+	<div class="vflex">
 		{#if $rooms?.length}
 			{#each $rooms as {id, name, password_is_set, private: mode, description: desc}}
 				<Room id={id} name="{name}" type="{password_is_set ? 'protected' : (mode ? 'private' : 'public')}" {desc}/>

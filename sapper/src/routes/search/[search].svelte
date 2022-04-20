@@ -5,11 +5,6 @@
 </script>
 
 <style>
-	.container {
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
-	}
 	.bord-card {
 		gap: 20px;
 	}
@@ -29,7 +24,7 @@
 			{#await res.json()}
 				loading...
 			{:then results} 
-				<div class="container">
+				<div class="vflex">
 					{#each results as result}
 						<a class="bord-card" href="/user/{result.id}">
 							<User user={result} />

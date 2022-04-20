@@ -54,9 +54,6 @@
 
 <style>
 	.container {
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
 		flex: 1;
 		overflow-y: auto;
 	}
@@ -98,7 +95,7 @@
 }}/>
 
 <Layout>
-	<div class="container" bind:this={container}>
+	<div class="vflex container" bind:this={container}>
 		{#each messages as msg}
 			<Message user={userInfo.get(msg.userId)} message={msg.msg}/>
 		{/each}
