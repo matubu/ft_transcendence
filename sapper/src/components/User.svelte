@@ -4,11 +4,13 @@
 	import { addStatusListener } from '@lib/utils';
 
 	export let user = undefined
+	export let nostatus = false
 	export let size: number | string = 50
 
 	const dispatch = createEventDispatcher()
 
-	addStatusListener(user.id)
+	if (nostatus === false)
+		addStatusListener(user.id)
 </script>
 
 <style>
@@ -36,7 +38,7 @@
 </style>
 
 {#if user}
-	<div style="--size: {size}px" on:click={() => dispatch('click')} class={$status[user.id]}>
+	<div style="--size: {size}px" on:click={() => dispatch('click')} class={nostatus === false && $status[user.id]}>
 		<img src="{user.picture?.url}" alt="">
 	</div>
 {/if}

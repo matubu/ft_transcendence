@@ -6,8 +6,6 @@
 		backdrop-filter: blur(52px);
 		padding: 30px;
 		border-radius: 10px;
-		display: flex;
-		flex-direction: column;
 		gap: 30px;
 		box-sizing: border-box;
 		width: 60px;
@@ -18,6 +16,6 @@
 	}
 </style>
 
-<div class="glass-card">
+<div class="vflex glass-card">
 	<slot />
 </div>

@@ -13,7 +13,9 @@
 			matchScore: (gameScore) => {
 				score = gameScore
 			},
-			eloDiff: (elo) => {
+			winner: ([win, gameScore, elo]) => {
+				winner = win
+				score = gameScore
 				eloDiff = elo
 			},
 			rankedExpired: () => status = 'expired',
@@ -55,8 +57,7 @@
 	// TODO 404 pong
 	// TODO improve winner screen
 	// TODO animation battle
-
-	let eloDiff
+	// TODO fix bug score home
 
 	let id: string,
 		status: string,
@@ -90,6 +91,8 @@
 	const PADDLE_Y_MARGIN: number = PADDLE_HEIGHT / 2 + 5
 
 	let score: number[] = [0, 0]
+	let winner: boolean
+	let eloDiff: string
 
 	let paddleLeft: number = HEIGHT / 2
 	let paddleRight: number = HEIGHT / 2
@@ -252,10 +255,7 @@
 
 <style>
 	.container {
-		display: flex;
-		flex-direction: column;
 		margin: 0 auto;
-		gap: 20px;
 	}
 	.arena {
 		border: 1px solid var(--bord);
@@ -315,8 +315,8 @@
 	}
 </style>
 
-{#if score[0] >= 11 || score[1] >= 11}
-	<Head title="{score[0] >= 11 ? 'You' : opponent?.nickname ?? opponent?.fullname} won !" />
+{#if winner === true}
+	<Head title="{winner ? 'You' : opponent?.nickname ?? opponent?.fullname?.split?.(' ')?.[0]} won !" />
 
 	<Guard>
 		<header>
@@ -330,11 +330,11 @@
 
 		<div class="win-container">
 			<div>
-				<a href="/user/{score[0] >= 11 ? $user.id : opponent.id}">
-					<User size="200" user={score[0] >= 11 ? $user : opponent} />
+				<a href="/user/{winner ? $user.id : opponent.id}">
+					<User size="200" user={winner ? $user : opponent} />
 				</a>
-				<h1>{score[0] >= 11 ? 'You' : opponent?.nickname ?? opponent?.fullname.split(' ')[0]} won !</h1>
-				<div class="{score[0] >= 11 ? 'winning' : 'losing'}">{eloDiff}</div>
+				<h1>{winner ? 'You' : opponent?.nickname ?? opponent?.fullname.split(' ')[0]} won !</h1>
+				<div class="{winner ? 'winning' : 'losing'}">{eloDiff}</div>
 			</div>
 		</div>
 	</Guard>
@@ -351,7 +351,7 @@
 			</IconButton>
 		</header>
 
-		<div class="container">
+		<div class="vflex container">
 			<div class="arena-container" on:click={() => fullscreenArena.requestFullscreen()} bind:this={fullscreenArena}>
 				<div class="arena" bind:this={arena}>
 					<h2 class="score">
