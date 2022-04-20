@@ -53,10 +53,8 @@ export class UserService {
 		return img;
 	}
 
-	async changeElo(id: number, newElo: number): Promise<User>
+	async updateUser(user: User): Promise<User>
 	{
-		let user = await this.get(id, []);
-		user.elo = newElo;
 		return this.userRepository.save(user);
 	}
 

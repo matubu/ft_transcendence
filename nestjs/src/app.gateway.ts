@@ -65,6 +65,14 @@ class Match {
 	isFinish() {
 		return (this.score[0] >= 11 || this.score[1] >= 11)
 	}
+
+	eloWon(elo_diff: number, K: number = 42): number
+	{
+		// assert(elo_diff >= 0, "elo_diff must be positive!")
+		const proba = 1 / (1 + Math.pow(10, elo_diff / 400))
+		return Math.round(K * (1 - proba))
+	}
+
 	updateScore(client: any, gameScore: number[], finish: Function) {
 		if (this.isFinish()) return;
 		if (client.userId === this.players[1].userId)
@@ -219,7 +227,18 @@ export class AppGateway {
 		let { id, match } = this.getMatchByClient(client);
 
 		if (match == undefined) return;
-		match?.updateScore?.(client, gameScore, () => {
+		match?.updateScore?.(client, gameScore, async () => {
+			let w = match.score[0] > match.score[1] ? match.players[0] : match.players[1]
+			let l = match.getOpponent(w)
+			let winner = await this.userService.get(w.userId, [])
+			let loser = await this.userService.get(l.userId, [])
+			const d_elo = match.eloWon(Math.abs((winner.elo - loser.elo)))
+			winner.elo += d_elo
+			loser.elo -= d_elo
+			send(w, "eloDiff", `+${d_elo}`)
+			send(l, "eloDiff", `-${d_elo}`)
+			this.userService.updateUser(winner)
+			this.userService.updateUser(loser)
 			this.matchService.saveMatch(match.players[0].userId, match.players[1].userId, match.score[0], match.score[1])
 			this.matchMap.delete(id)
 		})

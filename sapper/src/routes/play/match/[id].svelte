@@ -13,6 +13,9 @@
 			matchScore: (gameScore) => {
 				score = gameScore
 			},
+			eloDiff: (elo) => {
+				eloDiff = elo
+			},
 			rankedExpired: () => status = 'expired',
 			proxy: RTCCallback
 		}
@@ -52,6 +55,8 @@
 	// TODO 404 pong
 	// TODO improve winner screen
 	// TODO animation battle
+
+	let eloDiff
 
 	let id: string,
 		status: string,
@@ -329,7 +334,7 @@
 					<User size="200" user={score[0] >= 11 ? $user : opponent} />
 				</a>
 				<h1>{score[0] >= 11 ? 'You' : opponent?.nickname ?? opponent?.fullname.split(' ')[0]} won !</h1>
-				<div class="{score[0] >= 11 ? 'winning' : 'losing'}">{score[0] >= 11 ? '+10' : '-10'}</div>
+				<div class="{score[0] >= 11 ? 'winning' : 'losing'}">{eloDiff}</div>
 			</div>
 		</div>
 	</Guard>
