@@ -14,6 +14,14 @@
 		if (!res.ok) return ;
 		notifs = notifs.map(notif => ({ ...notif, seen: true }))
 	}
+
+	async function removeOneNotification(notification_id: number) {
+		const res = await fetch(`/api/notification/remove`,
+			{ method: "POST",
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ notification_id }) });
+		console.log("In Progress");
+	}
 </script>
 
 <style>
@@ -66,6 +74,13 @@
 	p {
 		margin: 10px;
 	}
+
+	.notif .notification {
+		background-color: red;
+		display: flex;
+		flex-wrap: nowrap;
+		flex-direction: row;
+	}
 </style>
 
 <svelte:window on:wsmsg={e => {
@@ -91,6 +106,7 @@
 	<div class="vflex notif">
 		{#if notifs.length}
 			{#each [...notifs].reverse() as notif}
+			<div id="notif{notif.id}" class="notification">
 				<p>
 					{#if notif.sender}
 					<a href="/user/{notif.sender.id}">
@@ -99,6 +115,10 @@
 					{/if}
 					<span>{notif.msg}</span>
 				</p>
+				<IconButton on:click={removeOneNotification(+notif.id)}>
+				<svg height="20" width="20" viewBox="0 0 24 24" fill="currentColor"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+				</IconButton>
+			</div>
 			{/each}
 		{:else}
 			<p>No notification</p>
