@@ -3,12 +3,16 @@
 	import Head from '@components/Head.svelte'
 	import { send } from '@lib/utils'
 	import { user } from '@lib/store'
-	import IconButton from '@lib/components/IconButton.svelte'
-	import Message from '@lib/components/Message.svelte'
+	import IconButton from '@components/IconButton.svelte'
+	import Message from '@components/Message.svelte'
 	import { afterUpdate } from 'svelte'
+	import { get } from 'svelte/store'
+	import { stores } from '@sapper/app'
+	
+	const { page } = stores()
 
 	let msg
-	let id_room: string
+	let id_room: string = get(page).path.split('/')[2]
 	let container: HTMLDivElement
 
 	let messages = []
@@ -34,10 +38,7 @@
 	afterUpdate(() => container.scrollTo(0, container.scrollHeight))
 
 	if (typeof document !== 'undefined')
-	{
-		id_room = location.pathname.split('/')[2]
 		loadChat()
-	}
 
 	let typing = false
 	let timeout

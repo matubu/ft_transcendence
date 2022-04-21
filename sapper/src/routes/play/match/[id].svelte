@@ -36,7 +36,7 @@
 	import Layout from '@components/Layout.svelte'
 	import Guard from '@components/Guard.svelte'
 	import Button from '@components/Button.svelte'
-	import { send } from '@lib/utils'
+	import { send, fetchUser } from '@lib/utils'
 	import { RTCConnection, sendOffer, whenReady, destroyRTC } from '@lib/webrtc'
 	import { user } from '@lib/store'
 	import { onDestroy, onMount } from 'svelte'
@@ -52,8 +52,6 @@
 	// TODO change favicon notification
 	// TODO improve winner screen
 	// TODO animation battle
-	// TODO fix bug score home
-	// TODO quit save db winner
 	// TODO personalize game
 
 	let id: string,
@@ -319,6 +317,7 @@
 		<header>
 			<IconButton alt="surrender" on:click={() => {
 				send('surrenderMatch')
+				fetchUser()
 				goto('/play/')
 			}}>
 				<svg height="35" width="35" viewBox="0 0 24 24" fill="currentColor"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>

@@ -11,6 +11,9 @@ import { ChannelService } from './channel/channel.service';
 import { MessageService } from './message/message.service';
 import { Notification } from 'src/notification/notification.entity'
 
+let g_userService
+let g_matchService
+
 const puts = (color: number, ...args) =>
 	console.log(`\u001B[1;${color}m`, ...args, '\u001B[0m')
 
@@ -74,8 +77,21 @@ class Match {
 			proba = 1 - proba
 		return Math.round(K * proba)
 	}
-
-	updateScore(client: any, gameScore: number[], finish: Function) {
+	async endGame(w)
+	{
+		let l = this.getOpponent(w)
+		let winner = await g_userService.get(w.userId, [])
+		let loser = await g_userService.get(l.userId, [])
+		const d_elo = this.eloWon(winner.elo, loser.elo)
+		winner.elo += d_elo
+		loser.elo -= d_elo
+		send(w, "winner", [true, this.score, `+${d_elo}`])
+		send(l, "winner", [false, this.score, `-${d_elo}`])
+		g_userService.updateUser(winner)
+		g_userService.updateUser(loser)
+		g_matchService.saveMatch(this.players[0].userId, this.players[1].userId, this.score[0], this.score[1])
+	}
+	updateScore(client: any, gameScore: number[]) {
 		if (this.isFinish()) return;
 		if (client.userId === this.players[1].userId)
 			gameScore.reverse()
@@ -83,11 +99,8 @@ class Match {
 			this.score[0] = Math.min(gameScore[0], 11)
 		if (gameScore[1] > this.score[1])
 			this.score[1] = Math.min(gameScore[1], 11)
-		if (this.isFinish()) {
-			send(this.players[0], 'matchScore', this.getScore(this.players[0]))
-			send(this.players[1], 'matchScore', this.getScore(this.players[1]))
-			finish()
-		}
+		if (this.isFinish())
+			this.endGame(this.score[0] > this.score[1] ? this.players[0] : this.players[1])
 	}
 	getScore(client: any) {
 		return (client.userId === this.players[0].userId ? this.score : [...this.score].reverse())
@@ -101,7 +114,10 @@ export class AppGateway {
 		private readonly matchService: MatchService,
 		private readonly channelService: ChannelService,
 		private readonly messageService: MessageService
-	) { }
+	) {
+		g_userService = this.userService
+		g_matchService = this.matchService
+	}
 
 	userMap: Map<number, Set<any>> = new Map()
 	matchingMap: Map<number, any> = new Map()
@@ -178,8 +194,11 @@ export class AppGateway {
 	surrenderFromMatch(client: any) {
 		let { id, match } = this.getMatchByClient(client)
 
-		match !== undefined && this.matchMap.delete(id)
-		this.updateStatusListener(client.userId)
+		if (match === undefined) return ;
+		match.endGame(match.getOpponent(client))
+		this.matchMap.delete(id)
+		this.updateStatusListener(match.players[0])
+		this.updateStatusListener(match.players[1])
 	}
 
 	@SubscribeMessage('joinRanked')
@@ -229,22 +248,15 @@ export class AppGateway {
 		let { id, match } = this.getMatchByClient(client);
 
 		if (match == undefined) return;
-		match?.updateScore?.(client, gameScore, async () => {
-			let w = match.score[0] > match.score[1] ? match.players[0] : match.players[1]
-			let l = match.getOpponent(w)
-			let winner = await this.userService.get(w.userId, [])
-			let loser = await this.userService.get(l.userId, [])
-			const d_elo = match.eloWon(winner.elo, loser.elo)
-			winner.elo += d_elo
-			loser.elo -= d_elo
-			send(w, "winner", [true, match.score, `+${d_elo}`])
-			send(l, "winner", [false, match.score, `-${d_elo}`])
-			this.userService.updateUser(winner)
-			this.userService.updateUser(loser)
-			this.matchService.saveMatch(match.players[0].userId, match.players[1].userId, match.score[0], match.score[1])
+		match.updateScore(client, gameScore)
+		if (match.isFinish())
+		{
 			this.matchMap.delete(id)
-		})
-		send(client, 'matchScore', match.getScore(client))
+			this.updateStatusListener(match.players[0])
+			this.updateStatusListener(match.players[1])
+		}
+		else
+			send(client, 'matchScore', match.getScore(client))
 	}
 
 	@SubscribeMessage('proxy')

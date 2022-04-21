@@ -27,7 +27,7 @@
 		top: 0;
 		left: 0;
 		width: 100%;
-		height: 100%;
+		min-height: 100%;
 		padding: 50px;
 		box-sizing: border-box;
 		background: var(--fore);
@@ -44,6 +44,7 @@
 		gap: 20px;
 		font-size: 20px;
 		flex: 1;
+		word-wrap: anywhere;
 	}
 	#top {
 		display: flex;
@@ -109,9 +110,9 @@
 					<User user={$user} />
 				</a>
 			{/if}
+			<SearchBar />
 		{:else}
 			<Button primary loading={$waitingLogin} on:click={logIn}>Login</Button>
 		{/if}
 	</div>
-	<SearchBar />
 </header>

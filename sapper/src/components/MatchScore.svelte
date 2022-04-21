@@ -6,6 +6,8 @@
 
 	export let player2: [any, number]
 	let [user2, score2] = player2
+
+	export let diff: number = score1 - score2
 </script>
 
 <style>
@@ -22,11 +24,11 @@
 		{user1.nickname ?? user1.fullname.split(' ')[0]}
 	</a>
 	<div>
-		<span class="{score1 == score2 ? 'equal' : (score1 > score2 ? 'winning' : 'losing')}">
+		<span class="{diff == 0 ? 'equal' : (diff > 0 ? 'winning' : 'losing')}">
 			{score1}
 		</span>
 		-
-		<span class="{score1 == score2 ? 'equal' : (score2 > score1 ? 'winning' : 'losing')}">
+		<span class="{diff == 0 ? 'equal' : (diff < 0 ? 'winning' : 'losing')}">
 			{score2}
 		</span>
 	</div>
