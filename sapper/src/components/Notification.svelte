@@ -76,7 +76,6 @@
 	}
 
 	.notif .notification {
-		background-color: red;
 		display: flex;
 		flex-wrap: nowrap;
 		flex-direction: row;

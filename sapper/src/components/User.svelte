@@ -9,7 +9,7 @@
 
 	const dispatch = createEventDispatcher()
 
-	if (nostatus === false)
+	if (nostatus === false && user.id)
 		addStatusListener(user.id)
 </script>
 

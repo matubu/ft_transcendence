@@ -35,6 +35,7 @@
 		box-sizing: border-box;
 		font-weight: 500;
 		background-position: var(--x, 0px) 0px;
+		text-align: center;
 	}
 	:is(a, button).primary {
 		background-image: linear-gradient(90deg, var(--prim), var(--seco), var(--prim));

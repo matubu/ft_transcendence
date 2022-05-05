@@ -49,7 +49,7 @@
 				</Icon>
 				<h2>Solo</h2>
 			</div>
-			<Button>Play with bots</Button>
+			<Button href="/play/solo">Play with bots</Button>
 		</div>
 		<div class="grad-card" style="background:var(--grad-gree)">
 			<div>
@@ -67,7 +67,7 @@
 				</Icon>
 				<h2>Ranked</h2>
 			</div>
-			<Button on:click={() => goto('/play/ranked')}>Play with strangers</Button>
+			<Button href="/play/ranked">Play with strangers</Button>
 		</div>
 	</div>
 	<div>

@@ -104,13 +104,13 @@
 			<Nav />
 		{/if}
 		{#if ($user)}
+			<SearchBar />
 			<Notification />
 			{#if !($mediaQuery)}
 				<a href="/user">
 					<User user={$user} />
 				</a>
 			{/if}
-			<SearchBar />
 		{:else}
 			<Button primary loading={$waitingLogin} on:click={logIn}>Login</Button>
 		{/if}
