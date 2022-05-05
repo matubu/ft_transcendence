@@ -99,7 +99,7 @@
 		expired = true
 	}
 
-	let _winningClass = (scoreA, scoreB) => scoreA === scoreB ? 'equal' : (scoreA > scoreB ? 'winning' : 'losing')
+	let _isWinningClass = (scoreA, scoreB) => scoreA === scoreB ? 'equal' : (scoreA > scoreB ? 'winning' : 'losing')
 
 	let randomVelocity = () => {
 		const x = (Math.random() * .5 + .5) * (Math.random() < .5 ? -1 : 1),
@@ -157,9 +157,9 @@
 			// --- FRAME VERTICAL COLLISION ---
 			if (ballPos[0] < BALL_RADIUS || ballPos[0] > WIDTH - BALL_RADIUS)
 			{
-				resetBall()
-				game.score[+(ballPos[0] < BALL_RADIUS)]++
+				game.score[+(ballPos[0] < WIDTH / 2)]++
 				syncScore?.(game.score)
+				resetBall()
 				sync = true
 				collision = 3
 			}
@@ -318,7 +318,7 @@
 		<header>
 			<IconButton alt="surrender" on:click={() => {
 				goto('/play/')
-				syncSurrender()
+				syncSurrender?.()
 			}}>
 				<svg height="35" width="35" viewBox="0 0 24 24" fill="currentColor"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
 			</IconButton>
@@ -328,11 +328,11 @@
 			<div class="arena-container" on:click={() => arenaContainer.requestFullscreen()} bind:this={arenaContainer}>
 				<div class="arena" bind:this={arena}>
 					<h2 class="score">
-						<span class="{_winningClass(game.score[0], game.score[1])}">
+						<span class="{_isWinningClass(game.score[0], game.score[1])}">
 							{game.score[0]}
 						</span>
 						-
-						<span class="{_winningClass(game.score[1], game.score[0])}">
+						<span class="{_isWinningClass(game.score[1], game.score[0])}">
 							{game.score[1]}
 						</span>
 					</h2>
