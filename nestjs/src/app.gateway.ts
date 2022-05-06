@@ -10,6 +10,7 @@ import { Server } from 'ws'
 import { ChannelService } from './channel/channel.service';
 import { MessageService } from './message/message.service';
 import { Notification } from 'src/notification/notification.entity'
+import { NotificationService } from './notification/notification.service'
 
 let g_userService
 let g_matchService
@@ -113,7 +114,8 @@ export class AppGateway {
 		private readonly userService: UserService,
 		private readonly matchService: MatchService,
 		private readonly channelService: ChannelService,
-		private readonly messageService: MessageService
+		private readonly messageService: MessageService,
+		private readonly notificationService: NotificationService
 	) {
 		g_userService = this.userService
 		g_matchService = this.matchService
@@ -321,5 +323,10 @@ export class AppGateway {
 			if (userId !== user.id)
 				this.sendTo(user.id, 'typing',
 					{ user: typingUser, isTyping: data.typing, room: data.room });
+	}
+
+	@SubscribeMessage('duelRequest')
+	async onDuelRequest(client: any, data: any) {
+		this.notificationService.insert(data.advId, "someone want to show you who's the boss! O_o", client.userId, `duel/${client.userId}`)
 	}
 }

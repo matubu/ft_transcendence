@@ -28,6 +28,6 @@ export class UserAchievementSubscriber implements EntitySubscriberInterface<User
 		const achievements = this.achievementService.getAchievements();
 		if ((await user).achievements.length + 1 === (await achievements).length)
 			this.userAchievementService.insert(receiver.id, "The end");
-		this.notificationService.insert(receiver.id, "Your are unlock achievement " + achievement.title, undefined, undefined);
+		this.notificationService.insert(receiver.id, "You have unlocked an achievement " + achievement.title, undefined, undefined);
 	}
 }

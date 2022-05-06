@@ -4,7 +4,7 @@
 	import Button from '@components/Button.svelte'
 	import Head from '@components/Head.svelte'
 	import { user } from '@lib/store'
-	import { removeFriend, addFriend, fetchUser, postjson, getjson } from '@lib/utils'
+	import { removeFriend, addFriend, fetchUser, postjson, getjson, send } from '@lib/utils'
 	import { stores } from '@sapper/app'
 	
 	const { page } = stores()
@@ -23,7 +23,9 @@
 		{#if ($user?.id !== data.id)}
 			<div>
 				<Button href="/api/channel/friend/{data.id}">Chat</Button>
-				<Button>Duel</Button>
+				<Button on:click={async () => {
+					send('duelRequest', {advId: data.id})
+				}}>Duel</Button>
 				{#if ($user.blockList.find(({ blockedId }) => blockedId === data.id))}
 					<Button on:click={async () => {
 						await postjson('/api/block', {
