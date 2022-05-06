@@ -41,7 +41,7 @@
 
 <form on:submit={e => {
 	e.preventDefault()
-	if (searchResult[0].href)
+	if (searchResult[0]?.href)
 	{
 		goto(searchResult[0]?.href)
 		search = ''

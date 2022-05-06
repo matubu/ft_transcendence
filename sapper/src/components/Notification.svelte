@@ -20,7 +20,7 @@
 			{ method: "POST",
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ notification_id }) });
-		console.log("In Progress");
+		notifs = notifs.filter(notif => notif.id != notification_id)
 	}
 </script>
 

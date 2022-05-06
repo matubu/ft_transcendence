@@ -5,6 +5,7 @@
 	import Button from '@components/Button.svelte'
 	import User from '@components/User.svelte'
 	import Icon from '@components/Icon.svelte'
+	import SearchBar from '@components/SearchBar.svelte'
 	import { goto } from '@sapper/app'
 	import { onMount } from 'svelte'
 	import { fetchUser, getjson, send } from '@lib/utils'
@@ -59,6 +60,7 @@
 				<h2>Dual</h2>
 			</div>
 			<Button>Play with friends</Button>
+			<!-- add search bar to find opponent -->
 		</div>
 		<div class="grad-card" style="background:var(--grad-blue)">
 			<div>
