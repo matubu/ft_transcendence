@@ -39,7 +39,11 @@
 </style>
 
 {#if user}
-	<div style="--size: {size}px" on:click={() => dispatch('click')} class={nostatus === false && $status[user.id]}>
+	<div
+		style="--size: {size}px" on:click={() => dispatch('click')}
+		class={nostatus === false && $status[user.id]}
+		title="{user.nickname ?? user.fullname.split(' ')[0]}"
+	>
 		<img src="{user.picture?.url}" alt="">
 	</div>
 {/if}

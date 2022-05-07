@@ -1,20 +1,24 @@
+<svelte:window
+	on:keydown={e => keysPressed.add(e.key.toLowerCase())}
+	on:keyup={e => keysPressed.delete(e.key.toLowerCase())}
+/>
+
 <script>
 	import User from '@components/User.svelte'
 	import Head from '@components/Head.svelte'
 	import Layout from '@components/Layout.svelte'
 	import Guard from '@components/Guard.svelte'
 	import Button from '@components/Button.svelte'
-	import { user } from '@lib/store'
 	import IconButton from '@components/IconButton.svelte'
-	import { get } from 'svelte/store'
 	import { onMount, onDestroy } from 'svelte'
 	import { goto } from '@sapper/app'
-	import { fetchUser } from '@lib/utils'
 
 	export const WIDTH: number = 300
 	export const HEIGHT: number = 200
 
 	export const BALL_SPEED: number = 100
+
+	export const PLAYER_SPEED = 80
 
 	export const BALL_SIZE: number = 5
 	export const BALL_RADIUS: number = BALL_SIZE / 2
@@ -23,6 +27,42 @@
 
 	export const PADDLE_X_MARGIN: number = 10
 	export const PADDLE_Y_MARGIN: number = PADDLE_HEIGHT / 2 + 5
+
+	let keysPressed = new Set()
+	export function handleKeyboardInput(id, deltatime) {
+		let speed = 1
+		if (keysPressed.has('shift'))
+			speed *= 3
+		if (keysPressed.has('control'))
+			speed /= 3
+		if (keysPressed.has('arrowup')
+			|| keysPressed.has('w')
+			|| keysPressed.has('z')
+			|| keysPressed.has('o')
+			|| keysPressed.has('i')
+			|| keysPressed.has('8')
+		)
+			updatePaddleAbsolute(id,
+				getPaddle(id)
+					- PLAYER_SPEED * speed * deltatime
+			)
+		if (keysPressed.has('arrowdown')
+			|| keysPressed.has('s')
+			|| keysPressed.has('l')
+			|| keysPressed.has('k')
+			|| keysPressed.has('j')
+			|| keysPressed.has('2')
+		)
+			updatePaddleAbsolute(id,
+				getPaddle(id)
+					+ PLAYER_SPEED * speed * deltatime
+			)
+	}
+
+	let registeredFunctions = []
+	export function onGameLoop(callback) {
+		registeredFunctions.push(callback)
+	}
 
 	let frame
 
@@ -37,9 +77,8 @@
 	let ballVel: number[] = [0, 0]
 
 	let paddlesElm = []
-	let ballElm
 
-	export let syncSurrender: Function
+	export let syncSurrender: Function = undefined
 	export const updatePaddleRelative = (i, y) => {
 		if (!arena) return ;
 		let rect = arena.getBoundingClientRect()
@@ -51,17 +90,21 @@
 			200 - PADDLE_Y_MARGIN),
 			PADDLE_Y_MARGIN
 		)
-		paddlesElm[i].style.top = `${paddles[i] / 2}%`
+		if (paddlesElm[i])
+			paddlesElm[i].style.top = `${paddles[i] / 2}%`
 	}
 	export const getPaddle = (i) => paddles[i]
 	export const getBallPos = () => ballPos
 	export const getBallVel = () => ballVel
-	export let syncBall: Function
-	export let syncScore: Function
+	export let syncBall: Function = undefined
+	export let syncScore: Function = undefined
+
+	let ballElm
 	let updateDOMBall = () => {
 		ballElm.style.left = `${ballPos[0] / 3}%`
 		ballElm.style.top = `${ballPos[1] / 2}%`
 	}
+
 	export const updateBall = (newBallPos, newBallVel, collisionId) => {
 		ballPos = newBallPos
 		ballVel = newBallVel
@@ -80,18 +123,17 @@
 			?.catch?.(() => {})
 	}
 
-	export const loadGame = (score, opponent) => {
+	export const loadGame = (score, players) => {
 		game = {
 			score,
-			opponent
+			players
 		}
 	}
 
-	export const setWinner = (won, score = game.score, eloWon) => {
-		game.won = won
+	export const setWinner = (winnerIdx, score = game.score, eloWon) => {
 		game.score = score
-		game.winner = won ? get(user) : game.opponent
-		game.winnerName = game.won ? 'You' : game.opponent.nickname ?? game.opponent.fullname.split(' ')[0]
+		game.winner = game.players[+winnerIdx]
+		game.winnerName = game.winner.nickname ?? game.winner.fullname.split(' ')[0]
 		game.eloWon = eloWon
 	}
 
@@ -107,7 +149,7 @@
 		
 		return ([x, y])
 	}
-	let sign = (n, sign) => Math.abs(n) * (sign ? -1 : 1)
+	let sign = (n, negative) => Math.abs(n) * (negative ? -1 : 1)
 	export const resetBall = () => {
 		ballPos = [WIDTH / 2, HEIGHT / 2]
 		ballVel = randomVelocity()
@@ -124,27 +166,31 @@
 	 * @returns
 	 * - the distance (a ratio) or infinity if no intersection
 	*/
-	export const lineRect = ([x, y, w, h], f, t): number =>
-		Math.min(
-			lineLine([x, y], [x, y + h], f, t),
-			lineLine([x, y + h], [x + w, y + h], f, t),
-			lineLine([x + w, y + h], [x + w, y], f, t),
-			lineLine([x + w, y], [x, y], f, t)
-		)
+	export const lineRect = ([x, y, w, h], f, t): (number|boolean)[] =>
+		[
+			[lineLine([x, y + h], [x + w, y + h], f, t), false],
+			[lineLine([x + w, y + h], [x + w, y], f, t), true],
+			[lineLine([x + w, y], [x, y], f, t), false]
+		].reduce((a, b) => a[0] < b[0] ? a : b, [Infinity, false])
+
+	export const BALL_WALL_SOUND = 1
+	export const BALL_PADDLE_SOUND = 2
+	export const DAMAGE_SOUND = 3
 
 	onMount(() => {
 		mp3 = [new Audio('ping.mp3'), new Audio('pong.mp3'), new Audio('oof.mp3')]
 
 		let previousTimestamp
-		let syncTimestamp
 		frame = requestAnimationFrame(function sim(timestamp) {
-			syncTimestamp ??= timestamp
-			let sync: boolean = (timestamp - syncTimestamp) > 3000;
+			let sync: boolean = false
 			let collision = 0
 			frame = requestAnimationFrame(sim)
 			// --- COMPUTE DELTATIME ---
 			previousTimestamp ??= timestamp
 			let deltaTime = (timestamp - previousTimestamp) / 1000
+			// --- CALL REGISTERED FUNCTIONS ---
+			for (let callback of registeredFunctions)
+				callback(deltaTime)
 			// --- RESET TIMESTAMP ---
 			previousTimestamp = timestamp
 			// --- CHECK IF GAME ---
@@ -161,44 +207,55 @@
 				syncScore?.(game.score)
 				resetBall()
 				sync = true
-				collision = 3
+				collision = DAMAGE_SOUND
 			}
 			// --- FRAME HORIZONTAL COLLISION ---
 			if (ballPos[1] < BALL_RADIUS || ballPos[1] > HEIGHT - BALL_RADIUS)
 			{
 				ballVel[1] = sign(ballVel[1], ballPos[1] > HEIGHT - BALL_RADIUS)
-				// --- SOUND ---
-				collision = 1
+				sync = true
+				collision = BALL_WALL_SOUND
 			}
 			// --- PADDLE COLLISION
-			for (let [paddleX, paddleY] of [[PADDLE_X_MARGIN, paddles[0]], [WIDTH - PADDLE_X_MARGIN, paddles[1]]])
+			for (let [paddleX, paddleY, width] of [
+				[
+					PADDLE_X_MARGIN - PADDLE_WIDTH / 2 - BALL_RADIUS,
+					paddles[0],
+					PADDLE_WIDTH + BALL_SIZE
+				],
+				[
+					WIDTH - (PADDLE_X_MARGIN - PADDLE_WIDTH / 2 - BALL_RADIUS),
+					paddles[1],
+					-(PADDLE_WIDTH + BALL_SIZE)
+				]
+			])
 			{
-				let distance = lineRect(
+				let [distance, vertical] = lineRect(
 					[
-						paddleX - PADDLE_WIDTH / 2 - BALL_RADIUS, paddleY - PADDLE_HEIGHT / 2 - BALL_RADIUS,
-						PADDLE_WIDTH + BALL_SIZE, PADDLE_HEIGHT + BALL_SIZE
+						paddleX, paddleY - PADDLE_HEIGHT / 2 - BALL_RADIUS,
+						width, PADDLE_HEIGHT + BALL_SIZE
 					],
 					lastPosition,
 					ballPos
 				)
 				if (distance === Infinity) continue ;
-				const SIDE = ballPos[0] < WIDTH / 2
 				// --- CHANGE VELOCITY ---
-				ballVel[0] = sign(ballVel[0] * 1.05, !SIDE)
-				ballVel[1] *= 1.05
-				// --- UPDATE POSITION ---
-				const X = PADDLE_X_MARGIN + PADDLE_WIDTH + BALL_SIZE + 1
-				ballPos[0] = SIDE ? X : WIDTH - X
-				// --- SYNC BALL ---
+				if (vertical) {
+					const SIDE = ballPos[0] > WIDTH / 2
+					ballVel[0] = sign(ballVel[0] * 1.05, SIDE)
+					ballVel[1] *= 1.05
+					// --- UPDATE POSITION ---
+					const X = PADDLE_X_MARGIN + PADDLE_WIDTH + BALL_SIZE + 1
+					ballPos[0] = SIDE ? WIDTH - X : X
+				} else {
+					ballVel[1] = sign(ballVel[0] * 1.05, ballPos[1] < paddleY)
+					ballVel[0] *= 1.05
+				}
 				sync = true
-				// --- SOUND ---
-				collision = 2
+				collision = BALL_PADDLE_SOUND
 			}
 			if (sync)
-			{
-				syncBall?.(ballPos, ballVel, collision)
-				syncTimestamp = timestamp
-			}
+				syncBall?.(collision)
 			if (collision)
 				playCollisionSound(collision)
 			updateDOMBall()
@@ -218,7 +275,7 @@
 		position: relative;
 		user-select: none;
 		background: var(--fore);
-		--width:  min(calc(100vw - 2rem), calc((100vh - 160px - 2rem) / 2 * 3));
+		--width: min(calc(100vw - 2rem), calc((100vh - 160px - 2rem) / 2 * 3));
 		width: var(--width);
 		height: calc(var(--width) / 3 * 2);
 		overflow: hidden;
@@ -234,10 +291,14 @@
 	.ball, .paddle {
 		position: absolute;
 		background: white;
-		transform: translate(-50%, -50%);
+		transform: translate3d(-50%, -50%, 0);
+		pointer-events: none;
 	}
 	.ball, .paddle { top: 50% }
-	.ball { left: 50% }
+	.ball {
+		left: 50%;
+		border-radius: 50%;
+	}
 	.score {
 		text-align: center;
 		font-size: 1em;
@@ -306,7 +367,7 @@
 				</a>
 				<h1>{game.winnerName} won !</h1>
 				{#if game.eloWon}
-					<div class="{game.won ? 'winning' : 'losing'}">{game.eloWon}</div>
+					<div class="{_isWinningClass(game.eloWon, 0)}">{game.eloWon}</div>
 				{/if}
 			</div>
 		</div>
@@ -336,6 +397,10 @@
 							{game.score[1]}
 						</span>
 					</h2>
+					<div bind:this={ballElm} class="ball" style="
+						height: {BALL_SIZE / 2}%;
+						width: {BALL_SIZE / 3}%;
+					"></div>
 					<div bind:this={paddlesElm[0]} class="paddle left" style="
 						height: {PADDLE_HEIGHT / 2}%;
 						width: {PADDLE_WIDTH / 3}%;
@@ -346,21 +411,29 @@
 						width: {PADDLE_WIDTH / 3}%;
 						left: {(WIDTH - PADDLE_X_MARGIN) / 3}%;
 					"></div>
-					<div bind:this={ballElm} class="ball" style="
-						height: {BALL_SIZE / 2}%;
-						width: {BALL_SIZE / 3}%;
-					"></div>
 				</div>
 			</div>
 
 			<div class="vs">
-				<a href="/user/{$user.id}">
-					<User user={$user} />
-				</a>
+				{#if game.players[0].id}
+					<a href="/user/{game.players[0].id}">
+						<User user={game.players[0]} />
+					</a>
+				{:else}
+					<div>
+						<User user={game.players[0]} />
+					</div>
+				{/if}
 				<span>VS</span>
-				<a href="/user/{game.opponent.id}">
-					<User user={game.opponent} />
-				</a>
+				{#if game.players[1].id}
+					<a href="/user/{game.players[1].id}">
+						<User user={game.players[1]} />
+					</a>
+				{:else}
+					<div>
+						<User user={game.players[1]} />
+					</div>
+				{/if}
 			</div>
 		</div>
 	</Guard>

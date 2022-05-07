@@ -1,47 +1,52 @@
 <script>
 	import { onMount, onDestroy } from "svelte"
 	import Game from '@components/Game.svelte'
+	import { get } from 'svelte/store'
+	import { user } from '@lib/store'
 
 	let game
 	let frame
 
 	onMount(() => {
-		game.loadGame([0, 0], {
-			nickname: 'Terminator',
-			picture: {
-				url: 'https://intelligence-artificielle.com/wp-content/uploads/2022/03/Terminator-3.jpg'
+		game.loadGame([0, 0], [
+			{
+				...get(user),
+				nickname: 'You'
+			},
+			{
+				nickname: 'Terminator (bot)',
+				picture: {
+					url: 'https://intelligence-artificielle.com/wp-content/uploads/2022/03/Terminator-3.jpg'
+				}
 			}
-		})
-
-		const SPEED = .05
-		let oldTimestamp
-		let ballVel = []
+		])
+		
+		const BOT_SPEED = 80
 		let targetY
-		frame = requestAnimationFrame(function bot(timestamp) {
-			// COMPLEX BOT
-			oldTimestamp ??= timestamp
-			let deltatime = timestamp - oldTimestamp
+		let ballVel = []
+		function updateBot(deltatime) {
+			let diffX = game.WIDTH - game.getBallPos()[0]
 			if (ballVel[0] !== game.getBallVel()[0]
 				|| ballVel[1] !== game.getBallVel()[1])
 			{
-				let diffX = game.WIDTH - game.getBallPos()[0]
 				targetY = game.getBallPos()[1]
 					+ diffX / game.getBallVel()[0] * game.getBallVel()[1]
 					+ Math.random() * 20 - 10
 			}
-			game.updatePaddleAbsolute(1,
-				game.getPaddle(1)
-				+ Math.max(
-					Math.min(
-						targetY - game.getPaddle(1),
-						+SPEED * deltatime),
-					-SPEED * deltatime)
-			)
+			if (game.getBallVel()[0] > 0)
+				game.updatePaddleAbsolute(1,
+					game.getPaddle(1)
+					+ Math.max(
+						Math.min(
+							targetY - game.getPaddle(1),
+							+BOT_SPEED * deltatime),
+						-BOT_SPEED * deltatime)
+				)
 			ballVel = [...game.getBallVel()]
-			oldTimestamp = timestamp
+		}
 
-			frame = requestAnimationFrame(bot)
-		})
+		game.onGameLoop(dt => game.handleKeyboardInput(0, dt))
+		game.onGameLoop(updateBot)
 
 		game.resetBall()
 	})
@@ -57,6 +62,6 @@
 <Game bind:this={game}
 	syncScore={(score) => {
 		if (score[0] >= 11 || score[1] >= 11)
-			game.setWinner(score[0] >= 11)
+			game.setWinner(score[1] >= 11)
 	}}
 />

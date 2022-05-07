@@ -178,7 +178,7 @@
 		fetchUser()
 	}}>
 		<h2>Change nickname</h2>
-		<input bind:this={inputNickname} type="text" required maxlength="25">
+		<input bind:this={inputNickname} type="text" required maxlength="20">
 		<div style="text-align: right">
 			<Button type="button" on:click={e => {
 				e.preventDefault()

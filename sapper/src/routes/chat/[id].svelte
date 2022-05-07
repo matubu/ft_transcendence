@@ -5,7 +5,7 @@
 	import { user } from '@lib/store'
 	import IconButton from '@components/IconButton.svelte'
 	import Message from '@components/Message.svelte'
-	import { afterUpdate } from 'svelte'
+	import { onMount, afterUpdate } from 'svelte'
 	import { get } from 'svelte/store'
 	import { stores } from '@sapper/app'
 	
@@ -38,7 +38,10 @@
 	afterUpdate(() => container.scrollTo(0, container.scrollHeight))
 
 	if (typeof document !== 'undefined')
+	{
+		onMount(() => requestAnimationFrame(() => msg?.focus?.()))
 		loadChat()
+	}
 
 	let typing = false
 	let timeout

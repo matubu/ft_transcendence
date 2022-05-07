@@ -263,7 +263,8 @@ export class AppGateway {
 
 	@SubscribeMessage('proxy')
 	onProxy(client: any, [gameId, msg]) {
-		send(this.matchMap.get(gameId).getOpponent(client), 'proxy', msg)
+		if (this.matchMap.has(gameId))
+			send(this.matchMap.get(gameId).getOpponent(client), 'proxy', msg)
 	}
 
 	@SubscribeMessage('chat')

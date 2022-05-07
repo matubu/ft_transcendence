@@ -6,10 +6,16 @@
 			matchData: ({ w: weak, s: score, o: opponent }) => {
 				weakPeer = weak
 				sendOffer(sendProxy, weak)
-				game.loadGame(score, opponent)
+				game.loadGame(score, [
+					{
+						...get(user),
+						nickname: 'You'
+					},
+					opponent
+				])
 			},
 			matchScore: (score) => game.updateScore(score),
-			winner: ([won, score, eloWon]) => game.setWinner(won, score, eloWon),
+			winner: ([won, score, eloWon]) => game.setWinner(!won, score, eloWon),
 			rankedExpired: () => game.setExpired(),
 			proxy: RTCCallback
 		}
@@ -26,6 +32,8 @@
 	import { send } from '@lib/utils'
 	import { RTCConnection, sendOffer, whenReady, destroyRTC } from '@lib/webrtc'
 	import { onDestroy, onMount } from 'svelte'
+	import { get } from 'svelte/store'
+	import { user } from '@lib/store'
 
 	let game
 
@@ -42,6 +50,8 @@
 
 		RTCCallback = RTCConnection(sendProxy)
 
+		game.onGameLoop(dt => game.handleKeyboardInput(0, dt))
+
 		whenReady(sock => {
 			console.log('!!! RTC CONNECTION READY !!!')
 			RTCSock = sock
@@ -50,12 +60,16 @@
 			// --- SYNC BALL ---
 			sock.on('S', ([[x, y], [vx, vy], collisionId]) => {
 				game.updateBall([game.WIDTH - x, y], [-vx, vy], collisionId)
-				// --- ASKING SYNC ---
-				collisionId === 3 && send('matchScore', [])
+				// --- ASKING SCORE SYNC ---
+				collisionId === game.DAMAGE_SOUND && send('matchScore', [])
 			})
+
 			sendRTC('P', game.getPaddle(0))
 
-			game.resetBall()
+			if (!weakPeer) {
+				game.resetBall()
+				syncBall()
+			}
 		})
 
 		send('matchData', id)
@@ -66,12 +80,15 @@
 		sendRTC('P', y)
 		game.updatePaddleRelative(0, y)
 	}
+
+	function syncBall(collisionId = 0) {
+		if (collisionId !== Game.DAMAGE_SOUND || !weakPeer)
+			sendRTC('S', [game.getBallPos(), game.getBallVel(), collisionId])
+	}
 </script>
 
 <Game bind:this={game}
 	syncSurrender={() => send('surrenderMatch')}
-	syncBall={(ballPos, ballVel, collisionId) => {
-		/*!weakPeer && */sendRTC('S', [ballPos, ballVel, collisionId])
-	}}
+	{syncBall}
 	syncScore={(score) => send('matchScore', score)}
 />
