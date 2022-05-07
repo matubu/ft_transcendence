@@ -5,6 +5,7 @@
 	import Button from '@components/Button.svelte'
 	import User from '@components/User.svelte'
 	import Icon from '@components/Icon.svelte'
+	import Modal from '@lib/components/Modal.svelte';
 	import SearchBar from '@components/SearchBar.svelte'
 	import { goto } from '@sapper/app'
 	import { onMount } from 'svelte'
@@ -17,6 +18,12 @@
 	})
 
 	let fmtDate = new Intl.DateTimeFormat(undefined, { dateStyle: 'full' }).format
+	let modalDuel
+
+	let onPick = e => {
+		let opponent = e.detail
+		//goto "/duel/{opponentId}" ?
+	}
 </script>
 
 <style>
@@ -59,8 +66,13 @@
 				</Icon>
 				<h2>Dual</h2>
 			</div>
-			<Button>Play with friends</Button>
+			<Button on:click={modalDuel.open()}>Play with friends</Button>
 			<!-- add search bar to find opponent -->
+			<Modal bind:this={modalDuel} >
+				<span>Enter your opponent name ⚔️</span>
+				<SearchBar />
+				<!-- <SearchBar on:pick={onPick}/> -->
+			</Modal>
 		</div>
 		<div class="grad-card" style="background:var(--grad-blue)">
 			<div>

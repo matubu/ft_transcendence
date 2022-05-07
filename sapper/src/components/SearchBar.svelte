@@ -3,6 +3,9 @@
 	import User from '@components/User.svelte'
 	import { onMount } from "svelte";
 	import { goto } from '@sapper/app'
+	import { createEventDispatcher } from 'svelte'
+
+	const dispatch = createEventDispatcher()
 
 	let search
 	let searchResult = []
@@ -44,6 +47,8 @@
 	if (searchResult[0]?.href)
 	{
 		goto(searchResult[0]?.href)
+		// TODO
+		// dispatch('pick', searchResult[0].userId)
 		search = ''
 	}
 }}>
