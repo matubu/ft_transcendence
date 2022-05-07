@@ -3,13 +3,19 @@
 	import User from '@components/User.svelte'
 	import { onMount } from "svelte";
 
-	let results = []
+	let results
 	let searchValue
 
 	export let onPick: Function
 
+	let timeout
 	const getValue = () => {
-		searchValue = search?.value?.trim?.()
+		if (!searchValue)
+		{
+			clearTimeout(timeout)
+			return results = undefined
+		}
+		setTimeout(() => results = getjson(`/api/search/${searchValue}`), 1000)
 	}
 	onMount(getValue)
 </script>
@@ -20,14 +26,14 @@
 	form:focus-within > .vflex { display: flex }
 	.vflex {
 		position: absolute;
-		right: 0;
+		left: 0;
 		background: var(--fore);
 		padding: 10px;
 		border-radius: 5px;
 		z-index: 999999;
-		margin-top: 10px;
-		min-width: 100%;
-		box-sizing: border-box;
+		top: 55px;
+		max-height: 35vh;
+		overflow: auto;
 	}
 	.bord-card {
 		cursor: pointer;
@@ -46,36 +52,30 @@
 
 <form on:submit={e => {
 	e.preventDefault()
-	if (results.length)
-	{
-		onPick(results.id)
-		searchValue = ''
-	}
+	results.then(results => {
+		if (results.length)
+		{
+			onPick(results[0].id)
+			searchValue = ''
+		}
+	})
 }}>
 	<input type="text" bind:value={searchValue} on:input={getValue}>
 	
-	{#if searchValue}
+	{#if results}
 		<div class="vflex">
-			{#await getjson(`/api/search/${searchValue}`)}
+			{#await results}
 				<p>loading...</p>
 			{:then results} 
 				{#if results.length}
-					{#each results as result, i}
-						<div class="bord-card" on:click={onPick(result.id)} data-id={result.id}>
-							<div>
-								<User user={result} size="40" />
-								<h3>{@html (result.nickname ?? result.fullname.split(' ')[0])
-									.replaceAll('&', '&#38;')
-									.replaceAll?.('<', '&lt;')
-									.replaceAll?.('>', '&gt;')
-									.replaceAll(new RegExp(
-										searchValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'
-									), `<b>$&</b>`)}</h3>
-							</div>
+					{#each results as result}
+						<div class="bord-card" on:click={onPick(result.id)} tabindex="0">
+							<User user={result} size="40" />
+							<h3>{result.nickname ?? result.fullname.split(' ')[0]}</h3>
 						</div>
 					{/each}
 				{:else}
-					<p class="dim" bind:this={searchResult[0]}>No result</p>
+					<p class="dim">No result</p>
 				{/if}
 			{:catch err}
 				<p>Error: {err.message}</p>

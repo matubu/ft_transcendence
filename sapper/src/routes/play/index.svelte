@@ -19,11 +19,6 @@
 
 	let fmtDate = new Intl.DateTimeFormat(undefined, { dateStyle: 'full' }).format
 	let modalDuel
-
-	let onPick = e => {
-		let opponent = e.detail
-		//goto "/duel/{opponentId}" ?
-	}
 </script>
 
 <style>
@@ -43,6 +38,9 @@
 	}
 	::-webkit-progress-bar {
 		background: var(--blue);
+	}
+	.noscroll-modal :global(.card) {
+		overflow: visible;
 	}
 </style>
 
@@ -68,11 +66,13 @@
 			</div>
 			<Button on:click={modalDuel.open()}>Play with friends</Button>
 			<!-- add search bar to find opponent -->
-			<Modal bind:this={modalDuel} >
-				<span>Enter your opponent name ⚔️</span>
-				<SearchBar onPick={id => goto(`/play/duel/${id}`)} />
-				<!-- <SearchBar on:pick={onPick}/> -->
-			</Modal>
+			<div class="noscroll-modal">
+				<Modal bind:this={modalDuel}>
+					<span>Enter your opponent name ⚔️</span>
+					<SearchBar onPick={id => goto(`/play/duel/${id}`)} />
+					<!-- <SearchBar on:pick={onPick}/> -->
+				</Modal>
+			</div>
 		</div>
 		<div class="grad-card" style="background:var(--grad-blue)">
 			<div>
