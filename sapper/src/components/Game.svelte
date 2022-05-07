@@ -177,13 +177,17 @@
 	export const BALL_PADDLE_SOUND = 2
 	export const DAMAGE_SOUND = 3
 
+	const syncUpdateBall = (collision) => {
+		syncBall?.(collision)
+		playCollisionSound(collision)
+		updateDOMBall()
+	}
+
 	onMount(() => {
 		mp3 = [new Audio('ping.mp3'), new Audio('pong.mp3'), new Audio('oof.mp3')]
 
 		let previousTimestamp
 		frame = requestAnimationFrame(function sim(timestamp) {
-			let sync: boolean = false
-			let collision = 0
 			frame = requestAnimationFrame(sim)
 			// --- COMPUTE DELTATIME ---
 			previousTimestamp ??= timestamp
@@ -206,15 +210,15 @@
 				game.score[+(ballPos[0] < WIDTH / 2)]++
 				syncScore?.(game.score)
 				resetBall()
-				sync = true
-				collision = DAMAGE_SOUND
+				syncUpdateBall(DAMAGE_SOUND)
+				return ;
 			}
 			// --- FRAME HORIZONTAL COLLISION ---
 			if (ballPos[1] < BALL_RADIUS || ballPos[1] > HEIGHT - BALL_RADIUS)
 			{
 				ballVel[1] = sign(ballVel[1], ballPos[1] > HEIGHT - BALL_RADIUS)
-				sync = true
-				collision = BALL_WALL_SOUND
+				syncUpdateBall(BALL_WALL_SOUND)
+				return ;
 			}
 			// --- PADDLE COLLISION
 			for (let [paddleX, paddleY, width] of [
@@ -248,16 +252,16 @@
 					const X = PADDLE_X_MARGIN + PADDLE_WIDTH + BALL_SIZE + 1
 					ballPos[0] = SIDE ? WIDTH - X : X
 				} else {
-					ballVel[1] = sign(ballVel[0] * 1.05, ballPos[1] < paddleY)
+					const SIDE = ballPos[1] < paddleY
+					ballVel[1] = sign(ballVel[0] * 1.05, SIDE)
 					ballVel[0] *= 1.05
+					// --- UPDATE POSITION ---
+					ballPos[1] = paddleY
+						+ (PADDLE_HEIGHT / 2 + BALL_RADIUS + 1) * (SIDE ? -1 : 1)
 				}
-				sync = true
-				collision = BALL_PADDLE_SOUND
+				syncUpdateBall(BALL_PADDLE_SOUND)
+				return ;
 			}
-			if (sync)
-				syncBall?.(collision)
-			if (collision)
-				playCollisionSound(collision)
 			updateDOMBall()
 		})
 	})
@@ -295,10 +299,7 @@
 		pointer-events: none;
 	}
 	.ball, .paddle { top: 50% }
-	.ball {
-		left: 50%;
-		border-radius: 50%;
-	}
+	.ball { left: 50% }
 	.score {
 		text-align: center;
 		font-size: 1em;

@@ -6,6 +6,7 @@
 	import User from '@components/User.svelte'
 	import Nav from '@components/Nav.svelte'
 	import { user, useMediaQuery, waitingLogin } from '@lib/store'
+	import { goto } from '@sapper/app'
 	import { logIn } from '@lib/utils'
 
 	let mediaQuery = useMediaQuery('(max-width: 800px)')
@@ -104,7 +105,7 @@
 			<Nav />
 		{/if}
 		{#if ($user)}
-			<SearchBar />
+			<SearchBar onPick={id => goto(`/user/${id}`)} />
 			<Notification />
 			{#if !($mediaQuery)}
 				<a href="/user">

@@ -203,6 +203,15 @@ export class AppGateway {
 		this.updateStatusListener(match.players[1])
 	}
 
+	createMatch(player1, player2) {
+		const id = Math.random().toFixed(16).split('.')[1]
+		this.matchMap.set(id, new Match(player1, player2))
+		send(player1, 'matchfound', { id })
+		send(player2, 'matchfound', { id })
+		this.updateStatusListener(player1.userId)
+		this.updateStatusListener(player2.userId)
+	}
+
 	@SubscribeMessage('joinRanked')
 	joinRanked(client: any) {
 		// --- TRY TO RECONNECT TO OLD MATCH ---
@@ -212,15 +221,10 @@ export class AppGateway {
 		this.matchingMap.set(client.userId, client)
 		if (this.matchingMap.size >= 2) {
 			// ---- CREATE MATCH ----
-			const [[id1, user1], [id2, user2]] = this.matchingMap
-			const id = Math.random().toFixed(16).split('.')[1]
+			const [[id1, player1], [id2, player2]] = this.matchingMap
 			this.matchingMap.delete(id1)
 			this.matchingMap.delete(id2)
-			this.matchMap.set(id, new Match(user1, user2))
-			send(user1, 'matchfound', { id })
-			send(user2, 'matchfound', { id })
-			this.updateStatusListener(user1.userId)
-			this.updateStatusListener(user2.userId)
+			this.createMatch(player1, player2)
 		}
 	}
 

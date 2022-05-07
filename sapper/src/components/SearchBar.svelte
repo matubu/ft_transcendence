@@ -2,16 +2,15 @@
 	import { getjson } from "@lib/utils"
 	import User from '@components/User.svelte'
 	import { onMount } from "svelte";
-	import { goto } from '@sapper/app'
-	import { createEventDispatcher } from 'svelte'
 
-	const dispatch = createEventDispatcher()
-
-	let search
-	let searchResult = []
+	let results = []
 	let searchValue
 
-	const getValue = () => searchValue = search?.value?.trim?.()
+	export let onPick: Function
+
+	const getValue = () => {
+		searchValue = search?.value?.trim?.()
+	}
 	onMount(getValue)
 </script>
 
@@ -30,7 +29,10 @@
 		min-width: 100%;
 		box-sizing: border-box;
 	}
-	.bord-card { padding: 0 10px }
+	.bord-card {
+		cursor: pointer;
+		padding: 0 10px
+	}
 	p { margin: 10px }
 	h3 {
 		font-weight: 200;
@@ -44,24 +46,22 @@
 
 <form on:submit={e => {
 	e.preventDefault()
-	if (searchResult[0]?.href)
+	if (results.length)
 	{
-		goto(searchResult[0]?.href)
-		// TODO
-		// dispatch('pick', searchResult[0].userId)
-		search = ''
+		onPick(results.id)
+		searchValue = ''
 	}
 }}>
-	<input type="text" bind:this={search} on:input={getValue}>
+	<input type="text" bind:value={searchValue} on:input={getValue}>
 	
 	{#if searchValue}
 		<div class="vflex">
 			{#await getjson(`/api/search/${searchValue}`)}
-				<p bind:this={searchResult[0]}>loading...</p>
+				<p>loading...</p>
 			{:then results} 
 				{#if results.length}
 					{#each results as result, i}
-						<a class="bord-card" href="/user/{result.id}" bind:this={searchResult[i]}>
+						<div class="bord-card" on:click={onPick(result.id)} data-id={result.id}>
 							<div>
 								<User user={result} size="40" />
 								<h3>{@html (result.nickname ?? result.fullname.split(' ')[0])
@@ -72,13 +72,13 @@
 										searchValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'
 									), `<b>$&</b>`)}</h3>
 							</div>
-						</a>
+						</div>
 					{/each}
 				{:else}
 					<p class="dim" bind:this={searchResult[0]}>No result</p>
 				{/if}
 			{:catch err}
-				<p bind:this={searchResult[0]}>Error: {err.message}</p>
+				<p>Error: {err.message}</p>
 			{/await}
 		</div>
 	{/if}

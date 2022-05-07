@@ -70,7 +70,7 @@
 			<!-- add search bar to find opponent -->
 			<Modal bind:this={modalDuel} >
 				<span>Enter your opponent name ⚔️</span>
-				<SearchBar />
+				<SearchBar onPick={id => goto(`/play/duel/${id}`)} />
 				<!-- <SearchBar on:pick={onPick}/> -->
 			</Modal>
 		</div>
