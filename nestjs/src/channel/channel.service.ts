@@ -75,7 +75,7 @@ export class ChannelService {
 												name: channel.name,
 												password_is_set: channel.password === "" ? false : true,
 												password: channel.password,
-												description: channel.description,
+												description: channel.description ?? "",
 												private: channel.private
 											});
 		return this.get(tmp.id);

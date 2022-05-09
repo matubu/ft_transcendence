@@ -38,6 +38,8 @@ export class ChannelController {
 		const channels = userChannels.filter(channel => friendChannels.includes(channel))
 		for (let i = 0; i < channels.length; i++)
 		{
+			if ((await this.channelService.get(channels[i])).private == false)
+				continue
 			const tmp = await this.channelService.getUsers(channels[i]);
 			if (tmp.length == 2)
 			{
