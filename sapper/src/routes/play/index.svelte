@@ -11,6 +11,8 @@
 	import { goto } from '@sapper/app'
 	import { onMount } from 'svelte'
 	import { fetchUser, send } from '@lib/utils'
+	import { user } from '@lib/store'
+	import { get } from 'svelte/store'
 
 	onMount(() => {
 		send('play')
@@ -33,8 +35,6 @@
 			"solo dual ranked"
 			"overview overview history"
 			"overview overview history";
-		max-width: 900px;
-		margin: 0 auto;
 	}
 	.overview { grid-area: overview; }
 	.history { grid-area: history; }
@@ -50,6 +50,8 @@
 				"overview overview"
 				"overview overview"
 				"history history";
+			max-width: 500px;
+			margin: 0 auto;
 		}
 	}
 	@media (max-width: 500px) {
@@ -67,9 +69,7 @@
 
 <Head title="Play" />
 
-<Layout>
-	<!-- <div class="grid-layout"> -->
-	<!-- </div> -->
+<Layout maxwidth="900px">
 	<div class="container">
 		<div class="solo grad-card" style="background:var(--grad-purp)">
 			<div>
@@ -88,7 +88,6 @@
 				<h2>Dual</h2>
 			</div>
 			<Button on:click={modalDuel.open()}>Play with friends</Button>
-			<!-- add search bar to find opponent -->
 		</div>
 		<div class="ranked grad-card" style="background:var(--grad-blue)">
 			<div>
@@ -100,11 +99,11 @@
 			<Button href="/play/ranked">Play with strangers</Button>
 		</div>
 		<div class="overview vflex">
-			<StatsOverview />
+			<StatsOverview user={$user} />
 			<Leaderboard />
 		</div>
 		<div class="history">
-			<MatchHistory />
+			<MatchHistory user={$user} />
 		</div>
 	</div>
 </Layout>
@@ -112,6 +111,6 @@
 <div class="noscroll-modal">
 	<Modal bind:this={modalDuel}>
 		<h2>Choose your opponent</h2>
-		<SearchBar onPick={id => goto(`/play/duel/${id}`)} />
+		<SearchBar onPick={id => goto(`/play/duel/${get(user).id}-${id}`)} />
 	</Modal>
 </div>

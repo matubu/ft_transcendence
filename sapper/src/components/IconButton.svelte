@@ -18,6 +18,7 @@
 		background: none;
 		border: none;
 		flex-shrink: 0;
+		padding: 0;
 	}
 	button:hover {
 		background: var(--hove);
@@ -29,6 +30,7 @@
 
 <button
 	aria-label={alt}
+	title={alt}
 	style="
 	width: {iconSize * 2}px;
 	height: {iconSize * 2}px;

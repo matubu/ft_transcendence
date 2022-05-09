@@ -92,7 +92,7 @@
 	on:focusin={e => blur && container.firstChild.blur()}
 >
 	<IconButton
-		alt="notifications"
+		alt="Notifications"
 		on:mousedown={e => {
 			blur = document.activeElement == container.firstChild
 			container.firstChild.blur()

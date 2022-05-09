@@ -31,22 +31,19 @@
 		color: var(--whit);
 		clip-path: url(/star.svg#clip);
 	}
-	.idx-1 {
-		background: radial-gradient(circle at top center, #f7cc84, #bd9030);
-	}
-	.idx-2 {
-		background: radial-gradient(circle at top center, #dadada, #939393);
-	}
-	.idx-3 {
-		background: radial-gradient(circle at top center, #e59d86, #8d4f3e);
-	}
+	.idx-1
+	{ background: radial-gradient(circle at top center, #f7cc84, #bd9030) }
+	.idx-2
+	{ background: radial-gradient(circle at top center, #dadada, #939393) }
+	.idx-3
+	{ background: radial-gradient(circle at top center, #e59d86, #8d4f3e) }
 
 	.score {
 		margin-left: auto;
 		background: #386bda70;
 		color: #6a94ec;
 		padding: 2px 10px;
-		border-radius: 99px;
+		border-radius: 5px;
 	}
 
 	.dim {

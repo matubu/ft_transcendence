@@ -10,9 +10,12 @@
 		border-color: var(--bord);
 		margin: 0;
 	}
-	.viewer-count {
-		padding: 10px 15px;
-		margin-right: auto;
+	.info {
+		width: 100%;
+		padding: 10px 20px;
+		justify-content: space-between;
+		box-sizing: border-box;
+		display: flex;
 	}
 	.bord-card :global(:is(header, .vs)) {
 		display: none;
@@ -61,11 +64,23 @@
 	})
 </script>
 
+<svelte:window on:wsmsg={e => {
+	const { channel, data } = e.detail
+	if (channel !== "gameData") return ;
+	if (data.id !== gameId) return ;
+
+	if (data.paddle)
+		game.updatePaddleAbsolute(data.paddleId, data.paddle)
+	if (data.ball)
+		game.updateBall(data.ball)
+}}/>
+
 <div class="bord-card">
 	<Game bind:this={game} />
 	<hr>
-	<div class="viewer-count">
+	<div class="info">
 		<User user={players[0]} />
+		<span class="dim">VS</span>
 		<User user={players[1]} />
 	</div>
 </div>

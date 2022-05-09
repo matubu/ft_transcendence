@@ -12,7 +12,7 @@
 	--yelo: #eec44f;
 	--gree: #2cc4a9;
 	--blue: #31b2ff;
-	--grey: #CBCBCB;
+	--grey: #ACACAC;
 	--prim: #f2f4f8;
 	--seco: #d8dee9;
 	--primary: #5252e1;
@@ -98,7 +98,6 @@ input[type="text"], input[type="password"] {
 	flex-direction: column;
 	justify-content: space-between;
 	gap: 15px;
-	max-width: 500px;
 }
 .grad-card > * {
 	margin: 0;
@@ -132,8 +131,10 @@ input[type="text"], input[type="password"] {
 	padding: 30px;
 	gap: 30px;
 }
-.card > h2 {
-	margin: 0;
+.card > h2 { margin: 0 }
+.card > * {
+	box-sizing: border-box;
+	width: 100%
 }
 
 .grid-layout {
@@ -149,3 +150,18 @@ input[type="text"], input[type="password"] {
 .equal { color: var(--yelo) }
 .winning { color: var(--gree) }
 .losing { color: var(--red) }
+
+.stats {
+	width: 100%;
+	text-align: center;
+	justify-content: space-between;
+	display: flex;
+	gap: 10px;
+}
+.stats :is(h3, h4) {
+	margin: 0;
+}
+.stats h3 {
+	font-size: 30px;
+	margin-bottom: 10px;
+}

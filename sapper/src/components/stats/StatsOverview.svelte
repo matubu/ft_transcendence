@@ -1,19 +1,10 @@
 <script>
-	import { user } from '@lib/store'
+	export let user
 
-	let wins = 0
-	let lose = 0
-	let total
-	let winratio = 0
-
-	user.subscribe(user => {
-		if (!user)
-			return (wins = lose = total = winratio = 0)
-		wins = user.matchs.filter(({ victory }) => victory.id === user.id).length
-		total = user.matchs.length
-		lose = total - wins
-		winratio = wins / total
-	})
+	let total = user.matchs.length
+	let wins = user.matchs.filter(({ victory }) => victory.id === user.id).length
+	let lose = total - wins
+	let winratio = wins / total
 </script>
 
 <style>
@@ -42,33 +33,6 @@
 	}
 	.progress-fill
 	{ stroke: var(--gree) }
-
-	.wins {
-		width: 100%;
-	}
-	.wins > h4 {
-		text-align: center;
-	}
-	.wins > .flex {
-		align-items: center;
-		gap: 20px;
-	}
-	progress {
-		width: 100%;
-		margin: 0;
-		-webkit-appearance: none;
-		border: 0;
-		background: var(--bord);
-		border-radius: 99px;
-		overflow: hidden;
-		height: 16px;
-	}
-	::-webkit-progress-bar
-	{ background: var(--bord) }
-	::-webkit-progress-value
-	{ background: var(--gree) }
-	::-moz-progress-bar
-	{ background: var(--gree) }
 </style>
 
 <div class="card">
@@ -88,12 +52,22 @@
 		</div>
 	</div>
 
-	<div class="wins">
-		<h4 class="dim">Total Matchs</h4>
-		<div class="flex">
-			<span>{wins}</span>
-			<progress max={total} value={wins} />
-			<span>{lose}</span>
+	<div class="stats">
+		<div>
+			<h3>{wins}</h3>
+			<h4 class="dim">Wins</h4>
+		</div>
+		<div>
+			<h3>{total}</h3>
+			<h4 class="dim">Total</h4>
+		</div>
+		<div>
+			<h3>{lose}</h3>
+			<h4 class="dim">Lose</h4>
+		</div>
+		<div>
+			<h3>{user.elo}</h3>
+			<h4 class="dim">Elo</h4>
 		</div>
 	</div>
 </div>
