@@ -18,9 +18,6 @@
 
 <style>
 	.card {
-		background: var(--fore);
-		padding: 30px;
-		border-radius: 10px;
 		width: 100%;
 		min-width: 200px;
 		max-width: 500px;

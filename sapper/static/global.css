@@ -1,16 +1,16 @@
 :root {
 	--whit: #F1F1F1;
-	--back: #020203;
-	--fore: #0f0f1c;
-	--bord: #1b1b1f;
+	--back: #111;
+	--fore: #191b2a;
+	--bord: #22232f;
 
 	--bhov: #f0f7ff09;
 	--hove: #f0f7ff07;
 	--acti: #f2f6ff0e;
 
-	--red : #f03c6f;
+	--red : #ee5c5f;
 	--yelo: #eec44f;
-	--gree: #80e295;
+	--gree: #2cc4a9;
 	--blue: #31b2ff;
 	--grey: #CBCBCB;
 	--prim: #f2f4f8;
@@ -92,7 +92,7 @@ input[type="text"], input[type="password"] {
 
 .grad-card {
 	flex: 1;
-	border-radius: 20px;
+	border-radius: 10px;
 	padding: 25px;
 	display: flex;
 	flex-direction: column;
@@ -109,12 +109,12 @@ input[type="text"], input[type="password"] {
 	gap: 20px;
 }
 
+.card,
 .bord-card {
 	display: flex;
 	gap: 10px;
 	align-items: center;
-	justify-content: space-between;
-	border-radius: 5px;
+	border-radius: 10px;
 	border: 1px solid var(--bord);
 	padding: 10px 15px;
 }
@@ -123,17 +123,29 @@ input[type="text"], input[type="password"] {
 	align-items: center;
 	gap: 20px;
 }
+.bord-card {
+	justify-content: space-between;
+}
+.card {
+	background: var(--fore);
+	flex-direction: column;
+	padding: 30px;
+	gap: 30px;
+}
+.card > h2 {
+	margin: 0;
+}
 
 .grid-layout {
 	display: grid;
 	gap: 20px;
 	grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
 }
-.vflex {
+.flex, .vflex {
 	display: flex;
-	flex-direction: column;
 	gap: 10px;
 }
+.vflex { flex-direction: column }
 .equal { color: var(--yelo) }
 .winning { color: var(--gree) }
 .losing { color: var(--red) }

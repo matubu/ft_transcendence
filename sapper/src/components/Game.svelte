@@ -16,7 +16,7 @@
 	export const WIDTH: number = 300
 	export const HEIGHT: number = 200
 
-	export const BALL_SPEED: number = 100
+	export const BALL_SPEED: number = 80
 
 	export const PLAYER_SPEED = 80
 
@@ -187,23 +187,32 @@
 		mp3 = [new Audio('ping.mp3'), new Audio('pong.mp3'), new Audio('oof.mp3')]
 
 		let previousTimestamp
+		let paddlesOld
 		frame = requestAnimationFrame(function sim(timestamp) {
 			frame = requestAnimationFrame(sim)
-			// --- COMPUTE DELTATIME ---
+
 			previousTimestamp ??= timestamp
+
 			let deltaTime = (timestamp - previousTimestamp) / 1000
-			// --- CALL REGISTERED FUNCTIONS ---
+
+			previousTimestamp = timestamp
+
+			if (!arena) return ;
+
 			for (let callback of registeredFunctions)
 				callback(deltaTime)
-			// --- RESET TIMESTAMP ---
-			previousTimestamp = timestamp
-			// --- CHECK IF GAME ---
-			if (!arena)
-				return ;
-			// --- UPDATE POSITION
+
+			paddlesOld ??= [...paddles]
+			let paddlesDeltaY = [
+				paddlesOld[0] - paddles[0],
+				paddlesOld[1] - paddles[1]
+			]
+			paddlesOld = [...paddles]
+
 			let lastPosition = [...ballPos]
 			ballPos[0] += ballVel[0] * deltaTime * BALL_SPEED
 			ballPos[1] += ballVel[1] * deltaTime * BALL_SPEED
+
 			// --- FRAME VERTICAL COLLISION ---
 			if (ballPos[0] < BALL_RADIUS || ballPos[0] > WIDTH - BALL_RADIUS)
 			{
@@ -213,6 +222,7 @@
 				syncUpdateBall(DAMAGE_SOUND)
 				return ;
 			}
+
 			// --- FRAME HORIZONTAL COLLISION ---
 			if (ballPos[1] < BALL_RADIUS || ballPos[1] > HEIGHT - BALL_RADIUS)
 			{
@@ -220,17 +230,20 @@
 				syncUpdateBall(BALL_WALL_SOUND)
 				return ;
 			}
+
 			// --- PADDLE COLLISION
-			for (let [paddleX, paddleY, width] of [
+			for (let [paddleX, paddleY, width, paddleDeltaY] of [
 				[
 					PADDLE_X_MARGIN - PADDLE_WIDTH / 2 - BALL_RADIUS,
 					paddles[0],
-					PADDLE_WIDTH + BALL_SIZE
+					PADDLE_WIDTH + BALL_SIZE,
+					paddlesDeltaY[0]
 				],
 				[
 					WIDTH - (PADDLE_X_MARGIN - PADDLE_WIDTH / 2 - BALL_RADIUS),
 					paddles[1],
-					-(PADDLE_WIDTH + BALL_SIZE)
+					-(PADDLE_WIDTH + BALL_SIZE),
+					paddlesDeltaY[1]
 				]
 			])
 			{
@@ -239,7 +252,10 @@
 						paddleX, paddleY - PADDLE_HEIGHT / 2 - BALL_RADIUS,
 						width, PADDLE_HEIGHT + BALL_SIZE
 					],
-					lastPosition,
+					[
+						lastPosition[0],
+						lastPosition[1] + paddleDeltaY
+					],
 					ballPos
 				)
 				if (distance === Infinity) continue ;
@@ -314,7 +330,7 @@
 		background: linear-gradient(45deg, #00adff, #1646f5);
 		-webkit-background-clip: text;
 		-webkit-text-fill-color: transparent;
-		text-shadow: 0 0 10px #9ccfdb6b;
+		text-shadow: 0 0 2px #9ccfdb6b;
 		font-weight: 900;
 	}
 	.win-container {
@@ -364,7 +380,7 @@
 		<div class="win-container">
 			<div>
 				<a href="/user/{game.winner.id}">
-					<User size="200" user={game.winner} />
+					<User size="200" user={game.winner} nostatus />
 				</a>
 				<h1>{game.winnerName} won !</h1>
 				{#if game.eloWon}
@@ -393,7 +409,7 @@
 						<span class="{_isWinningClass(game.score[0], game.score[1])}">
 							{game.score[0]}
 						</span>
-						-
+						:
 						<span class="{_isWinningClass(game.score[1], game.score[0])}">
 							{game.score[1]}
 						</span>

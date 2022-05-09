@@ -13,6 +13,7 @@
 		display: flex;
 		flex-direction: column;
 		overflow-y: auto;
+		gap: 20px;
 	}
 </style>
 

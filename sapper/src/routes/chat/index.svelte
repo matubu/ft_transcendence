@@ -4,6 +4,7 @@
 	import Button from '@components/Button.svelte'
 	import Room from '@components/Room.svelte'
 	import Modal from '@components/Modal.svelte'
+	import IconButton from '@components/IconButton.svelte'
 	import { useMediaQuery } from '@lib/store'
 	import { writable } from 'svelte/store'
 	import { postjson } from '@lib/utils'
@@ -62,6 +63,10 @@
 		<label>
 			Chat name<br>
 			<input type="text" placeholder="Chat name" required name="name">
+		</label>
+		<label>
+			Description<br>
+			<input type="text" placeholder="Description" name="description">
 		</label>
 		<label>
 			Password<br>

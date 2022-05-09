@@ -14,7 +14,7 @@
 				nickname: 'You'
 			},
 			{
-				nickname: 'Terminator (bot)',
+				nickname: 'Terminator',
 				picture: {
 					url: 'https://intelligence-artificielle.com/wp-content/uploads/2022/03/Terminator-3.jpg'
 				}
@@ -31,7 +31,7 @@
 			{
 				targetY = game.getBallPos()[1]
 					+ diffX / game.getBallVel()[0] * game.getBallVel()[1]
-					+ Math.random() * 20 - 10
+					+ (Math.random() - .5) * 10
 			}
 			if (game.getBallVel()[0] > 0)
 				game.updatePaddleAbsolute(1,

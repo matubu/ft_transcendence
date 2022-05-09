@@ -25,6 +25,8 @@
 		text-overflow: ellipsis;
 	}
 
+	.bord-card
+	{ height: 50px }
 	.grad-card {
 		padding: 7px;
 		border-radius: 14px;
@@ -48,7 +50,7 @@
 	</div>
 	<div style="gap: 0">
 		{#await getjson(`/api/channel/${id}/users`)}
-			loading...
+			<span class="dim">...</span>
 		{:then users}
 			{#each users.slice(0, 3) as user}
 				<div style="margin-left: -20px">
