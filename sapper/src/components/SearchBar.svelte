@@ -7,6 +7,7 @@
 	let searchValue
 
 	export let onPick: Function
+	export let resultFilter = result => {return true};
 
 	let timeout
 	const getValue = () => {
@@ -15,7 +16,7 @@
 			clearTimeout(timeout)
 			return results = undefined
 		}
-		setTimeout(() => results = getjson(`/api/search/${searchValue}`), 1000)
+		setTimeout(() => results = getjson(`/api/search/${searchValue}`).then(r => r.filter(resultFilter)), 1000)
 	}
 	onMount(getValue)
 </script>
@@ -52,23 +53,22 @@
 
 <form on:submit={e => {
 	e.preventDefault()
-	results.then(results => {
-		if (results.length)
+	results.then(res => {
+		if (res.length)
 		{
-			onPick(results[0].id)
+			onPick(res[0].id)
 			searchValue = ''
 		}
 	})
 }}>
 	<input type="text" bind:value={searchValue} on:input={getValue}>
-	
 	{#if results}
 		<div class="vflex">
 			{#await results}
 				<p>loading...</p>
-			{:then results} 
-				{#if results.length}
-					{#each results as result}
+			{:then res} 
+				{#if res.length}
+					{#each res as result}
 						<div class="bord-card" on:click={onPick(result.id)} tabindex="0">
 							<User user={result} size="40" />
 							<h3>{result.nickname ?? result.fullname.split(' ')[0]}</h3>

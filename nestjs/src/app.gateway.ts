@@ -125,6 +125,7 @@ export class AppGateway {
 	matchingMap: Map<number, any> = new Map()
 	matchMap: Map<string, Match> = new Map()
 	listenerMap: Map<number, Set<any>> = new Map()
+	duelRequestMap: Map<number, number> = new Map()
 
 	@WebSocketServer()
 	server: Server
@@ -212,20 +213,62 @@ export class AppGateway {
 		this.updateStatusListener(player2.userId)
 	}
 
+	findMatch(user, max_diff)
+	{
+		let eloDiff = (userA, userB) => Math.abs(userA.elo - userB.elo)
+		let nearest = null
+		for (let e of this.matchingMap.values()) {
+			if (!nearest && eloDiff(e, user) <= max_diff) nearest = e;
+			if (nearest && eloDiff(e, user) < eloDiff(nearest, e)) nearest = e;
+		}
+		return nearest
+	}
+
+	//TODO 
+	//searchMatch(user)
+	//{
+	//	let max_diff: number = 0
+	//	let delta: number = 42
+	//	let waiting_time: number = 3;
+
+	//	while (true) {
+	//		max_diff += delta
+	//		let adv = findMatch(user, max_diff)
+	//		if (!adv) {
+	//			//block while listening for new potential adv
+	//			//after {waiting_time} continue
+	//			continue;
+	//		}
+	//		return adv
+	//	}
+	//}
+
 	@SubscribeMessage('joinRanked')
-	joinRanked(client: any) {
+	async joinRanked(client: any) {
 		// --- TRY TO RECONNECT TO OLD MATCH ---
 		if (this.connectToMatch(client) !== false)
 			return;
 		// ---- ADD TO MATCHING LIST ----
-		this.matchingMap.set(client.userId, client)
+		/*this.matchingMap.set(client.userId, client)
 		if (this.matchingMap.size >= 2) {
 			// ---- CREATE MATCH ----
 			const [[id1, player1], [id2, player2]] = this.matchingMap
 			this.matchingMap.delete(id1)
 			this.matchingMap.delete(id2)
 			this.createMatch(player1, player2)
+		}*/
+		// ---- FIND BEST OPPONENT ----
+		let user = await g_userService.get(client.userId, [])
+		client.elo = user.elo
+		let opp = this.findMatch(client, 9999999) //temp
+		if (!opp) {
+			// ---- ADD TO MATCHING QUEUE ----
+			//TODO now that the player is in queue he needs to allow more elo diff as time goes on //prototype line 227
+			this.matchingMap.set(client.userId, client)
+			return;
 		}
+		this.createMatch(client, opp)
+		this.matchingMap.delete(opp.userId)
 	}
 
 	@SubscribeMessage('leaveRanked')
@@ -273,12 +316,8 @@ export class AppGateway {
 
 	@SubscribeMessage('chat')
 	async onChat(client: any, data: any) {
-		//get all user in chat
-		//broadcast client and message to them
-		//insert new message in db
 		const { room, msg } = data;
 		const users = await this.channelService.getUsers(room);
-		// const chatData = {senderId: client.userId, room: room, msg: msg}
 		const messageInfo = await this.messageService.insert(client.userId, room, msg)
 		for (const user of users)
 			this.sendTo(user.id, 'chat', { ...messageInfo, room });
@@ -332,6 +371,23 @@ export class AppGateway {
 
 	@SubscribeMessage('duelRequest')
 	async onDuelRequest(client: any, data: any) {
-		this.notificationService.insert(data.advId, "someone want to show you who's the boss! O_o", client.userId, `duel/${client.userId}`)
+		const oppId = data.oppId
+		if (oppId == client.userId) return;
+		if (this.duelRequestMap.has(oppId)) return;
+		this.duelRequestMap.set(client.userId, oppId)
+		
+		this.notificationService.insert(oppId, "someone want to show you who's the boss! O_o", client.userId, `duel/${client.userId}`)
+	}
+
+	@SubscribeMessage('duelAccept')
+	async onDuelAccept(client: any, data: any) {
+		const oppId = data.oppId
+		if (!this.duelRequestMap.has(oppId)) return;
+		if (this.duelRequestMap.get(oppId) != client.userId) return;
+		//TODO send him duel error reason...
+		if (this.getStatus(oppId) !== "online") return;
+		const opp = this.userMap.get(oppId)[0]
+		this.createMatch(opp, client)
+		this.duelRequestMap.delete(oppId)
 	}
 }

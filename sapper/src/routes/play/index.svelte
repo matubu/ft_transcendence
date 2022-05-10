@@ -111,6 +111,6 @@
 <div class="noscroll-modal">
 	<Modal bind:this={modalDuel}>
 		<h2>Choose your opponent</h2>
-		<SearchBar onPick={id => goto(`/play/duel/${get(user).id}-${id}`)} />
+		<SearchBar onPick={id => goto(`/play/duel/${get(user).id}-${id}`)} resultFilter={r => r.id != $user.id} />
 	</Modal>
 </div>
