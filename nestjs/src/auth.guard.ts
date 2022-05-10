@@ -1,6 +1,6 @@
 import { createParamDecorator, UnauthorizedException, ExecutionContext } from '@nestjs/common'
 
-const signerFactory = require('fastify-cookie/signer')
+const signerFactory = require('@fastify/cookie/signer')
 const signer = signerFactory(process.env.SECRET_COOKIES)
 
 export const unsign = (cookie: string): number => {

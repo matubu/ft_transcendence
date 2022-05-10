@@ -7,6 +7,8 @@ import { Autorization } from '../auth.guard'
 import { AuthService } from 'src/auth/auth.service';
 import { DeleteResult } from 'typeorm';
 import { Dfa } from 'src/dfa/dfa.entity';
+import cookie from '@fastify/cookie'
+import multipart from '@fastify/multipart'
 
 @Controller('user')
 export class UserController {
