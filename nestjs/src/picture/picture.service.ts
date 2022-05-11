@@ -77,7 +77,8 @@ export class PictureService {
 
 	async removeByName(name: string): Promise<DeleteResult>
 	{
-		fs.unlinkSync(process.cwd() + "/upload/images/" + name);
+		const file: string = process.cwd() + "/upload/images/" + name;
+		fs.unlinkSync(file);
 		return this.pictureRepository.delete({ name: name });
 	}
 

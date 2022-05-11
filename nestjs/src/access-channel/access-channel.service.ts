@@ -67,4 +67,8 @@ export class AccessChannelService {
 			return (false);
 		return (true);
 	}
+
+	async removeAll(user: User): Promise<DeleteResult> {
+		return this.accessRepository.delete({ user });
+	}
 }

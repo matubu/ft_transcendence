@@ -1,14 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, forwardRef, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
 import { Match } from './match.entity';
+import { User } from 'src/user/user.entity';
 
 @Injectable()
 export class MatchService {
 	constructor(
 		@InjectRepository(Match)
 		private matchRepository: Repository<Match>,
+		@Inject(forwardRef(() => UserService))
 		private readonly userService: UserService
 	) {}
 
@@ -54,5 +56,10 @@ export class MatchService {
 		for (let i = 0; i < matchs.length; i++)
 			defaite.push(matchs[i]);
 		return (defaite);
+	}
+
+	async removeAll(user: User): Promise<void> {
+		await this.matchRepository.delete({ player1: user });
+		await this.matchRepository.delete({ player2: user });
 	}
 }

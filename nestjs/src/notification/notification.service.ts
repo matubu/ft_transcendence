@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserService } from 'src/user/user.service';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
@@ -9,6 +9,7 @@ export class NotificationService {
 	constructor(
 		@InjectRepository(Notification)
 		private notificationRepository: Repository<Notification>,
+		@Inject(forwardRef(() => UserService))
 		private readonly userService: UserService
 	) {}
 

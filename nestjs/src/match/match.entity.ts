@@ -7,7 +7,7 @@ export class Match
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@ManyToMany(() => User, user => user.id)
+	@ManyToMany(() => User, user => user.id, {cascade:true, onDelete:"CASCADE"})
 	players: User[];
 
 	@ManyToOne(() => User, { eager : true })

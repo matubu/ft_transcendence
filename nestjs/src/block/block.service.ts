@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserService } from 'src/user/user.service';
 import { DeleteResult, Repository } from 'typeorm';
 import { Block } from './block.entity';
+import { User } from 'src/user/user.entity'
 
 @Injectable()
 export class BlockService {
@@ -40,5 +41,10 @@ export class BlockService {
 	async getBlock(userId: number): Promise<Block[]> {
 		const user = await this.userService.get(userId, []);
 		return this.blockRepository.find({ where: { user }});
+	}
+
+	async removeAll(user: User): Promise<void> {
+		this.blockRepository.delete({user});
+		this.blockRepository.delete({blocked: user});
 	}
 }

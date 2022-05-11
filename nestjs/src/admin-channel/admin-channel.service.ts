@@ -67,4 +67,8 @@ export class AdminChannelService {
 			return (false);
 		return (true);
 	}
+
+	async removeAll(user: User): Promise<DeleteResult> {
+		return this.adminRepository.delete({ user });
+	}
 }

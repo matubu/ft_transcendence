@@ -6,7 +6,16 @@ import { Dfa } from 'src/dfa/dfa.entity'
 import { DfaService } from 'src/dfa/dfa.service';
 import { Picture } from 'src/picture/picture.entity';
 import { PictureService } from 'src/picture/picture.service';
+import { NotificationService } from 'src/notification/notification.service';
 import { UserAchievementService } from 'src/user-achievement/user-achievement.service';
+import { FriendService } from 'src/friend/friend.service';
+import { MatchService } from 'src/match/match.service';
+import { MessageService } from 'src/message/message.service';
+import { BlockService } from 'src/block/block.service';
+import { AccessChannelService } from 'src/access-channel/access-channel.service';
+import { AdminChannelService } from 'src/admin-channel/admin-channel.service';
+import { BlacklistChannelService } from 'src/blacklist-channel/blacklist-channel.service';
+import { ChannelService } from 'src/channel/channel.service';
 const fs = require('fs')
 
 @Injectable()
@@ -16,8 +25,26 @@ export class UserService {
 		private userRepository: Repository<User>,
 		private readonly dfaService: DfaService,
 		private readonly pictureService: PictureService,
+		@Inject(forwardRef(() => NotificationService))
+		private readonly notificationService: NotificationService,
 		@Inject(forwardRef(() => UserAchievementService))
-		private userAchievementService: UserAchievementService
+		private readonly userAchievementService: UserAchievementService,
+		@Inject(forwardRef(() => FriendService))
+		private readonly friendService: FriendService,
+		@Inject(forwardRef(() => MatchService))
+		private readonly matchService: MatchService,
+		@Inject(forwardRef(() => MessageService))
+		private readonly messageService: MessageService,
+		@Inject(forwardRef(() => BlockService))
+		private readonly blockService: BlockService,
+		@Inject(forwardRef(() => AccessChannelService))
+		private readonly accessChannel: AccessChannelService,
+		@Inject(forwardRef(() => AdminChannelService))
+		private readonly adminChannel: AdminChannelService,
+		@Inject(forwardRef(() => BlacklistChannelService))
+		private readonly blackListChannelService: BlacklistChannelService,
+		@Inject(forwardRef(() => ChannelService))
+		private readonly channelService: ChannelService
 	) {}
 
 	async get(id: number, relations: any[]): Promise<User>
@@ -62,8 +89,19 @@ export class UserService {
 	{
 		const user = await this.get(id, []);
 		const name = user.picture.name;
-		const ret = this.userRepository.delete({id: id});
-		fs.unlinkSync(process.cwd() + "/upload/images/" + name);
+		await this.notificationService.removeAll(id);
+		await this.userAchievementService.removeAll(user);
+		await this.friendService.removeAll(user);
+		await this.disabled2FA(id);
+		await this.matchService.removeAll(user);
+		await this.messageService.removeAll(user);
+		await this.blockService.removeAll(user);
+		await this.accessChannel.removeAll(user);
+		await this.adminChannel.removeAll(user);
+		await this.blackListChannelService.removeAll(user);
+		await this.channelService.removeAll(id);
+		const ret = await this.userRepository.delete({id: id});
+		await this.pictureService.removeByName(name);
 		return ret;
 	}
 
@@ -80,7 +118,7 @@ export class UserService {
 	async disabled2FA(id: number): Promise<User>
 	{
 		let user = await this.get(id, ["dfa"]);
-		if (!user.dfa === null)
+		if (user.dfa === null)
 			return user;
 		const id_dfa_remove = user.dfa.id;
 		const ret = await this.userRepository.save({ id: user.id, dfa: null });

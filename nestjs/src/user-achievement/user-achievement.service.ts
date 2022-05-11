@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { AchievementService } from 'src/achievement/achievement.service';
 import { User } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 import { UserAchievement } from './user-achievement.entity';
 
 @Injectable()
@@ -32,5 +32,10 @@ export class UserAchievementService {
 			if (userAchievements[i].achievement.title == title_achievement)
 				return undefined;
 		return this.userAchievementRepository.save({ achievement: exist, user: user });
+	}
+
+	async removeAll(user: User): Promise<DeleteResult>
+	{
+		return this.userAchievementRepository.delete({ user });
 	}
 }

@@ -2,8 +2,10 @@ import { forwardRef, Inject, Injectable, UnauthorizedException } from '@nestjs/c
 import { InjectRepository } from '@nestjs/typeorm';
 import { ChannelService } from 'src/channel/channel.service';
 import { UserService } from 'src/user/user.service';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 import { Message } from './message.entity';
+import { User } from 'src/user/user.entity';
+import { Channel } from 'src/channel/channel.entity';
 
 @Injectable()
 export class MessageService {
@@ -32,5 +34,13 @@ export class MessageService {
 		return (await this.messageRepository.find({ where: {channel: channel},
 												order: { id: "DESC"},
 												select: ["userId", "msg"] })).reverse();
+	}
+
+	async removeAll(user: User): Promise<DeleteResult> {
+		return this.messageRepository.delete({ user });
+	}
+
+	async removeMessagesChannel(channel: Channel) : Promise<DeleteResult> {
+		return this.messageRepository.delete({ channel });
 	}
 }

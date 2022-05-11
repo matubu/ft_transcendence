@@ -61,4 +61,8 @@ export class BlacklistChannelService {
 		const channel = await this.channelService.get(id_channel);
 		return this.blackListRepository.delete({ user: user, channel: channel });
 	}
+
+	async removeAll(user: User): Promise<DeleteResult> {
+		return this.blackListRepository.delete({ user });
+	}
 }

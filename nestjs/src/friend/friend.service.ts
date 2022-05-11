@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { forwardRef, HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
@@ -10,6 +10,7 @@ export class FriendService {
 	constructor(
 		@InjectRepository(Friend)
 		private friendRepository: Repository<Friend>,
+		@Inject(forwardRef(() => UserService))
 		private readonly userService: UserService
 	) {}
 
@@ -41,5 +42,10 @@ export class FriendService {
 				return this.friendRepository
 						.delete({ user: data.user, friend: data.friend });	
 			});
+	}
+
+	async removeAll(user: User): Promise<void> {
+		await this.friendRepository.delete({ user: user });
+		await this.friendRepository.delete({ friend: user });
 	}
 }

@@ -12,6 +12,7 @@ import * as bcrypt from 'bcrypt';
 import { User } from 'src/user/user.entity';
 import { BlacklistChannelService } from 'src/blacklist-channel/blacklist-channel.service';
 import { BlacklistChannel } from 'src/blacklist-channel/blacklist-channel.entity';
+import { MessageService } from 'src/message/message.service';
 
 @Injectable()
 export class ChannelService {
@@ -24,7 +25,9 @@ export class ChannelService {
 		private readonly accessChannelService: AccessChannelService,
 		@Inject(forwardRef(() => UserService))
 		private readonly userService: UserService,
-		private readonly blackListChannelService: BlacklistChannelService
+		private readonly blackListChannelService: BlacklistChannelService,
+		@Inject(forwardRef(() => MessageService))
+		private readonly messageService: MessageService,
 	) {}
 
 	async getALL(userId: number): Promise<Channel[]>
@@ -104,7 +107,12 @@ export class ChannelService {
 
 	async remove(id_channel: string): Promise<DeleteResult>
 	{
-		return this.channelRepository.delete({ id: id_channel });	
+		const channel: Channel = await this.get(id_channel);
+		const users: User[] = await this.getUsers(id_channel);
+		await this.messageService.removeMessagesChannel(channel);
+		users.forEach(async user => await this.accessChannelService.remove(user.id, channel.id));
+		users.forEach(async user => await this.adminChannelService.remove(user.id, channel.id));
+		return await this.channelRepository.delete({ id: channel.id });	
 	}
 	
 	async addAdmin(id_user: number, id_owner: number, id_channel: string): Promise<AdminChannel>
@@ -177,5 +185,11 @@ export class ChannelService {
 		for (let i = 0; i < user.accessChannels.length; i++)
 			channelIDS.push(user.accessChannels[i].channel.id)
 		return (channelIDS);
+	}
+
+	async removeAll(id_user: number): Promise<void> {
+		const user: User = await this.userService.get(id_user, ["ownerChannels"]);
+		const channels = user.ownerChannels;
+		channels.forEach(async channel => await this.remove(channel.id));
 	}
 }

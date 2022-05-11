@@ -9,8 +9,8 @@ import { AppModule } from 'src/app.module';
 
 @Module({
 	imports: [TypeOrmModule.forFeature([Notification]),
-				forwardRef(() =>UserModule),
-				forwardRef(() =>AppModule)],
+				forwardRef(() => UserModule),
+				forwardRef(() => AppModule)],
 	providers: [NotificationService, NotificationSubscriber],
 	exports: [NotificationService],
 	controllers: [NotificationController]
