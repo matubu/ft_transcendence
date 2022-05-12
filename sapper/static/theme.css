@@ -36,3 +36,23 @@
 		!important;
 }
 
+.theme-computer1.arena-container > .arena {
+	background:
+		no-repeat center/cover
+		url("/computer1.jpg")
+		!important;
+}
+
+.theme-dontpanic.arena-container > .arena {
+	background:
+		no-repeat center/cover
+		url("/dontpanic.jpg")
+		!important;
+}
+
+.theme-yourname.arena-container > .arena {
+	background:
+		no-repeat center/cover
+		url("/YourName.jpg")
+		!important;
+}

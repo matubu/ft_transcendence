@@ -41,4 +41,19 @@
 		<input type=radio bind:group={theme} value="pocker">
 		<span>Pocker</span>
 	</label>
+
+	<label>
+		<input type=radio bind:group={theme} value="computer1">
+		<span>Computer1</span>
+	</label>
+
+	<label>
+		<input type=radio bind:group={theme} value="dontpanic">
+		<span>Dontpanic</span>
+	</label>
+
+	<label>
+		<input type=radio bind:group={theme} value="yourname">
+		<span>Yourname</span>
+	</label>
 </div>
