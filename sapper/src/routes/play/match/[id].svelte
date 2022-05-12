@@ -60,6 +60,7 @@
 			sock.on('P', pos => game.updatePaddleAbsolute(1, pos))
 			// --- SYNC BALL ---
 			sock.on('S', ([[x, y], [vx, vy], collisionId]) => {
+				console.log(Date.now(), 'sync [RECV]')
 				game.updateBall([game.WIDTH - x, y], [-vx, vy], collisionId)
 				// --- ASKING SCORE SYNC ---
 				collisionId === game.DAMAGE_SOUND && send('matchScore', [])
@@ -89,6 +90,7 @@
 	function syncBall(collisionId = 0) {
 		if (collisionId === Game.DAMAGE_SOUND && weakPeer)
 			return ;
+		console.log(Date.now(), 'sync [SEND]')
 		sendGameData('S', [game.getBallPos(), game.getBallVel(), collisionId])
 	}
 

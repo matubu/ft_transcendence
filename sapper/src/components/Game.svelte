@@ -10,7 +10,7 @@
 	import Guard from '@components/Guard.svelte'
 	import Button from '@components/Button.svelte'
 	import IconButton from '@components/IconButton.svelte'
-	import { onMount, onDestroy } from 'svelte'
+	import { onMount } from 'svelte'
 	import { goto } from '@sapper/app'
 
 	export const WIDTH: number = 300
@@ -287,12 +287,14 @@
 			}
 			updateDOMBall()
 		})
-	})
 
-	typeof document !== 'undefined' && onDestroy(() => cancelAnimationFrame(frame))
+		return (() => cancelAnimationFrame(frame))
+	})
 </script>
 
 <style>
+	@import '/theme.css';
+
 	.container {
 		margin: 0 auto;
 	}
@@ -410,7 +412,11 @@
 		</header>
 
 		<div class="vflex container">
-			<div class="arena-container" on:click={() => arenaContainer.requestFullscreen()} bind:this={arenaContainer}>
+			<div
+				class="arena-container theme-{localStorage.getItem('theme') ?? '90'}"
+				on:click={() => arenaContainer.requestFullscreen()}
+				bind:this={arenaContainer}
+			>
 				<div class="arena" bind:this={arena}>
 					<h2 class="score">
 						<span class="{_isWinningClass(game.score[0], game.score[1])}">

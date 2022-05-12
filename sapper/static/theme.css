@@ -1,0 +1,38 @@
+.theme-beach.arena-container > .arena {
+	background:
+		no-repeat center/cover
+		url("https://www.tripsavvy.com/thmb/FwmQ-JvBEBDDlVb-j_zdEo0iVsA=/2048x1152/smart/filters:no_upscale()/beach-5b59c9b7c9e77c004b3e0ff0.jpg")
+		!important;
+}
+.theme-beach.arena-container .ball {
+	background:
+		no-repeat center/cover
+		url("https://assets.bonappetit.com/photos/57e1b4674caff61056fa86bd/master/pass/ttar_coconut_02_v_launch.jpg")
+		!important;
+}
+.theme-beach.arena-container .paddle {
+	background:
+		no-repeat center/cover
+		url("https://media.istockphoto.com/photos/metal-stainless-texture-background-picture-id1129034019?k=20&m=1129034019&s=612x612&w=0&h=WXzo7IHDeCr-6Autbv9oa6mc6oQLVJ2qoOuyZutWkdk=")
+		!important;
+}
+
+.theme-pocker.arena-container > .arena {
+	background:
+		no-repeat center/cover
+		url("https://cdn.create.vista.com/api/media/small/167213276/stock-photo-poker-banner-template-layout-mockup")
+		!important;
+}
+.theme-pocker.arena-container .ball {
+	background:
+		no-repeat center/80%
+		url("https://thumbs.dreamstime.com/b/vector-casino-poker-chips-luminous-light-elements-top-view-blue-green-textured-background-online-casino-blackjack-poster-eps-108220877.jpg")
+		!important;
+}
+.theme-pocker.arena-container .paddle {
+	background:
+		no-repeat center/cover
+		url("https://pokerchiplounge.com/media/catalog/product/cache/d57a2af217876e4f695e3ad6c47352a3/p/o/poker_knights_clay_poker_chips_-_25000stack_1_1_1_1_1.jpg")
+		!important;
+}
+

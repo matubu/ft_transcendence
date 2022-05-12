@@ -8,6 +8,7 @@
 	import StatsOverview from '@components/stats/StatsOverview.svelte'
 	import MatchHistory from '@components/stats/MatchHistory.svelte'
 	import Leaderboard from '@components/stats/Leaderboard.svelte'
+	import ThemeSelector from '@components/ThemeSelector.svelte'
 	import { goto } from '@sapper/app'
 	import { onMount } from 'svelte'
 	import { fetchUser, send } from '@lib/utils'
@@ -32,19 +33,22 @@
 		gap: 10px;
 		grid-template-columns: 1fr 1fr 1fr;
 		grid-template-areas:
+			"theme-selector theme-selector theme-selector"
 			"solo dual ranked"
 			"overview overview history"
 			"overview overview history";
 	}
-	.overview { grid-area: overview; }
-	.history { grid-area: history; }
-	.solo { grid-area: solo; }
-	.dual { grid-area: dual; }
-	.ranked { grid-area: ranked; }
+	.overview { grid-area: overview }
+	.history { grid-area: history }
+	.solo { grid-area: solo }
+	.dual { grid-area: dual }
+	.ranked { grid-area: ranked }
+	.theme-selector { grid-area: theme-selector }
 	@media (max-width: 800px) {
 		.container {
 			grid-template-columns: 1fr 1fr;
 			grid-template-areas:
+				"theme-selector theme-selector"
 				"solo dual"
 				"ranked ranked"
 				"overview overview"
@@ -58,6 +62,7 @@
 		.container {
 			grid-template-columns: 1fr;
 			grid-template-areas:
+				"theme-selector"
 				"solo"
 				"dual"
 				"ranked"
@@ -71,6 +76,9 @@
 
 <Layout maxwidth="900px">
 	<div class="container">
+		<div class="theme-selector">
+			<ThemeSelector />
+		</div>
 		<div class="solo grad-card" style="background:var(--grad-purp)">
 			<div>
 				<Icon>

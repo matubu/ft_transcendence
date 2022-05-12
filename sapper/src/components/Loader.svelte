@@ -1,4 +1,4 @@
-<svg width="400" height="400" viewBox="0 0 100 100" fill="none">
+<svg width="200" height="200" viewBox="0 0 100 100" fill="none">
 	<rect x="0" height="50" width="15" rx="5" fill="#F1F1F1">
 		<animate
 			attributeName="y"
