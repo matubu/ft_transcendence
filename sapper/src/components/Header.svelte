@@ -13,6 +13,9 @@
 </script>
 
 <style>
+	header {
+		padding: 1rem;
+	}
 	#logo a {
 		display: flex;
 		align-items: center;

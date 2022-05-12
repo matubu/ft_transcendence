@@ -8,13 +8,17 @@
 <style>
 	main {
 		width: 100%;
+		overflow-y: auto;
+	}
+	main > div {
+		width: 100%;
 		margin: 0 auto;
 		position: relative;
 		flex: 1;
 		display: flex;
 		flex-direction: column;
-		overflow-y: auto;
 		gap: 20px;
+		padding: 1rem;
 	}
 </style>
 
@@ -22,7 +26,10 @@
 
 <main
 	in:fly={{ x: -30, duration: 300 }}
-	style="max-width: {maxwidth}"
 >
-	<slot />
+	<div
+		style="max-width: {maxwidth}"
+	>
+		<slot />
+	</div>
 </main>

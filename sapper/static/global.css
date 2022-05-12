@@ -23,7 +23,6 @@
 }
 body {
 	background: var(--back);
-	padding: 1rem;
 	display: flex;
 	flex-direction: column;
 	gap: 20px;

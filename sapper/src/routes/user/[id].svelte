@@ -7,7 +7,7 @@
 	import MatchHistory from '@components/stats/MatchHistory.svelte'
 	import StatsOverview from '@components/stats/StatsOverview.svelte'
 	import { user } from '@lib/store'
-	import { removeFriend, addFriend, fetchUser, postjson, getjson, send } from '@lib/utils'
+	import { removeFriend, addFriend, fetchUser, postjson, getjson } from '@lib/utils'
 	import { stores } from '@sapper/app'
 	import { goto } from '@sapper/app'
 	
