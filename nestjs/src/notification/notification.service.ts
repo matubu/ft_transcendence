@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserService } from 'src/user/user.service';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { Notification } from './notification.entity';
+import { User } from 'src/user/user.entity'
 
 @Injectable()
 export class NotificationService {
@@ -30,6 +31,11 @@ export class NotificationService {
 	{
 		const receiver = await this.userService.get(id_user, []);
 		return this.notificationRepository.delete({ receiver });
+	}
+
+	async removeAllByUser(user: User): Promise<DeleteResult>
+	{
+		return this.notificationRepository.delete({ receiver: user });
 	}
 
 	async markReadOne(idUser: number, id_notification: number): Promise<Notification>

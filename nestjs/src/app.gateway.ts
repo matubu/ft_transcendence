@@ -15,12 +15,12 @@ import { NotificationService } from './notification/notification.service'
 let g_userService
 let g_matchService
 
-const puts = (color: number, ...args) =>
-	console.log(`\u001B[1;${color}m`, ...args, '\u001B[0m')
+//const puts = (color: number, ...args) =>
+	//console.log(`\u001B[1;${color}m`, ...args, '\u001B[0m')
 
 const send = (client: any, channel: string, data: any = '') => {
 	const str = JSON.stringify(data)
-	puts(94, `<<< SEND {${client.userId}} ${str} in ${channel}`)
+	//puts(94, `<<< SEND {${client.userId}} ${str} in ${channel}`)
 	client.send?.(`${channel}:${str}`)
 }
 
@@ -132,13 +132,13 @@ export class AppGateway {
 
 	sendTo(userId: number, channel: string, data: any = '') {
 		const str = JSON.stringify(data)
-		puts(94, `<<< SEND {${userId}} ${str} in ${channel}`)
+		//puts(94, `<<< SEND {${userId}} ${str} in ${channel}`)
 		for (const client of (this.userMap.get(userId) ?? []))
 			client.send?.(`${channel}:${str}`)
 	}
 
 	handleConnection(client: any) {
-		puts(92, `+++ CONNECTED {${client.userId}}`)
+		//puts(92, `+++ CONNECTED {${client.userId}}`)
 
 		if (!this.userMap.has(client.userId))
 			this.userMap.set(client.userId, new Set())
@@ -147,7 +147,7 @@ export class AppGateway {
 	}
 
 	handleDisconnect(client: any) {
-		puts(91, `--- DISCONNECTED {${client.userId}}`)
+		//puts(91, `--- DISCONNECTED {${client.userId}}`)
 
 		// --- DELETE LISTENER ---
 		for (let [_, set] of this.listenerMap)
@@ -324,7 +324,10 @@ export class AppGateway {
 	async onChat(client: any, data: any) {
 		const { room, msg } = data;
 		const users = await this.channelService.getUsers(room);
-		const messageInfo = await this.messageService.insert(client.userId, room, msg)
+		const user = users.find(user => user.id === client.userId);
+		if (user == undefined || user == null)
+			return ;
+		const messageInfo = await this.messageService.insertByUser(user, room, msg)
 		for (const user of users)
 			this.sendTo(user.id, 'chat', { ...messageInfo, room });
 	}
@@ -367,8 +370,8 @@ export class AppGateway {
 	async isTyping({ userId }, data: { room: string, typing: boolean })
 	{
 		const users = await this.channelService.getUsers(data.room);
-		const typingUser = await this.userService.get(userId, []);
-		console.log(userId)
+		const typingUser = users.find(user => user.id === userId);
+		//console.log(userId)
 		for (const user of users)
 			if (userId !== user.id)
 				this.sendTo(user.id, 'typing',

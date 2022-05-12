@@ -89,7 +89,7 @@ export class UserService {
 	{
 		const user = await this.get(id, []);
 		const name = user.picture.name;
-		await this.notificationService.removeAll(id);
+		await this.notificationService.removeAllByUser(user);
 		await this.userAchievementService.removeAll(user);
 		await this.friendService.removeAll(user);
 		await this.disabled2FA(id);

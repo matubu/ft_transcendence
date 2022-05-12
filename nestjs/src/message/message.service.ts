@@ -20,9 +20,14 @@ export class MessageService {
 
 	async insert(id_user: number, id_channel: string, msg: string): Promise<Message>
 	{
-		if (await this.channelService.isAccess(id_user, id_channel) == false)
-			throw new UnauthorizedException();
 		const user = await this.userService.get(id_user, []);
+		return this.insertByUser(user, id_channel, msg);
+	}
+
+	async insertByUser(user: User, id_channel: string, msg: string): Promise<Message>
+	{
+		if (await this.channelService.isAccess(user.id, id_channel) == false)
+			throw new UnauthorizedException();
 		const channel = await this.channelService.get(id_channel);
 		const ret = await this.messageRepository.save({ user: user, channel: channel, msg: msg });
 		return this.messageRepository.findOne({ where: { id: ret.id }, relations: ['user'] });
