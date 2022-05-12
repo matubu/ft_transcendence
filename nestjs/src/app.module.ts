@@ -21,9 +21,10 @@ import { RankModule } from './rank/rank.module';
 import { SearchModule } from './search/search.module';
 import { BlacklistChannelModule } from './blacklist-channel/blacklist-channel.module';
 import { BlockModule } from './block/block.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(), UserModule, PictureModule, NotificationModule, MessageModule, MatchModule, ChannelModule, AccessModule, FriendModule, DfaModule, AuthModule, AchievementModule, AdminModule, UserAchievementModule, AlcoholModule, RankModule, SearchModule, BlacklistChannelModule, BlockModule],
+  imports: [TypeOrmModule.forRoot(), UserModule, PictureModule, NotificationModule, MessageModule, MatchModule, ChannelModule, AccessModule, FriendModule, DfaModule, AuthModule, AchievementModule, AdminModule, UserAchievementModule, AlcoholModule, RankModule, SearchModule, BlacklistChannelModule, BlockModule, ScheduleModule.forRoot()],
   controllers: [AppController],
   providers: [AppService, AppGateway],
   exports: [AppGateway]

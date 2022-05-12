@@ -11,6 +11,7 @@ import { ChannelService } from './channel/channel.service';
 import { MessageService } from './message/message.service';
 import { Notification } from 'src/notification/notification.entity'
 import { NotificationService } from './notification/notification.service'
+import { Cron } from '@nestjs/schedule';
 
 let g_userService
 let g_matchService
@@ -70,16 +71,14 @@ class Match {
 		return (this.score[0] >= 11 || this.score[1] >= 11)
 	}
 
-	eloWon(winnerElo: number, loserElo: number, K: number = 42): number
-	{
+	eloWon(winnerElo: number, loserElo: number, K: number = 42): number {
 		const elo_diff = Math.abs(winnerElo - loserElo)
 		let proba = 1 / (1 + Math.pow(10, elo_diff / 400))
 		if (loserElo > winnerElo)
 			proba = 1 - proba
 		return Math.round(K * proba)
 	}
-	async endGame(w)
-	{
+	async endGame(w) {
 		let l = this.getOpponent(w)
 		let winner = await g_userService.get(w.userId, [])
 		let loser = await g_userService.get(l.userId, [])
@@ -197,7 +196,7 @@ export class AppGateway {
 	surrenderFromMatch(client: any) {
 		let { id, match } = this.getMatchByClient(client)
 
-		if (match === undefined) return ;
+		if (match === undefined) return;
 		match.endGame(match.getOpponent(client))
 		this.matchMap.delete(id)
 		this.updateStatusListener(match.players[0])
@@ -219,35 +218,41 @@ export class AppGateway {
 		this.updateStatusListener(player2.userId)
 	}
 
-	findMatch(user, max_diff)
-	{
+	findMatch(user, max_diff) {
+		const curr = Date.now()
+		const speed = max_diff
 		let eloDiff = (userA, userB) => Math.abs(userA.elo - userB.elo)
+		let range = (userA, userB) => (2 * curr - userA.joinedTime - userB.joinedTime) / 1000 * speed
+		let smaller = (userA, userB) => {
+			const da = eloDiff(userA, user)
+			const db = eloDiff(userB, user)
+			if (da > db) return false
+			if (da < db) return true
+			return (range(userA, user) > range(userB, user))
+		}
+
 		let nearest = null
-		for (let e of this.matchingMap.values()) {
-			if (!nearest && eloDiff(e, user) <= max_diff) nearest = e;
-			if (nearest && eloDiff(e, user) < eloDiff(nearest, e)) nearest = e;
+		for (let e of this.matchingMap) {
+			let u = e[1]
+			if (u.userId === user.userId) continue
+			if (nearest) {
+				if (smaller(u, nearest)) nearest = u
+			} else if (eloDiff(u, user) - range(u, user) <= max_diff) nearest = u
 		}
 		return nearest
 	}
 
-	//TODO 
-	//searchMatch(user)
-	//{
-	//	let max_diff: number = 0
-	//	let delta: number = 42
-	//	let waiting_time: number = 3;
-
-	//	while (true) {
-	//		max_diff += delta
-	//		let adv = findMatch(user, max_diff)
-	//		if (!adv) {
-	//			//block while listening for new potential adv
-	//			//after {waiting_time} continue
-	//			continue;
-	//		}
-	//		return adv
-	//	}
-	//}
+	@Cron('*/1 * * * * *')
+	matchFinder() {
+		for (let e of this.matchingMap) {
+			let user = e[1]
+			let opp = this.findMatch(user, 42)
+			if (!opp) continue
+			this.createMatch(user, opp)
+			this.matchingMap.delete(user.userId)
+			this.matchingMap.delete(opp.userId)
+		}
+	}
 
 	@SubscribeMessage('joinRanked')
 	async joinRanked(client: any) {
@@ -255,26 +260,10 @@ export class AppGateway {
 		if (this.connectToMatch(client) !== false)
 			return;
 		// ---- ADD TO MATCHING LIST ----
-		/*this.matchingMap.set(client.userId, client)
-		if (this.matchingMap.size >= 2) {
-			// ---- CREATE MATCH ----
-			const [[id1, player1], [id2, player2]] = this.matchingMap
-			this.matchingMap.delete(id1)
-			this.matchingMap.delete(id2)
-			this.createMatch(player1, player2)
-		}*/
-		// ---- FIND BEST OPPONENT ----
 		let user = await g_userService.get(client.userId, [])
 		client.elo = user.elo
-		let opp = this.findMatch(client, 9999999) //temp
-		if (!opp) {
-			// ---- ADD TO MATCHING QUEUE ----
-			//TODO now that the player is in queue he needs to allow more elo diff as time goes on //prototype line 227
-			this.matchingMap.set(client.userId, client)
-			return;
-		}
-		this.createMatch(client, opp)
-		this.matchingMap.delete(opp.userId)
+		client.joinedTime = Date.now()
+		this.matchingMap.set(client.userId, client)
 	}
 
 	@SubscribeMessage('leaveRanked')
@@ -304,8 +293,7 @@ export class AppGateway {
 
 		if (match == undefined) return;
 		match.updateScore(client, gameScore)
-		if (match.isFinish())
-		{
+		if (match.isFinish()) {
 			this.matchMap.delete(id)
 			this.updateStatusListener(match.players[0])
 			this.updateStatusListener(match.players[1])
@@ -333,7 +321,7 @@ export class AppGateway {
 	}
 
 	updateStatusListener(userId: number) {
-		if (!this.listenerMap.has(userId)) return ;
+		if (!this.listenerMap.has(userId)) return;
 		let status: string = this.getStatus(userId)
 		for (let listener of this.listenerMap.get(userId))
 			this.sendStatus(listener, userId, status)
@@ -359,16 +347,14 @@ export class AppGateway {
 		this.listenerMap.get(listened).add(client)
 	}
 
-	handleNotifcation(notif: Notification)
-	{
+	handleNotifcation(notif: Notification) {
 		const { receiver } = notif
-		if (!receiver) return ;
+		if (!receiver) return;
 		this.sendTo(receiver.id, "notif", notif);
 	}
 
 	@SubscribeMessage('typing')
-	async isTyping({ userId }, data: { room: string, typing: boolean })
-	{
+	async isTyping({ userId }, data: { room: string, typing: boolean }) {
 		const users = await this.channelService.getUsers(data.room);
 		const typingUser = users.find(user => user.id === userId);
 		//console.log(userId)
@@ -384,8 +370,7 @@ export class AppGateway {
 		if (oppId == client.userId) return;
 		if (this.duelRequestMap.has(oppId)) return;
 		this.duelRequestMap.set(client.userId, oppId)
-		
-		this.notificationService.insert(oppId, "someone want to show you who's the boss! O_o", client.userId, `duel/${client.userId}`)
+		this.notificationService.insert(oppId, "someone want to show you who's the boss! O_o", client.userId, `/play/duel/${client.userId}-${oppId}`)
 	}
 
 	@SubscribeMessage('duelAccept')
@@ -395,7 +380,7 @@ export class AppGateway {
 		if (this.duelRequestMap.get(oppId) != client.userId) return;
 		//TODO send him duel error reason...
 		if (this.getStatus(oppId) !== "online") return;
-		const opp = this.userMap.get(oppId)[0]
+		const opp = [...this.userMap.get(oppId)][0]
 		this.createMatch(opp, client)
 		this.duelRequestMap.delete(oppId)
 	}

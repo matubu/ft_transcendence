@@ -15,11 +15,15 @@
 	}
 
 	let { a, b } = $page.params
+	a = +a
+	b = +b
 	console.log(`a: ${a}, b: ${b} user: ${$user.id}`)
 	if (a != b) {
 		if (a == $user.id) {
+			console.log("requesting")
 			send("duelRequest", {oppId: b})
 		} else if (b == $user.id) {
+			console.log("accepting")
 			send("duelAccept", {oppId: a})
 		}
 	}
