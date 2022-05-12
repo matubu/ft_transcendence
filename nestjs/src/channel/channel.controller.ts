@@ -28,6 +28,12 @@ export class ChannelController {
 		return await this.channelService.getUsers(id_channel);
 	}
 
+	@Get(':id_channel/infoChannel')
+	async getInfoChannel(@Param('id_channel') id_channel: string): Promise<Channel>
+	{
+		return await this.channelService.get(id_channel);
+	}
+
 	@Get('friend/:id_friend')
 	async getChannelMP(@Autorization() userId: number,
 						@Param('id_friend') friendId: number,

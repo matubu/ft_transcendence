@@ -262,15 +262,15 @@
 				// --- CHANGE VELOCITY ---
 				if (vertical) {
 					const SIDE = ballPos[0] > WIDTH / 2
-					ballVel[0] = sign(ballVel[0] * 1.05, SIDE)
-					ballVel[1] *= 1.05
+					ballVel[0] = sign(ballVel[0] * 2, SIDE)
+					ballVel[1] *= 2
 					// --- UPDATE POSITION ---
 					const X = PADDLE_X_MARGIN + PADDLE_WIDTH + BALL_SIZE + 1
 					ballPos[0] = SIDE ? WIDTH - X : X
 				} else {
 					const SIDE = ballPos[1] < paddleY
-					ballVel[1] = sign(ballVel[0] * 1.05, SIDE)
-					ballVel[0] *= 1.05
+					ballVel[1] = sign(ballVel[0] * 2, SIDE)
+					ballVel[0] *= 2
 					// --- UPDATE POSITION ---
 					ballPos[1] = paddleY
 						+ (PADDLE_HEIGHT / 2 + BALL_RADIUS + 1) * (SIDE ? -1 : 1)
