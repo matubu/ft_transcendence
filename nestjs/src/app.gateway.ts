@@ -16,12 +16,8 @@ import { Cron } from '@nestjs/schedule';
 let g_userService
 let g_matchService
 
-//const puts = (color: number, ...args) =>
-	//console.log(`\u001B[1;${color}m`, ...args, '\u001B[0m')
-
 const send = (client: any, channel: string, data: any = '') => {
 	const str = JSON.stringify(data)
-	//puts(94, `<<< SEND {${client.userId}} ${str} in ${channel}`)
 	client.send?.(`${channel}:${str}`)
 }
 
@@ -131,14 +127,11 @@ export class AppGateway {
 
 	sendTo(userId: number, channel: string, data: any = '') {
 		const str = JSON.stringify(data)
-		//puts(94, `<<< SEND {${userId}} ${str} in ${channel}`)
 		for (const client of (this.userMap.get(userId) ?? []))
 			client.send?.(`${channel}:${str}`)
 	}
 
 	handleConnection(client: any) {
-		//puts(92, `+++ CONNECTED {${client.userId}}`)
-
 		if (!this.userMap.has(client.userId))
 			this.userMap.set(client.userId, new Set())
 		this.userMap.get(client.userId).add(client)
@@ -146,8 +139,6 @@ export class AppGateway {
 	}
 
 	handleDisconnect(client: any) {
-		//puts(91, `--- DISCONNECTED {${client.userId}}`)
-
 		// --- DELETE LISTENER ---
 		for (let [_, set] of this.listenerMap)
 			set.delete(client)
@@ -204,9 +195,24 @@ export class AppGateway {
 	}
 
 	@SubscribeMessage('GameData')
-	onGameData(client: any, { id, type, data }) {
-		if (!this.matchMap.has(id) || !this.matchMap.get(id).containsPlayerId(id))
+	onGameData(client: any, data) {
+		// console.log('GameData', data)
+		if (!this.matchMap.has(data.id) || !this.matchMap.get(data.id).containsPlayerId(client.userId))
 			return ;
+		let match = this.matchMap.get(data.id)
+		for (let [_, user] of this.userMap)
+		{
+			for (let conn of user)
+			{
+				if (!match.players.includes(conn))
+				{
+					send(conn, 'GameData', {
+						...data,
+						playerSide: client.userId === match.players[1].userId ? 1 : 0
+					})
+				}
+			}
+		}
 	}
 
 	createMatch(player1, player2) {

@@ -22,8 +22,8 @@
 
 		handlers[channel]?.(data)
 	}}
-	on:touchmove={e => updatePaddle(e.touches[0].clientY)}
-	on:mousemove={e => updatePaddle(e.clientY)}
+	on:touchmove={e => game.updatePaddleRelative(0, e.touches[0].clientY)}
+	on:mousemove={e => game.updatePaddleRelative(0, e.clientY)}
 	on:visibilitychange={() => !document.hidden && send('matchScore', [])}
 />
 
@@ -35,9 +35,12 @@
 	import { get } from 'svelte/store'
 	import { user } from '@lib/store'
 
+	import { stores } from '@sapper/app'
+	const { page } = stores()
+
 	let game
 
-	let id: string,
+	let { id } = get(page).params,
 		RTCCallback: Function,
 		weakPeer = true,
 		RTCSock
@@ -46,8 +49,6 @@
 	const sendProxy = data => send('proxy', [id, data])
 
 	onMount(() => {
-		id = location.pathname.split('/')[3]
-
 		RTCCallback = RTCConnection(sendProxy)
 
 		game.onGameLoop(dt => game.handleKeyboardInput(0, dt))
@@ -56,7 +57,7 @@
 			console.log('!!! RTC CONNECTION READY !!!')
 			RTCSock = sock
 			// --- PADDLE UPDATE ---
-			sock.on('P', pos => game.updatePaddleRelative(1, pos))
+			sock.on('P', pos => game.updatePaddleAbsolute(1, pos))
 			// --- SYNC BALL ---
 			sock.on('S', ([[x, y], [vx, vy], collisionId]) => {
 				game.updateBall([game.WIDTH - x, y], [-vx, vy], collisionId)
@@ -64,7 +65,7 @@
 				collisionId === game.DAMAGE_SOUND && send('matchScore', [])
 			})
 
-			sendRTC('P', game.getPaddle(0))
+			sendGameData('P', game.getPaddle(0))
 
 			if (!weakPeer) {
 				game.resetBall()
@@ -85,20 +86,41 @@
 		})
 	}
 
-	function updatePaddle(y) {
-		sendGameData('P', y)
-		game.updatePaddleRelative(0, y)
-	}
-
 	function syncBall(collisionId = 0) {
 		if (collisionId === Game.DAMAGE_SOUND && weakPeer)
 			return ;
 		sendGameData('S', [game.getBallPos(), game.getBallVel(), collisionId])
 	}
+
+	let py
+	let timeout
 </script>
 
 <Game bind:this={game}
 	syncSurrender={() => send('surrenderMatch')}
 	{syncBall}
+	syncPaddle={(i, y) => {
+		if (i !== 0) return ;
+		if (Math.abs(py - y) < 10)
+		{
+			sendRTC('P', y)
+			if (timeout) return ;
+			timeout = setTimeout(() => {
+				py = game.getPaddle(0)
+				send('GameData', {
+					id,
+					type: 'P',
+					data: py
+				})
+				timeout = undefined
+			}, 200)
+			return ;
+		}
+		clearTimeout(timeout)
+		timeout = undefined
+		sendGameData('P', y)
+		py = y
+	}
+	}
 	syncScore={(score) => send('matchScore', score)}
 />

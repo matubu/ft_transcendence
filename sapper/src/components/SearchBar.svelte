@@ -11,12 +11,10 @@
 
 	let timeout
 	const getValue = () => {
+		clearTimeout(timeout)
 		if (!searchValue)
-		{
-			clearTimeout(timeout)
 			return results = undefined
-		}
-		setTimeout(() => results = getjson(`/api/search/${searchValue}`).then(r => r.filter(resultFilter)), 1000)
+		timeout = setTimeout(() => results = getjson(`/api/search/${encodeURIComponent(searchValue)}`).then(r => r.filter(resultFilter)), 1000)
 	}
 	onMount(getValue)
 </script>

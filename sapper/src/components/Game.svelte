@@ -85,22 +85,25 @@
 		updatePaddleAbsolute(i, (y - rect.top) / rect.height * 200)
 	}
 	export const updatePaddleAbsolute = (i, y) => {
-		paddles[i] = Math.max(Math.min(
+		paddles[+i] = y = Math.max(Math.min(
 			y,
 			200 - PADDLE_Y_MARGIN),
 			PADDLE_Y_MARGIN
 		)
+		syncPaddle?.(+i, y)
 		if (paddlesElm[+i])
-			paddlesElm[+i].style.top = `${paddles[+i] / 2}%`
+			paddlesElm[+i].style.top = `${y / 2}%`
 	}
 	export const getPaddle = (i) => paddles[i]
 	export const getBallPos = () => ballPos
 	export const getBallVel = () => ballVel
 	export let syncBall: Function = undefined
+	export let syncPaddle: Function = undefined
 	export let syncScore: Function = undefined
 
 	let ballElm
 	let updateDOMBall = () => {
+		if (!ballElm) return ;
 		ballElm.style.left = `${ballPos[0] / 3}%`
 		ballElm.style.top = `${ballPos[1] / 2}%`
 	}
@@ -153,6 +156,11 @@
 	export const resetBall = () => {
 		ballPos = [WIDTH / 2, HEIGHT / 2]
 		ballVel = randomVelocity()
+	}
+	export let syncReset = () => {
+		syncScore?.(game.score)
+		resetBall()
+		syncUpdateBall(DAMAGE_SOUND)
 	}
 
 	export const lineLine = ([afx, afy], [atx, aty], [bfx, bfy], [btx, bty]): number => {
@@ -217,9 +225,7 @@
 			if (ballPos[0] < BALL_RADIUS || ballPos[0] > WIDTH - BALL_RADIUS)
 			{
 				game.score[+(ballPos[0] < WIDTH / 2)]++
-				syncScore?.(game.score)
-				resetBall()
-				syncUpdateBall(DAMAGE_SOUND)
+				syncReset()
 				return ;
 			}
 

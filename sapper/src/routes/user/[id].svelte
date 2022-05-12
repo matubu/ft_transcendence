@@ -10,7 +10,6 @@
 	import { removeFriend, addFriend, fetchUser, postjson, getjson } from '@lib/utils'
 	import { stores } from '@sapper/app'
 	import { goto } from '@sapper/app'
-	
 	const { page } = stores()
 </script>
 
@@ -31,7 +30,7 @@
 <Head title="User profile"/>
 
 <Layout maxwidth="900px">
-	{#await getjson(`/api/user/${$page.path.split('/')[2]}`)}
+	{#await getjson(`/api/user/${$page.params.id}`)}
 		<p class="dim">Loading ...</p>
 	{:then data}
 		<User size=100 user={data} />

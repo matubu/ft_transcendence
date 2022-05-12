@@ -16,7 +16,7 @@
 	let settings
 
 	let msg
-	let id_room: string = get(page).path.split('/')[2]
+	let id_room: string = get(page).params.id
 	let container: HTMLDivElement
 
 	let messages = []

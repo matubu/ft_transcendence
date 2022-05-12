@@ -40,7 +40,7 @@
 	import User from '@components/User.svelte'
 	import { onMount } from 'svelte'
 
-	export let gameId = 32
+	export let gameId
 	export let players = [
 		{
 			nickname: 'Test',
@@ -66,17 +66,27 @@
 
 <svelte:window on:wsmsg={e => {
 	const { channel, data } = e.detail
-	if (channel !== "gameData") return ;
+	if (channel !== "GameData") return ;
 	if (data.id !== gameId) return ;
 
-	if (data.paddle)
-		game.updatePaddleAbsolute(data.paddleId, data.paddle)
-	if (data.ball)
-		game.updateBall(data.ball)
+	if (data.type === 'P')
+		game.updatePaddleAbsolute(data.playerSide, data.data)
+	if (data.type === 'S')
+	{
+		const [pos, vel, collisionId] = data.data
+
+		if (data.playerSide)
+			game.updateBall([game.WIDTH - pos[0], pos[1]], [-vel[0], vel[1]], collisionId)
+		else
+			game.updateBall(pos, vel, collisionId)
+	}
 }}/>
 
 <div class="bord-card">
-	<Game bind:this={game} />
+	<Game
+		bind:this={game}
+		syncReset={() => {}}
+	/>
 	<hr>
 	<div class="info">
 		<User user={players[0]} />
