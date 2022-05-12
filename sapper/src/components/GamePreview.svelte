@@ -85,7 +85,9 @@
 <div class="bord-card">
 	<Game
 		bind:this={game}
-		syncReset={() => {}}
+		syncReset={() => {
+			game.updateBall([game.WIDTH / 2, game.HEIGHT / 2], [0, 0], 0)
+		}}
 	/>
 	<hr>
 	<div class="info">
