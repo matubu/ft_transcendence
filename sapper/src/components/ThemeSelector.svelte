@@ -15,6 +15,7 @@
 		border: 1px solid var(--bord);
 		border-radius: 5px;
 		background: var(--bhov);
+		transition: .5s;
 	}
 	span:hover { background: var(--hove) }
 	span:active { background: var(--acti) }
