@@ -7,7 +7,7 @@
 	export let player2: [any, number]
 	let [user2, score2] = player2
 
-	export let diff: number = score1 - score2
+	export let diff: number
 </script>
 
 <style>

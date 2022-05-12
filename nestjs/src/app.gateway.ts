@@ -204,6 +204,12 @@ export class AppGateway {
 		this.updateStatusListener(match.players[1])
 	}
 
+	@SubscribeMessage('GameData')
+	onGameData(client: any, { id, type, data }) {
+		if (!this.matchMap.has(id) || !this.matchMap.get(id).containsPlayerId(id))
+			return ;
+	}
+
 	createMatch(player1, player2) {
 		const id = Math.random().toFixed(16).split('.')[1]
 		this.matchMap.set(id, new Match(player1, player2))

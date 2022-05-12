@@ -9,12 +9,13 @@
 	main {
 		width: 100%;
 		overflow-y: auto;
+		display: flex;
+		justify-content: center;
+		flex: 1;
+		position: relative;
 	}
 	main > div {
 		width: 100%;
-		margin: 0 auto;
-		position: relative;
-		flex: 1;
 		display: flex;
 		flex-direction: column;
 		gap: 20px;
@@ -25,12 +26,8 @@
 
 <Header />
 
-<main
-	in:fly={{ x: -30, duration: 300 }}
->
-	<div
-		style="max-width: {maxwidth}"
-	>
+<main in:fly={{ x: -30, duration: 300 }}>
+	<div style="max-width: {maxwidth}">
 		<slot />
 	</div>
 </main>

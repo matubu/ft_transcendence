@@ -76,14 +76,24 @@
 	})
 	onDestroy(destroyRTC)
 
+	function sendGameData(type, data) {
+		sendRTC(type, data)
+		send('GameData', {
+			id,
+			type,
+			data
+		})
+	}
+
 	function updatePaddle(y) {
-		sendRTC('P', y)
+		sendGameData('P', y)
 		game.updatePaddleRelative(0, y)
 	}
 
 	function syncBall(collisionId = 0) {
-		if (collisionId !== Game.DAMAGE_SOUND || !weakPeer)
-			sendRTC('S', [game.getBallPos(), game.getBallVel(), collisionId])
+		if (collisionId === Game.DAMAGE_SOUND && weakPeer)
+			return ;
+		sendGameData('S', [game.getBallPos(), game.getBallVel(), collisionId])
 	}
 </script>
 
