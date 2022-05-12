@@ -71,4 +71,9 @@ export class AccessChannelService {
 	async removeAll(user: User): Promise<DeleteResult> {
 		return this.accessRepository.delete({ user });
 	}
+
+	async removeUser(channel: Channel): Promise<void> {
+		const users: User[] = await this.getAccess(channel);
+		await Promise.all(users.map(user => this.accessRepository.delete({ user, channel })))
+	}
 }

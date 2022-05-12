@@ -5,6 +5,7 @@ import { User } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
 import { DeleteResult, Repository } from 'typeorm';
 import { BlacklistChannel } from './blacklist-channel.entity';
+import { Channel } from 'src/channel/channel.entity';
 
 @Injectable()
 export class BlacklistChannelService {
@@ -64,5 +65,9 @@ export class BlacklistChannelService {
 
 	async removeAll(user: User): Promise<DeleteResult> {
 		return this.blackListRepository.delete({ user });
+	}
+
+	async removeUser(channel: Channel): Promise<void> {
+		await this.blackListRepository.delete({ channel });
 	}
 }

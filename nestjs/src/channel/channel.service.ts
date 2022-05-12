@@ -108,10 +108,15 @@ export class ChannelService {
 	async remove(id_channel: string): Promise<DeleteResult>
 	{
 		const channel: Channel = await this.get(id_channel);
-		const users: User[] = await this.getUsers(id_channel);
+		return this.removeByChannel(channel);	
+	}
+
+	async removeByChannel(channel: Channel): Promise<DeleteResult>
+	{
 		await this.messageService.removeMessagesChannel(channel);
-		users.forEach(async user => await this.accessChannelService.remove(user.id, channel.id));
-		users.forEach(async user => await this.adminChannelService.remove(user.id, channel.id));
+		await this.accessChannelService.removeUser(channel);
+		await this.adminChannelService.removeUser(channel);
+		await this.blackListChannelService.removeUser(channel);
 		return await this.channelRepository.delete({ id: channel.id });	
 	}
 	
@@ -189,7 +194,7 @@ export class ChannelService {
 
 	async removeAll(id_user: number): Promise<void> {
 		const user: User = await this.userService.get(id_user, ["ownerChannels"]);
-		const channels = user.ownerChannels;
-		channels.forEach(async channel => await this.remove(channel.id));
+		const channels: Channel[] = user.ownerChannels;
+		await Promise.all(channels.map(channel => this.removeByChannel(channel)))
 	}
 }

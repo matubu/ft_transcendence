@@ -71,4 +71,9 @@ export class AdminChannelService {
 	async removeAll(user: User): Promise<DeleteResult> {
 		return this.adminRepository.delete({ user });
 	}
+
+	async removeUser(channel: Channel): Promise<void> {
+		const users: User[] = await this.getAdmins(channel);
+		await Promise.all(users.map(user => this.adminRepository.delete({ user, channel })))
+	}
 }
