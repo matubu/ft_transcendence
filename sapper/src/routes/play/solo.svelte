@@ -31,7 +31,7 @@
 			{
 				targetY = game.getBallPos()[1]
 					+ diffX / game.getBallVel()[0] * game.getBallVel()[1]
-					+ (Math.random() - .5) * 10
+					+ (Math.random() - .5) * 5
 			}
 			if (game.getBallVel()[0] > 0)
 				game.updatePaddleAbsolute(1,
