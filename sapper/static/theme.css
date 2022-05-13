@@ -1,58 +1,94 @@
 .theme-beach.arena-container > .arena {
 	background:
 		no-repeat center/cover
-		url("https://www.tripsavvy.com/thmb/FwmQ-JvBEBDDlVb-j_zdEo0iVsA=/2048x1152/smart/filters:no_upscale()/beach-5b59c9b7c9e77c004b3e0ff0.jpg")
+		url("/theme/beach/arena.jpg")
 		!important;
 }
 .theme-beach.arena-container .ball {
 	background:
 		no-repeat center/cover
-		url("https://assets.bonappetit.com/photos/57e1b4674caff61056fa86bd/master/pass/ttar_coconut_02_v_launch.jpg")
+		url("/theme/beach/ball.jpg")
 		!important;
 }
 .theme-beach.arena-container .paddle {
 	background:
 		no-repeat center/cover
-		url("https://media.istockphoto.com/photos/metal-stainless-texture-background-picture-id1129034019?k=20&m=1129034019&s=612x612&w=0&h=WXzo7IHDeCr-6Autbv9oa6mc6oQLVJ2qoOuyZutWkdk=")
+		url("/theme/beach/paddle.jpg")
 		!important;
 }
 
 .theme-poker.arena-container > .arena {
 	background:
 		no-repeat center/cover
-		url("https://cdn.create.vista.com/api/media/small/167213276/stock-photo-poker-banner-template-layout-mockup")
+		url("/theme/poker/arena.jpg")
 		!important;
 }
 .theme-poker.arena-container .ball {
 	background:
 		no-repeat center/80%
-		url("/poker_ball.png")
+		url("/theme/poker/ball.png")
 		!important;
 }
 .theme-poker.arena-container .paddle {
 	background:
 		no-repeat center/cover
-		url("/poker_paddle.png")
+		url("/theme/poker/paddle.png")
 		!important;
 }
 
 .theme-computer1.arena-container > .arena {
 	background:
 		no-repeat center/cover
-		url("/computer1.jpg")
+		url("/theme/computer1/arena.jpg")
+		!important;
+}
+.theme-computer1.arena-container .ball {
+	background:
+		no-repeat center/80%
+		url("/theme/computer1/ball.png")
+		!important;
+}
+.theme-computer1.arena-container .paddle {
+	background:
+		no-repeat center/cover
+		url("/theme/computer1/paddle.png")
 		!important;
 }
 
 .theme-dontpanic.arena-container > .arena {
 	background:
 		no-repeat center/cover
-		url("/dontpanic.jpg")
+		url("/theme/dontpanic/arena.jpg")
+		!important;
+}
+.theme-dontpanic.arena-container .ball {
+	background:
+		no-repeat center/80%
+		url("/theme/dontpanic/ball.png")
+		!important;
+}
+.theme-dontpanic.arena-container .paddle {
+	background:
+		no-repeat center/cover
+		url("/theme/dontpanic/paddle.png")
 		!important;
 }
 
 .theme-yourname.arena-container > .arena {
 	background:
 		no-repeat center/cover
-		url("/YourName.jpg")
+		url("/theme/yourname/arena.jpg")
+		!important;
+}
+.theme-yourname.arena-container .ball {
+	background:
+		no-repeat center/80%
+		url("/theme/yourname/ball.png")
+		!important;
+}
+.theme-yourname.arena-container .paddle {
+	background:
+		no-repeat center/cover
+		url("/theme/yourname/paddle.png")
 		!important;
 }
