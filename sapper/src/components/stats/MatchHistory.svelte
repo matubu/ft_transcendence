@@ -26,26 +26,24 @@
 
 	<div class="vflex">
 		{#if (user.matchs.length)}
-			{#key user.matchs}
-				{#each (user.matchs) as { player1_score, player2_score, player1, player2, date, victory }, i}
-					{#if fmtDate(new Date(user.matchs[i - 1]?.date ?? null)) !== fmtDate(new Date(date))}
-						<span class="date">{fmtDate(new Date(date))}</span>
-					{/if}
-					<MatchScore 
-						player1={
-							user.id === player1.id
-								? [player1, player1_score]
-								: [player2, player2_score]
-						}
-						player2={
-							user.id !== player1.id
-								? [player1, player1_score]
-								: [player2, player2_score]
-						}
-						diff={victory.id === user.id ? 1 : -1}
-					/>
-				{/each}
-			{/key}
+			{#each (user.matchs) as { player1_score, player2_score, player1, player2, date, victory }, i}
+				{#if fmtDate(new Date(user.matchs[i - 1]?.date ?? null)) !== fmtDate(new Date(date))}
+					<span class="date">{fmtDate(new Date(date))}</span>
+				{/if}
+				<MatchScore 
+					player1={
+						user.id === player1.id
+							? [player1, player1_score]
+							: [player2, player2_score]
+					}
+					player2={
+						user.id !== player1.id
+							? [player1, player1_score]
+							: [player2, player2_score]
+					}
+					diff={victory.id === user.id ? 1 : -1}
+				/>
+			{/each}
 		{:else}
 			<p class="dim">No match history yet</p>
 		{/if}

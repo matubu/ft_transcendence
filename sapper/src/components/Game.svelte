@@ -222,7 +222,7 @@
 			ballPos[0] += ballVel[0] * deltaTime * BALL_SPEED
 			ballPos[1] += ballVel[1] * deltaTime * BALL_SPEED
 
-			// --- FRAME VERTICAL COLLISION ---
+			/// FRAME VERTICAL COLLISION ///
 			if (ballPos[0] < BALL_RADIUS || ballPos[0] > WIDTH - BALL_RADIUS)
 			{
 				game.score[+(ballPos[0] < WIDTH / 2)]++
@@ -230,7 +230,7 @@
 				return ;
 			}
 
-			// --- FRAME HORIZONTAL COLLISION ---
+			/// FRAME HORIZONTAL COLLISION ///
 			if (ballPos[1] < BALL_RADIUS || ballPos[1] > HEIGHT - BALL_RADIUS)
 			{
 				ballVel[1] = sign(ballVel[1], ballPos[1] > HEIGHT - BALL_RADIUS)
@@ -238,7 +238,7 @@
 				return ;
 			}
 
-			// --- PADDLE COLLISION
+			/// PADDLE COLLISION ///
 			for (let [paddleX, paddleY, width, paddleDeltaY] of [
 				[
 					PADDLE_X_MARGIN - PADDLE_WIDTH / 2 - BALL_RADIUS,
@@ -266,19 +266,19 @@
 					ballPos
 				)
 				if (distance === Infinity) continue ;
-				// --- CHANGE VELOCITY ---
+				/// CHANGE VELOCITY ///
 				if (vertical) {
 					const SIDE = ballPos[0] > WIDTH / 2
 					ballVel[0] = sign(ballVel[0] * BALL_ACCELERATION, SIDE)
 					ballVel[1] *= BALL_ACCELERATION
-					// --- UPDATE POSITION ---
+					/// UPDATE POSITION ///
 					const X = PADDLE_X_MARGIN + PADDLE_WIDTH + BALL_SIZE + 1
 					ballPos[0] = SIDE ? WIDTH - X : X
 				} else {
 					const SIDE = ballPos[1] < paddleY
 					ballVel[1] = sign(ballVel[0] * BALL_ACCELERATION, SIDE)
 					ballVel[0] *= BALL_ACCELERATION
-					// --- UPDATE POSITION ---
+					/// UPDATE POSITION ///
 					ballPos[1] = paddleY
 						+ (PADDLE_HEIGHT / 2 + BALL_RADIUS + 1) * (SIDE ? -1 : 1)
 				}
@@ -287,6 +287,11 @@
 			}
 			updateDOMBall()
 		})
+
+		/// THEME ///
+		document.documentElement.style.setProperty('--🏟️', `url("/theme/${localStorage.getItem('theme')}/arena.webp")`);
+		document.documentElement.style.setProperty('--🎾', `url("/theme/${localStorage.getItem('theme')}/ball.webp")`);
+		document.documentElement.style.setProperty('--🏓', `url("/theme/${localStorage.getItem('theme')}/paddle.webp")`);
 
 		return (() => cancelAnimationFrame(frame))
 	})
@@ -298,7 +303,7 @@
 	.container {
 		margin: 0 auto;
 	}
-	.arena {
+	.🏟️ {
 		border: 1px solid var(--bord);
 		box-sizing: border-box;
 		position: relative;
@@ -314,17 +319,17 @@
 		display: grid;
 		place-items: center;
 	}
-	:fullscreen .arena {
+	:fullscreen .🏟️ {
 		--width: min(calc(100vw), calc(100vh / 2 * 3));
 	}
-	.ball, .paddle {
+	.🎾, .🏓  {
 		position: absolute;
 		background: white;
 		transform: translate3d(-50%, -50%, 0);
 		pointer-events: none;
 	}
-	.ball, .paddle { top: 50% }
-	.ball { left: 50% }
+	.🎾, .🏓  { top: 50% }
+	.🎾 { left: 50% }
 	.score {
 		text-align: center;
 		font-size: 1em;
@@ -417,7 +422,7 @@
 				on:click={() => arenaContainer.requestFullscreen()}
 				bind:this={arenaContainer}
 			>
-				<div class="arena" bind:this={arena}>
+				<div class="🏟️" bind:this={arena}>
 					<h2 class="score">
 						<span class="{_isWinningClass(game.score[0], game.score[1])}">
 							{game.score[0]}
@@ -427,16 +432,16 @@
 							{game.score[1]}
 						</span>
 					</h2>
-					<div bind:this={ballElm} class="ball" style="
+					<div bind:this={ballElm} class="🎾" style="
 						height: {BALL_SIZE / 2}%;
 						width: {BALL_SIZE / 3}%;
 					"></div>
-					<div bind:this={paddlesElm[0]} class="paddle left" style="
+					<div bind:this={paddlesElm[0]} class="🏓  left" style="
 						height: {PADDLE_HEIGHT / 2}%;
 						width: {PADDLE_WIDTH / 3}%;
 						left: {PADDLE_X_MARGIN / 3}%;
 					"></div>
-					<div bind:this={paddlesElm[1]} class="paddle right" style="
+					<div bind:this={paddlesElm[1]} class="🏓  right" style="
 						height: {PADDLE_HEIGHT / 2}%;
 						width: {PADDLE_WIDTH / 3}%;
 						left: {(WIDTH - PADDLE_X_MARGIN) / 3}%;

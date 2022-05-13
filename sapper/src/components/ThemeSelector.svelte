@@ -5,6 +5,9 @@
 </script>
 
 <style>
+	.flex {
+		flex-wrap: wrap;
+	}
 	input {
 		display: none;
 	}
