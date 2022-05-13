@@ -29,7 +29,7 @@
 <div class="flex">
 	<label>
 		<input type=radio bind:group={theme} value="90">
-		<span>90</span>
+		<span>90's</span>
 	</label>
 
 	<label>
@@ -38,8 +38,8 @@
 	</label>
 
 	<label>
-		<input type=radio bind:group={theme} value="pocker">
-		<span>Pocker</span>
+		<input type=radio bind:group={theme} value="poker">
+		<span>Poker</span>
 	</label>
 
 	<label>
@@ -49,11 +49,11 @@
 
 	<label>
 		<input type=radio bind:group={theme} value="dontpanic">
-		<span>Dontpanic</span>
+		<span>Don't Panic</span>
 	</label>
 
 	<label>
 		<input type=radio bind:group={theme} value="yourname">
-		<span>Yourname</span>
+		<span>YourName.</span>
 	</label>
 </div>

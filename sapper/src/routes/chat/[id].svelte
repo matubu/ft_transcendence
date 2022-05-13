@@ -163,12 +163,17 @@
 	<h2>Hello Word</h2>
 	{#if isOwner($user)}
 		<Button>Change Name</Button>
+		<Button>Create/Change Password</Button>
+		<Button>Private change value</Button>
+		<Button>Remove Channel</Button>
 	{/if}
 	{#if isOwner($user) || isAdmin($user)}
 		<Button>Expulse</Button>
 		<Button>Ban</Button>
+		<Button>Ban for time</Button>
 	{/if}
 	{#if !isOwner($user) && !isAdmin($user)}
+		<Button>Block user</Button>
 		<Button>Leave</Button>
 	{/if}
 </Modal>
