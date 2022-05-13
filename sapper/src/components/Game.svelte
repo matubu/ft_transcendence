@@ -16,12 +16,12 @@
 	export const WIDTH: number = 300
 	export const HEIGHT: number = 200
 
-	export const BALL_SPEED: number = 80
+	let BALL_SPEED: number = 80
 	export const BALL_ACCELERATION: number = 1.1
 
 	export const PLAYER_SPEED = 80
 
-	export const BALL_SIZE: number = 5
+	export const BALL_SIZE: number = 150
 	export const BALL_RADIUS: number = BALL_SIZE / 2
 	export const PADDLE_WIDTH: number = 5
 	export const PADDLE_HEIGHT: number = 25
@@ -122,9 +122,9 @@
 
 	let mp3
 	let playCollisionSound = (type) => {
-		mp3[type - 1]
-			?.play?.()
-			?.catch?.(() => {})
+		// mp3[type - 1]
+		// 	?.play?.()
+		// 	?.catch?.(() => {})
 	}
 
 	export const loadGame = (score, players) => {
@@ -198,6 +198,7 @@
 		let previousTimestamp
 		let paddlesOld
 		frame = requestAnimationFrame(function sim(timestamp) {
+			BALL_SPEED = keysPressed.has('v') ? 80 : 10
 			frame = requestAnimationFrame(sim)
 
 			previousTimestamp ??= timestamp
@@ -256,8 +257,10 @@
 			{
 				let [distance, vertical] = lineRect(
 					[
-						paddleX, paddleY - PADDLE_HEIGHT / 2 - BALL_RADIUS,
-						width, PADDLE_HEIGHT + BALL_SIZE
+						paddleX,
+						paddleY - PADDLE_HEIGHT / 2 - BALL_RADIUS,
+						width,
+						PADDLE_HEIGHT + BALL_SIZE
 					],
 					[
 						lastPosition[0],
@@ -272,7 +275,7 @@
 					ballVel[0] = sign(ballVel[0] * BALL_ACCELERATION, SIDE)
 					ballVel[1] *= BALL_ACCELERATION
 					/// UPDATE POSITION ///
-					const X = PADDLE_X_MARGIN + PADDLE_WIDTH + BALL_SIZE + 1
+					const X = PADDLE_X_MARGIN + PADDLE_WIDTH + BALL_RADIUS + 1
 					ballPos[0] = SIDE ? WIDTH - X : X
 				} else {
 					const SIDE = ballPos[1] < paddleY
