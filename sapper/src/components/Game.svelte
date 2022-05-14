@@ -10,7 +10,7 @@
 	import Guard from '@components/Guard.svelte'
 	import Button from '@components/Button.svelte'
 	import IconButton from '@components/IconButton.svelte'
-	import { onMount } from 'svelte'
+	import { onMount, tick } from 'svelte'
 	import { goto } from '@sapper/app'
 
 	export const WIDTH: number = 300
@@ -291,21 +291,27 @@
 		})
 
 		/// THEME ///
-		document.documentElement.style.setProperty('--🏟️', `url("/theme/${localStorage.getItem('theme')}/arena.webp")`);
-		document.documentElement.style.setProperty('--🎾', `url("/theme/${localStorage.getItem('theme')}/ball.webp")`);
-		document.documentElement.style.setProperty('--🏓', `url("/theme/${localStorage.getItem('theme')}/paddle.webp")`);
+		const theme = localStorage.getItem('theme') ?? '90'
+		if (theme !== '90') (async () => {
+			await tick()
+			arena.style.backgroundImage = `url("/theme/${theme}/arena.webp")`
+			ballElm.style.backgroundImage = `url("/theme/${theme}/ball.webp")`
+			for (let paddleElm of paddlesElm)
+				paddleElm.style.backgroundImage = `url("/theme/${theme}/paddle.webp")`
+		})()
 
 		return (() => cancelAnimationFrame(frame))
 	})
-
-	let i = 0
 </script>
 
 <style>
-	@import '/theme.css';
-
 	.container {
 		margin: 0 auto;
+	}
+	.🏟️, .🏓, .🎾 {
+		background-repeat: no-repeat !important;
+		background-position: center !important;
+		background-size: cover !important;
 	}
 	.🏟️ {
 		border: 1px solid var(--bord);
@@ -449,7 +455,7 @@
 						height: {PADDLE_HEIGHT / 2}%;
 						width: {PADDLE_WIDTH / 3}%;
 						left: {(WIDTH - PADDLE_X_MARGIN) / 3}%;
-					">{i++}</div>
+					"></div>
 				</div>
 			</div>
 
