@@ -102,7 +102,7 @@
 		const newDescription: string = newChannelDescription;
 
 		if (newName !== undefined && newName !== name)
-			await changeValueChannel("chanegName", JSON.stringify({ name: newName }))
+			await changeValueChannel("changeName", JSON.stringify({ name: newName }))
 		if (newDescription !== undefined && newDescription !== description)
 			await changeValueChannel("changeDescription", JSON.stringify({ description: newDescription }))
 	}
