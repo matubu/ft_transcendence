@@ -59,7 +59,7 @@
 			// --- PADDLE UPDATE ---
 			sock.on('P', pos => game.updatePaddleAbsolute(1, pos))
 			// --- SYNC BALL ---
-			sock.on('S', ([[x, y], [vx, vy], collisionId]) => {
+			sock.on('B', ([[x, y], [vx, vy], collisionId]) => {
 				console.log(`%c[RECV]%c${new Date().toLocaleTimeString([], {
 					hour12: false,
 					hour: '2-digit',
@@ -101,7 +101,7 @@
 			minute: '2-digit',
 			fractionalSecondDigits: 3
 		})} ${collisionId === game.DAMAGE_SOUND ? 'RESET' : ''}`, 'color: aquamarine')
-		sendGameData('S', [game.getBallPos(), game.getBallVel(), collisionId])
+		sendGameData('B', [game.getBallPos(), game.getBallVel(), collisionId])
 	}
 
 	let py

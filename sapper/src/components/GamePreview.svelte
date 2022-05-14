@@ -26,7 +26,7 @@
 	.bord-card :global(.arena-container) {
 		cursor: pointer;
 	}
-	.bord-card :global(.arena) {
+	.bord-card :global(.🏟️) {
 		width: 100%;
 		height: unset;
 		aspect-ratio: 3 / 2;
@@ -39,6 +39,8 @@
 	import Game from '@components/Game.svelte'
 	import User from '@components/User.svelte'
 	import { onMount } from 'svelte'
+
+	export let end
 
 	export let gameId
 	export let players = [
@@ -69,17 +71,24 @@
 	if (channel !== "GameData") return ;
 	if (data.id !== gameId) return ;
 
-	if (data.type === 'P')
-		game.updatePaddleAbsolute(data.playerSide, data.data)
-	if (data.type === 'S')
-	{
-		const [pos, vel, collisionId] = data.data
+	({
+		P: () => {
+			game.updatePaddleAbsolute(data.playerSide, data.data)
+		},
+		B: () => {
+			const [pos, vel, collisionId] = data.data
 
-		if (data.playerSide)
-			game.updateBall([game.WIDTH - pos[0], pos[1]], [-vel[0], vel[1]], collisionId)
-		else
-			game.updateBall(pos, vel, collisionId)
-	}
+			if (data.playerSide)
+				game.updateBall([game.WIDTH - pos[0], pos[1]], [-vel[0], vel[1]], collisionId)
+			else
+				game.updateBall(pos, vel, collisionId)
+		},
+		S: () => {
+			game.updateScore(data.data)
+			if (data.data[0] >= 11 || data.data[1] >= 11)
+				end()
+		}
+	})[data.type]?.()
 }}/>
 
 <div class="bord-card">

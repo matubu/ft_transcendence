@@ -16,7 +16,7 @@
 	export const WIDTH: number = 300
 	export const HEIGHT: number = 200
 
-	let BALL_SPEED: number = 80
+	export const BALL_SPEED: number = 10
 	export const BALL_ACCELERATION: number = 1.1
 
 	export const PLAYER_SPEED = 80
@@ -122,9 +122,9 @@
 
 	let mp3
 	let playCollisionSound = (type) => {
-		// mp3[type - 1]
-		// 	?.play?.()
-		// 	?.catch?.(() => {})
+		mp3[type - 1]
+			?.play?.()
+			?.catch?.(() => {})
 	}
 
 	export const loadGame = (score, players) => {
@@ -198,7 +198,6 @@
 		let previousTimestamp
 		let paddlesOld
 		frame = requestAnimationFrame(function sim(timestamp) {
-			BALL_SPEED = keysPressed.has('v') ? 80 : 10
 			frame = requestAnimationFrame(sim)
 
 			previousTimestamp ??= timestamp
@@ -298,6 +297,8 @@
 
 		return (() => cancelAnimationFrame(frame))
 	})
+
+	let i = 0
 </script>
 
 <style>
@@ -448,7 +449,7 @@
 						height: {PADDLE_HEIGHT / 2}%;
 						width: {PADDLE_WIDTH / 3}%;
 						left: {(WIDTH - PADDLE_X_MARGIN) / 3}%;
-					"></div>
+					">{i++}</div>
 				</div>
 			</div>
 

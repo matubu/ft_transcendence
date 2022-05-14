@@ -1,7 +1,7 @@
 <script>
 	import Layout from '@components/Layout.svelte'
 	import Head from '@components/Head.svelte'
-	import { send, getjson } from '@lib/utils'
+	import { send, getjson, postjson } from '@lib/utils'
 	import { user } from '@lib/store'
 	import IconButton from '@components/IconButton.svelte'
 	import Message from '@components/Message.svelte'
@@ -70,41 +70,32 @@
 		return user.ownerChannels.some(channel => channel.id == id_room);
 	}
 
-	let channel: any;
-	let newChannelName: string;
-	let newChannelDescription: string;
+	let newChannelName: string = '';
+	let newChannelDescription: string = '';
 
 	async function infoChannel(): Promise<any> {
-		channel = await getjson(`/api/channel/${id_room}/infoChannel`);
+		let channel = await getjson(`/api/channel/${id_room}/infoChannel`);
 		newChannelName = channel.name;
 		newChannelDescription = channel.description;
-		// console.log(channel);
 		return channel;
 	}
 
 	async function changeValueChannel(url: string, value: any): Promise<void> {
-		const res = await fetch(`/api/channel/${id_room}/${url}`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: value
-		});
+		const res = await postjson(`/api/channel/${id_room}/${url}`, value);
 		if (!res.ok)
 			return ;
-		console.log(res);
 	}
 
-	async function saveSettingOwner(): Promise<void> {
+	async function saveSettingOwner(channel): Promise<void> {
 		const name: string = channel.name;
 		const description: string = channel.description;
 		const newName: string = newChannelName;
 		const newDescription: string = newChannelDescription;
 
 		if (newName !== undefined && newName !== name)
-			await changeValueChannel("changeName", JSON.stringify({ name: newName }))
+			await changeValueChannel("changeName", { name: newName })
 		if (newDescription !== undefined && newDescription !== description)
-			await changeValueChannel("changeDescription", JSON.stringify({ description: newDescription }))
+			await changeValueChannel("changeDescription", { description: newDescription })
 	}
 </script>
 
@@ -211,7 +202,7 @@
 			{/if}
 			<p>Private : </p>
 			<input type="checkbox" checked={channel.private}>
-			<Button on:click={saveSettingOwner}>Save</Button>
+			<Button on:click={() => saveSettingOwner(channel)}>Save</Button>
 			<Button>Remove Channel</Button>
 		{/await}
 	{/if}

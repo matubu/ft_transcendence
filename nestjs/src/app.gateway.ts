@@ -194,25 +194,23 @@ export class AppGateway {
 		this.updateStatusListener(match.players[1])
 	}
 
+	sendGameData(match, data) {
+		for (let [_, user] of this.userMap)
+			for (let conn of user)
+				if (!match.players.includes(conn))
+					send(conn, 'GameData', data)
+	}
+
 	@SubscribeMessage('GameData')
 	onGameData(client: any, data) {
 		// console.log('GameData', data)
 		if (!this.matchMap.has(data.id) || !this.matchMap.get(data.id).containsPlayerId(client.userId))
 			return ;
 		let match = this.matchMap.get(data.id)
-		for (let [_, user] of this.userMap)
-		{
-			for (let conn of user)
-			{
-				if (!match.players.includes(conn))
-				{
-					send(conn, 'GameData', {
-						...data,
-						playerSide: client.userId === match.players[1].userId ? 1 : 0
-					})
-				}
-			}
-		}
+		this.sendGameData(match, {
+			...data,
+			playerSide: client.userId === match.players[1].userId ? 1 : 0
+		})
 	}
 
 	createMatch(player1, player2) {
@@ -306,6 +304,11 @@ export class AppGateway {
 		}
 		else
 			send(client, 'matchScore', match.getScore(client))
+		this.sendGameData(match, {
+			id,
+			type: 'S',
+			data: match.score
+		})
 	}
 
 	@SubscribeMessage('proxy')

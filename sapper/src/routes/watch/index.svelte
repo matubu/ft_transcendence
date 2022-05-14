@@ -18,8 +18,17 @@
 
 <Layout>
 	<div class="grid-layout">
-		{#each gamesId as gameId}
-			<GamePreview {gameId} />
-		{/each}
+		{#if gamesId.length}
+			{#each gamesId as gameId}
+				<GamePreview
+					{gameId}
+					end={() => {
+						gamesId = gamesId.filter(id => id !== gameId)
+					}}
+				/>
+			{/each}
+		{:else}
+			<p class="dim">No game ongoing</p>
+		{/if}
 	</div>
 </Layout>
