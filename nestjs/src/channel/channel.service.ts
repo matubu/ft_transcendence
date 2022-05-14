@@ -197,4 +197,25 @@ export class ChannelService {
 		const channels: Channel[] = user.ownerChannels;
 		await Promise.all(channels.map(channel => this.removeByChannel(channel)))
 	}
+
+	async checkValidChange(userId: number, channelId: string, value: string): Promise<Channel> {
+		const channel = await this.get(channelId);
+		if (userId != channel.owner.id)
+			throw new UnauthorizedException();
+		if (value === "" || value === null || value === undefined)
+			throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
+		return channel;
+	}
+
+	async updateName(userId: number, channelId: string, name: string): Promise<Channel> {
+		let channel = await this.checkValidChange(userId, channelId, name);
+		channel.name = name;
+		return this.channelRepository.save(channel);
+	}
+
+	async updateDescription(userId: number, channelId: string, description: string): Promise<Channel> {
+		let channel = await this.checkValidChange(userId, channelId, description);
+		channel.description = description;
+		return this.channelRepository.save(channel);
+	}
 }

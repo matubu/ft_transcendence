@@ -1,4 +1,4 @@
-import { BadGatewayException, Body, Controller, Delete, forwardRef, Get, Inject, Param, Post, Res } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Res, UnauthorizedException } from '@nestjs/common';
 import { AdminChannel } from 'src/admin-channel/admin-channel.entity';
 import { Autorization } from 'src/auth.guard';
 import { Message } from 'src/message/message.entity';
@@ -29,8 +29,11 @@ export class ChannelController {
 	}
 
 	@Get(':id_channel/infoChannel')
-	async getInfoChannel(@Param('id_channel') id_channel: string): Promise<Channel>
+	async getInfoChannel(@Autorization() userId: number, @Param('id_channel') id_channel: string): Promise<Channel>
 	{
+		const access = await this.channelService.isAccess(userId, id_channel);
+		if (!access)
+			throw new UnauthorizedException()
 		return await this.channelService.get(id_channel);
 	}
 
@@ -81,6 +84,20 @@ export class ChannelController {
 			private: body?.private ?? false
 		};
 		return await this.channelService.create(userId, channel);
+	}
+
+	@Post(':id_channel/changeName')
+	async updateName(@Param('id_channel') idChannel: string,
+		@Autorization() userId: number,
+		@Body() body: {name: string}): Promise<Channel> {
+		return await this.channelService.updateName(userId, idChannel, body.name);
+	}
+
+	@Post(':id_channel/changeDescription')
+	async updateDescription(@Param('id_channel') idChannel: string,
+		@Autorization() userId: number,
+		@Body() body: {description: string}): Promise<Channel> {
+			return await this.channelService.updateDescription(userId, idChannel, body.description);
 	}
 
 	@Post(':id_channel')
