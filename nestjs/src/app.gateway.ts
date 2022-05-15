@@ -377,9 +377,13 @@ export class AppGateway {
 	async onDuelRequest(client: any, data: any) {
 		const oppId = data.oppId
 		if (oppId == client.userId) return;
-		if (this.duelRequestMap.has(oppId)) return;
+		if (this.duelRequestMap.has(client.userId)) return;
+		if (this.duelRequestMap.get(oppId) == client.userId) {
+			await this.onDuelAccept(client, data)
+			return
+		}
 		this.duelRequestMap.set(client.userId, oppId)
-		this.notificationService.insert(oppId, "someone want to show you who's the boss! O_o", client.userId, `/play/duel/${client.userId}-${oppId}`)
+		this.notificationService.insert(oppId, "someone wants to show you who's the boss! O_o", client.userId, `/play/duel/${client.userId}-${oppId}`)
 	}
 
 	@SubscribeMessage('duelAccept')
