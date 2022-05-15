@@ -176,7 +176,6 @@ if (typeof document !== 'undefined')
 				let updatedStatus = get(status)
 				updatedStatus[data[0]] = data[1]
 				status.set(updatedStatus)
-				console.log(get(status))
 				return ;
 			}
 

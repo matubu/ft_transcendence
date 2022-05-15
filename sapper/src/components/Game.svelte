@@ -193,7 +193,7 @@
 	}
 
 	onMount(() => {
-		mp3 = [new Audio('ping.mp3'), new Audio('pong.mp3'), new Audio('oof.mp3')]
+		mp3 = [new Audio('/audio/90/wall.mp3'), new Audio('/audio/90/paddle.mp3'), new Audio('/audio/90/score.mp3')]
 
 		let previousTimestamp
 		let paddlesOld
