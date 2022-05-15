@@ -66,6 +66,10 @@
 	.achievements > .bord-card > :last-child {
 		text-align: right;
 	}
+	.qr {
+		height: auto;
+		max-width: 150px;
+	}
 </style>
 
 <Head title="User" />
@@ -194,7 +198,7 @@
 	<h2>{$user?.dfa ? "Disable" : "Enable"} 2FA</h2>
 	{#if qrCode2FA}
 	<p>You will never see the QR code again, please scan it</p>
-	<img width="150" height="150" src="{qrCode2FA.qr}" alt="">
+	<img class="qr" width="150" height="150" src="{qrCode2FA.qr}" alt="">
 	{/if}
 	<div style="text-align: right">
 		{#if qrCode2FA}
