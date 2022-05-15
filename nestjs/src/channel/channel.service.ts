@@ -111,6 +111,14 @@ export class ChannelService {
 		return this.removeByChannel(channel);	
 	}
 
+	async removeByOwner(id_channel: string, id_user: number): Promise<DeleteResult>
+	{
+		const channel: Channel = await this.get(id_channel);
+		if (channel.owner.id != id_user)
+			throw new UnauthorizedException();
+		return this.removeByChannel(channel);	
+	}
+
 	async removeByChannel(channel: Channel): Promise<DeleteResult>
 	{
 		await this.messageService.removeMessagesChannel(channel);
@@ -202,12 +210,14 @@ export class ChannelService {
 		const channel = await this.get(channelId);
 		if (userId != channel.owner.id)
 			throw new UnauthorizedException();
-		if (value === "" || value === null || value === undefined)
+		if (value === null || value === undefined)
 			throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
 		return channel;
 	}
 
 	async updateName(userId: number, channelId: string, name: string): Promise<Channel> {
+		if (name === "")
+			throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
 		let channel = await this.checkValidChange(userId, channelId, name);
 		channel.name = name;
 		return this.channelRepository.save(channel);
@@ -216,6 +226,41 @@ export class ChannelService {
 	async updateDescription(userId: number, channelId: string, description: string): Promise<Channel> {
 		let channel = await this.checkValidChange(userId, channelId, description);
 		channel.description = description;
+		return this.channelRepository.save(channel);
+	}
+
+	async changeToPrivate(userId: number, channelId: string): Promise<Channel> {
+		const channel = await this.get(channelId);
+		if (userId != channel.owner.id)
+			throw new UnauthorizedException();
+		channel.private = true;
+		return this.channelRepository.save(channel);
+	}
+
+	async changeToNotPrivate(userId: number, channelId: string): Promise<Channel> {
+		const channel = await this.get(channelId);
+		if (userId != channel.owner.id)
+			throw new UnauthorizedException();
+		channel.private = false;
+		return this.channelRepository.save(channel);
+	}
+
+	async deletePassword(channelId: string, userId: number): Promise<Channel> {
+		const channel = await this.get(channelId);
+		if (userId != channel.owner.id)
+			throw new UnauthorizedException();
+		channel.password_is_set = false;
+		channel.password = null;
+		return this.channelRepository.save(channel);
+	}
+
+	async setPassword(channelId: string, userId: number, password: string): Promise<Channel> {
+		const channel = await this.get(channelId);
+		if (userId != channel.owner.id)
+			throw new UnauthorizedException();
+		if (password !== undefined && password.length >= 1)
+			channel.password = await bcrypt.hash(password, 10);
+		channel.password_is_set = true;
 		return this.channelRepository.save(channel);
 	}
 }

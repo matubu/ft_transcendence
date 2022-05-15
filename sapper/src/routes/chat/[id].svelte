@@ -13,7 +13,10 @@
 	
 	const { page } = stores()
 
-	let settings
+	let settings;
+	let settingsPassword;
+	let settingsAdmin;
+	let settingsRemoveChannel;
 
 	let msg
 	let id_room: string = get(page).params.id
@@ -72,11 +75,14 @@
 
 	let newChannelName: string = '';
 	let newChannelDescription: string = '';
+	let newChannelPrivate: boolean = false;
+	let newChannelPassword: string = '';
 
 	async function infoChannel(): Promise<any> {
 		let channel = await getjson(`/api/channel/${id_room}/infoChannel`);
 		newChannelName = channel.name;
 		newChannelDescription = channel.description;
+		newChannelPrivate = channel.private;
 		return channel;
 	}
 
@@ -91,11 +97,34 @@
 		const description: string = channel.description;
 		const newName: string = newChannelName;
 		const newDescription: string = newChannelDescription;
+		const newPrivate: boolean = newChannelPrivate;
 
 		if (newName !== undefined && newName !== name)
 			await changeValueChannel("changeName", { name: newName })
 		if (newDescription !== undefined && newDescription !== description)
 			await changeValueChannel("changeDescription", { description: newDescription })
+		if (newPrivate !== channel.private)
+		{
+			if (newPrivate)
+				await changeValueChannel("changeToPrivate", {})
+			else
+				await changeValueChannel("changeToNotPrivate", {})
+		}
+	}
+
+	async function removeChannel(): Promise<void> {
+		await fetch(`/api/channel/${id_room}`, { method: 'DELETE' });
+		document.location.href="/chat";
+	}
+
+	async function removePassword(): Promise<void> {
+		await fetch(`/api/channel/${id_room}/deletePassword`, { method: 'DELETE' });
+		settingsPassword.close();
+	}
+
+	async function setPassword(): Promise<void> {
+		await changeValueChannel("setPassword", { password: newChannelPassword });
+		settingsPassword.close();
 	}
 </script>
 
@@ -195,26 +224,67 @@
 		{:then channel}
 			<input type="text" bind:value={newChannelName} placeholder="Name"/>
 			<input type="text" bind:value={newChannelDescription} placeholder="Description"/>
-			{#if channel.password_is_set}
-				<Button>Change password</Button>
-			{:else}
-				<Button>Create password</Button>
-			{/if}
-			<p>Private : </p>
-			<input type="checkbox" checked={channel.private}>
+			<p>Private : <input type="checkbox" bind:checked={newChannelPrivate}></p>
 			<Button on:click={() => saveSettingOwner(channel)}>Save</Button>
-			<Button>Remove Channel</Button>
+			<Button on:click={() => settingsPassword.open()}>Settings password</Button>
+			<Button on:click={() => settingsAdmin.open()}>Settings admin</Button>
+			<Button on:click={() => settingsRemoveChannel.open()}>Remove Channel</Button>
 		{/await}
 	{/if}
 	{#if isOwner($user) || isAdmin($user)}
 		<h3>Admin</h3>
 		<Button>Expulse</Button>
 		<Button>Ban</Button>
+	{/if}
+	{#if isAdmin($user)}
 		<p>For leave channel, remove your admin access</p>
 		<Button>Stop being an admin</Button>
 	{/if}
+	<h3>User</h3>
 	{#if !isOwner($user) && !isAdmin($user)}
-		<h3>User</h3>
 		<Button>Leave this chat</Button>
 	{/if}
+	<!-- This part is not fonctional -->
+	{#if $user.blockList != null}
+		{#if $user.blockList.lenght > 1}
+			<h2>Users Blocking</h2>
+		{:else}
+			<h2>User Blocking</h2>
+		{/if}
+		<!-- dans la boucle seulement si dans le channel -->
+		{#each $user.blockList as userBlocking}
+			<p>{userBlocking.nickname ? userBlocking.nickname : userBlocking.fullname}</p>
+			<Button>Unblock</Button>
+		{/each}
+	{:else}
+		<p>Not user blocking in this channel</p>
+	{/if}
+	<input type="text" placeholder="Search user for block">
+</Modal>
+
+<Modal bind:this={settingsRemoveChannel}>
+	<p>You are sure you want to delete the channel ?<br>
+    this would result in the deletion of messages from the channel.</p>
+	<Button on:click={() => removeChannel()}>Yes</Button>
+	<Button on:click={() => settingsRemoveChannel.close()}>No</Button>
+</Modal>
+
+<Modal bind:this={settingsPassword}>
+	<h2>Settings Password</h2>
+	{#await infoChannel()}
+		Loading Settings Password
+	{:then channel}
+		<input type="password" bind:value={newChannelPassword} placeholder="Password"/>
+		<Button on:click={() => setPassword()}>Save new password</Button>
+		<Button on:click={() => settingsPassword.close()}>Close</Button>
+		{#if channel.password_is_set}
+			<Button on:click={() => removePassword()}>Remove password</Button>
+		{/if}
+	{/await}
+</Modal>
+
+<Modal bind:this={settingsAdmin}>
+	<h2>Settings Administrator</h2>
+	<h3>Actual administrator</h3>
+	<h3>Other users</h3>
 </Modal>

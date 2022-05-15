@@ -100,6 +100,18 @@ export class ChannelController {
 			return await this.channelService.updateDescription(userId, idChannel, body.description);
 	}
 
+	@Post(':id_channel/changeToPrivate')
+	async changeToPrivate(@Param('id_channel') idChannel: string,
+		@Autorization() userId: number): Promise<Channel> {
+			return await this.channelService.changeToPrivate(userId, idChannel);
+	}
+
+	@Post(':id_channel/changeToNotPrivate')
+	async changeToNotPrivate(@Param('id_channel') idChannel: string,
+		@Autorization() userId: number): Promise<Channel> {
+			return await this.channelService.changeToNotPrivate(userId, idChannel);
+	}
+
 	@Post(':id_channel')
 	async access(@Param('id_channel') id_channel: string,
 					@Autorization() userId: number,
@@ -135,6 +147,28 @@ export class ChannelController {
 					@Body() body: { id_user: number }): Promise<DeleteResult>
 	{
 		return await this.channelService.removeAccess(body.id_user, sudo, id_channel);
+	}
+
+	@Delete(':id_channel')
+	async removeChannel(@Param('id_channel') id_channel: string,
+					@Autorization() owner: number): Promise<DeleteResult>
+	{
+		return await this.channelService.removeByOwner(id_channel, owner);
+	}
+
+	@Delete(':id_channel/deletePassword')
+	async deletePassword(@Param('id_channel') id_channel: string,
+					@Autorization() owner: number): Promise<Channel>
+	{
+		return await this.channelService.deletePassword(id_channel, owner);
+	}
+
+	@Post(':id_channel/setPassword')
+	async setPassword(@Param('id_channel') id_channel: string,
+					@Autorization() owner: number,
+					@Body() body: { password: string }): Promise<Channel>
+	{
+		return await this.channelService.setPassword(id_channel, owner, body.password);
 	}
 
 	@Post(':id_channel/ban')
