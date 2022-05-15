@@ -6,11 +6,13 @@
 	
 	import { user } from '@lib/store'
 	import Button from '@lib/components/Button.svelte';
+	import Confetti from '@lib/confetti'
 
 	const { page } = stores()
+	const like = new Confetti();
 
 	let copyUrl = (e) => {
-		navigator.clipboard.writeText(window.location.href);
+		navigator.clipboard.writeText(window.location.href).then(() => like.startAt(e.detail.clientX, e.detail.clientY));
 	}
 
 	let { a, b } = $page.params
