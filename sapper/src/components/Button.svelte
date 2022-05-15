@@ -75,7 +75,7 @@
 	style="{full !== false && 'width: 100%; text-align: center'}"
 	rel=prefetch
 	href="{href}"
-	on:click={() => dispatch('click')}
+	on:click={e => dispatch('click', e)}
 	bind:this={button}
 >
 	<slot />
@@ -84,7 +84,7 @@
 <button
 	class="{primary !== false && 'primary'} {float !== false && 'float'} {loading !== false && 'loading'}"
 	style="{full !== false && 'width: 100%; text-align: center'}"
-	on:click={() => dispatch('click')}
+	on:click={e => dispatch('click', e)}
 	{type}
 	bind:this={button}
 >
