@@ -23,11 +23,20 @@ const send = (client: any, channel: string, data: any = '') => {
 
 class Match {
 	players: any[]
+	playersData: any[]
 	watchers: any[] = []
 	score: number[] = [0, 0]
 
-	constructor(player1, player2) {
-		this.players = [player1, player2]
+	static createMatch(player1, player2): Promise<Match> {
+		return new Promise(async (resolve) => {
+			let match = new Match()
+			match.players = [player1, player2]
+			match.playersData = [
+				await g_userService.get(player1.userId, []),
+				await g_userService.get(player2.userId, [])
+			]
+			resolve(match)
+		})
 	}
 	containsPlayerId(id) {
 		return (id === this.players[0].userId || id === this.players[1].userId)
@@ -209,13 +218,15 @@ export class AppGateway {
 		let match = this.matchMap.get(data.id)
 		this.sendGameData(match, {
 			...data,
+			players: match.playersData.map(({ id, nickname, fullname, picture }) =>
+				({ id, nickname: nickname ?? fullname.split(' ')[0], picture: { url: picture.url } })),
 			playerSide: client.userId === match.players[1].userId ? 1 : 0
 		})
 	}
 
-	createMatch(player1, player2) {
+	async createMatch(player1, player2) {
 		const id = Math.random().toFixed(16).split('.')[1]
-		this.matchMap.set(id, new Match(player1, player2))
+		this.matchMap.set(id, await Match.createMatch(player1, player2))
 		send(player1, 'matchfound', { id })
 		send(player2, 'matchfound', { id })
 		this.updateStatusListener(player1.userId)

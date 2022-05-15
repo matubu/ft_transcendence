@@ -132,6 +132,16 @@
 			score,
 			players
 		}
+
+		/// THEME ///
+		const theme = localStorage.getItem('theme') ?? '90'
+		if (theme !== '90') (async () => {
+			await tick()
+			arena.style.background = `no-repeat center/cover url("/theme/${theme}/arena.webp")`
+			ballElm.style.background = `no-repeat center/cover url("/theme/${theme}/ball.webp")`
+			for (let paddleElm of paddlesElm)
+				paddleElm.style.background = `no-repeat center/cover url("/theme/${theme}/paddle.webp")`
+		})()
 	}
 
 	export const setWinner = (winnerIdx, score = game.score, eloWon) => {
@@ -289,16 +299,6 @@
 			}
 			updateDOMBall()
 		})
-
-		/// THEME ///
-		const theme = localStorage.getItem('theme') ?? '90'
-		if (theme !== '90') (async () => {
-			await tick()
-			arena.style.background = `no-repeat center/cover url("/theme/${theme}/arena.webp")`
-			ballElm.style.background = `no-repeat center/cover url("/theme/${theme}/ball.webp")`
-			for (let paddleElm of paddlesElm)
-				paddleElm.style.background = `no-repeat center/cover url("/theme/${theme}/paddle.webp")`
-		})()
 
 		return (() => cancelAnimationFrame(frame))
 	})

@@ -43,20 +43,7 @@
 	export let end
 
 	export let gameId
-	export let players = [
-		{
-			nickname: 'Test',
-			picture: {
-				url: 'https://www.mairie-francheville69.fr/wp-content/uploads/2017/11/image-test-1.jpeg'
-			}
-		},
-		{
-			nickname: 'Terminator',
-			picture: {
-				url: 'https://intelligence-artificielle.com/wp-content/uploads/2022/03/Terminator-3.jpg'
-			}
-		}
-	]
+	export let players
 	export let score = [0, 0]
 
 	let game
