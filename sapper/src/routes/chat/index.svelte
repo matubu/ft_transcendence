@@ -4,6 +4,7 @@
 	import Button from '@components/Button.svelte'
 	import Room from '@components/Room.svelte'
 	import Modal from '@components/Modal.svelte'
+	import Toggle from '@components/Toggle.svelte'
 	import { useMediaQuery } from '@lib/store'
 	import { writable } from 'svelte/store'
 	import { postjson } from '@lib/utils'
@@ -52,7 +53,7 @@
 </Button>
 
 <Modal bind:this={modalNewChat}>
-	<h2>New chat</h2>
+	<h2>Create chat</h2>
 	<form bind:this={formNewChat} on:submit={async e => {
 		e.preventDefault()
 		const { password, mode, ...args } = Object.fromEntries([...formNewChat.querySelectorAll('input, textarea')].map(elm => [elm.name, elm.name === 'mode' ? elm.checked : elm.value]))
@@ -61,7 +62,7 @@
 		reloadChatList()
 	}}>
 		<label>
-			Chat name<br>
+			Chat<br>
 			<input type="text" placeholder="Chat name" required name="name">
 		</label>
 		<label>
@@ -72,16 +73,13 @@
 			Password<br>
 			<input type="password" placeholder="Password" name="password">
 		</label>
-		<label>
-			Private<br>
-			<input type="checkbox" name="mode">
-		</label>
+		<Toggle desc="Private" name="mode" />
 		<div style="text-align: right">
 			<Button on:click={e => {
 				e.preventDefault()
 				modalNewChat.close()
 			}}>Cancel</Button>
-			<Button primary>Create</Button>
+			<Button primary>Create chat</Button>
 		</div>
 	</form>
 </Modal>

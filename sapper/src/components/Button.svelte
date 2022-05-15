@@ -22,6 +22,7 @@
 <style>
 	a, button {
 		display: inline-block;
+		height: fit-content;
 		position: relative;
 		padding: 15px 20px;
 		cursor: pointer;

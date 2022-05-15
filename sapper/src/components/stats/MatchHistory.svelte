@@ -13,6 +13,7 @@
 	}
 	h2
 	{ padding: 30px 30px 0 30px }
+	.dim { padding: 0 30px }
 
 	.vflex
 	{ width: 100% }

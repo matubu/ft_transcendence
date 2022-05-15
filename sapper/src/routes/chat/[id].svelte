@@ -7,16 +7,18 @@
 	import Message from '@components/Message.svelte'
 	import Modal from '@components/Modal.svelte'
 	import Button from '@components/Button.svelte'
-	import { onMount, afterUpdate } from 'svelte'
+	import User from '@components/User.svelte'
+	import Toggle from '@components/Toggle.svelte'
+	import { onMount, afterUpdate, tick } from 'svelte'
 	import { get } from 'svelte/store'
 	import { stores, goto } from '@sapper/app'
 	
 	const { page } = stores()
 
 	let settings;
-	let settingsPassword;
-	let settingsAdmin;
-	let settingsRemoveChannel;
+	// let settingsPassword;
+	// let settingsAdmin;
+	// let settingsRemoveChannel;
 
 	let msg
 	let id_room: string = get(page).params.id
@@ -47,7 +49,8 @@
 	if (typeof document !== 'undefined')
 	{
 		onMount(async () => {
-			requestAnimationFrame(() => msg?.focus?.())
+			await tick()
+			msg?.focus?.()
 		})
 		loadChat()
 	}
@@ -65,66 +68,44 @@
 		timeout = setTimeout(() => updateTyping(false), 1000)
 	}
 
-	function isAdmin(user: any): boolean {
-		return user.adminChannels.some(channel => channel.id == id_room);
-	}
+	const isAdmin = (user: any) => user.adminChannels.some(channel => channel.id == id_room)
+	const isOwner = (user: any) => user.ownerChannels.some(channel => channel.id == id_room)
 
-	function isOwner(user: any): boolean {
-		return user.ownerChannels.some(channel => channel.id == id_room);
-	}
-
-	let newChannelName: string = '';
-	let newChannelDescription: string = '';
-	let newChannelPrivate: boolean = false;
-	let newChannelPassword: string = '';
+	let name: string = '';
+	let desc: string = '';
+	let isPrivate: boolean = false;
+	let hasPassword: boolean = false;
+	let password: string = '';
 
 	async function infoChannel(): Promise<any> {
-		let channel = await getjson(`/api/channel/${id_room}/infoChannel`);
-		newChannelName = channel.name;
-		newChannelDescription = channel.description;
-		newChannelPrivate = channel.private;
-		return channel;
+		let channel = await getjson(`/api/channel/${id_room}/infoChannel`)
+		name = channel.name
+		desc = channel.description
+		isPrivate = channel.private
+		hasPassword = channel.password_is_set
+		return channel
 	}
 
-	async function changeValueChannel(url: string, value: any): Promise<void> {
-		const res = await postjson(`/api/channel/${id_room}/${url}`, value);
-		if (!res.ok)
-			return ;
+	async function changeValueChannel(url: string, value: any = {}): Promise<void> {
+		await postjson(`/api/channel/${id_room}/${url}`, value)
 	}
 
 	async function saveSettingOwner(channel): Promise<void> {
-		const name: string = channel.name;
-		const description: string = channel.description;
-		const newName: string = newChannelName;
-		const newDescription: string = newChannelDescription;
-		const newPrivate: boolean = newChannelPrivate;
-
-		if (newName !== undefined && newName !== name)
-			await changeValueChannel("changeName", { name: newName })
-		if (newDescription !== undefined && newDescription !== description)
-			await changeValueChannel("changeDescription", { description: newDescription })
-		if (newPrivate !== channel.private)
-		{
-			if (newPrivate)
-				await changeValueChannel("changeToPrivate", {})
-			else
-				await changeValueChannel("changeToNotPrivate", {})
-		}
+		if (name !== undefined && channel.name !== name)
+			await changeValueChannel('changeName', { name })
+		if (desc !== undefined && channel.description !== desc)
+			await changeValueChannel('changeDescription', { description: desc })
+		if (isPrivate !== channel.private)
+			await changeValueChannel(`changeTo${isPrivate ? '' : 'Not'}Private`)
+		if (hasPassword)
+			password && await changeValueChannel("setPassword", { password })
+		else
+			await fetch(`/api/channel/${id_room}/deletePassword`, { method: 'DELETE' })
 	}
 
-	async function removeChannel(): Promise<void> {
-		await fetch(`/api/channel/${id_room}`, { method: 'DELETE' });
-		goto('/chat');
-	}
-
-	async function removePassword(): Promise<void> {
-		await fetch(`/api/channel/${id_room}/deletePassword`, { method: 'DELETE' });
-		settingsPassword.close();
-	}
-
-	async function setPassword(): Promise<void> {
-		await changeValueChannel("setPassword", { password: newChannelPassword });
-		settingsPassword.close();
+	async function leaveChannel(): Promise<void> {
+		await fetch(`/api/channel/${id_room}`, { method: 'DELETE' })
+		goto('/chat')
 	}
 </script>
 
@@ -153,6 +134,11 @@
 	.flex-between {
 		display: flex;
 		justify-content: space-between;
+		align-items: center;
+		gap: 10px;
+	}
+	.member {
+		align-items: center;
 	}
 </style>
 
@@ -181,7 +167,7 @@
 			<svg height="35" width="35" viewBox="0 0 48 48"><path fill="currentColor" d="M24 40 8 24 24 8 26.1 10.1 13.7 22.5H40V25.5H13.7L26.1 37.9Z"/></svg>
 		</IconButton>
 		{#await infoChannel()}
-			loading
+			<span class="dim">...</span>
 		{:then res}
 			{#if !(res.name === "Private Message" && res.private === true)}
 				<IconButton alt="Settings" on:click={() => settings.open()}>
@@ -217,74 +203,84 @@
 
 <Modal bind:this={settings}>
 	<h2>Settings</h2>
-	{#if isOwner($user)}
-		<h3>Owner</h3>
-		{#await infoChannel()}
-			Loading Owner
-		{:then channel}
-			<input type="text" bind:value={newChannelName} placeholder="Name"/>
-			<input type="text" bind:value={newChannelDescription} placeholder="Description"/>
-			<p>Private : <input type="checkbox" bind:checked={newChannelPrivate}></p>
-			<Button on:click={() => saveSettingOwner(channel)}>Save</Button>
-			<Button on:click={() => settingsPassword.open()}>Settings password</Button>
-			<Button on:click={() => settingsAdmin.open()}>Settings admin</Button>
-			<Button on:click={() => settingsRemoveChannel.open()}>Remove Channel</Button>
-		{/await}
-	{/if}
-	{#if isOwner($user) || isAdmin($user)}
-		<h3>Admin</h3>
-		<Button>Expulse</Button>
-		<Button>Ban</Button>
-	{/if}
-	{#if isAdmin($user)}
-		<p>For leave channel, remove your admin access</p>
-		<Button>Stop being an admin</Button>
-	{/if}
-	<h3>User</h3>
-	{#if !isOwner($user) && !isAdmin($user)}
-		<Button>Leave this chat</Button>
-	{/if}
-	<!-- This part is not fonctional -->
-	{#if $user.blockList != null}
-		{#if $user.blockList.lenght > 1}
-			<h2>Users Blocking</h2>
-		{:else}
-			<h2>User Blocking</h2>
-		{/if}
-		<!-- dans la boucle seulement si dans le channel -->
-		{#each $user.blockList as userBlocking}
-			<p>{userBlocking.nickname ? userBlocking.nickname : userBlocking.fullname}</p>
-			<Button>Unblock</Button>
-		{/each}
-	{:else}
-		<p>Not user blocking in this channel</p>
-	{/if}
-	<input type="text" placeholder="Search user for block">
-</Modal>
-
-<Modal bind:this={settingsRemoveChannel}>
-	<p>You are sure you want to delete the channel ?<br>
-    this would result in the deletion of messages from the channel.</p>
-	<Button on:click={() => removeChannel()}>Yes</Button>
-	<Button on:click={() => settingsRemoveChannel.close()}>No</Button>
-</Modal>
-
-<Modal bind:this={settingsPassword}>
-	<h2>Settings Password</h2>
 	{#await infoChannel()}
-		Loading Settings Password
+		<p class="dim">loading...</p>
 	{:then channel}
-		<input type="password" bind:value={newChannelPassword} placeholder="Password"/>
-		<Button on:click={() => setPassword()}>Save new password</Button>
-		<Button on:click={() => settingsPassword.close()}>Close</Button>
-		{#if channel.password_is_set}
-			<Button on:click={() => removePassword()}>Remove password</Button>
+		{#if isOwner($user)}
+			<label>
+				Name
+				<input type="text" bind:value={name} placeholder="Name"/>
+			</label>
+			<label>
+				Description
+				<input type="text" bind:value={desc} placeholder="Description"/>
+			</label>
+			<Toggle desc="Private" bind:checked={isPrivate}/>
+			<div class="vflex">
+				<Toggle desc="Password" bind:checked={hasPassword}/>
+				{#if hasPassword}
+					<input type="password" bind:value={password} placeholder="Password"/>
+				{/if}
+			</div>
+			<Button primary on:click={() => saveSettingOwner(channel)}>Save</Button>
+		{/if}
+		{JSON.stringify(channel)}
+		<!-- add admin -->
+		<!-- This part is not fonctional -->
+		<h3>Members</h3>
+		{#await getjson(`/api/channel/${id_room}/users`)}
+			loading
+		{:then members}
+			{#if members.length}
+				<div class="vflex">
+					{#each members as member}
+						<div class="flex-between">
+							<a class="flex member" href="/user/{member.id}">
+								<User user={member} />
+								{member.nickname ?? member.fullname.split(' ')[0]}
+							</a>
+							{#if isOwner($user) || isAdmin($user)}
+								<Button>Expulse</Button>
+								<Button on:click={() =>
+									changeValueChannel('ban', { id_user: member.id })
+								}>Ban</Button>
+							{/if}
+							{#if isOwner($user)}
+								<Button on:click={() =>
+									changeValueChannel('addAdmin', { id_user: member.id })
+								}>Add admin</Button>
+							{/if}
+						</div>
+					{/each}
+				</div>
+			{:else}
+				<p class="dim">No members in this chat</p>
+			{/if}
+		{/await}
+		<h3>Blocked users</h3>
+		{#if channel.blockList}
+			{#each channel.blockList as userBlocked}
+				<div class="flex">
+					<User user={userBlocked}/>
+					<p>{userBlocked.nickname ?? userBlocked.fullname.split(' ')[0]}</p>
+					{#if isOwner($user) || isAdmin($user)}
+						<Button>Unblock</Button>
+					{/if}
+				</div>
+			{/each}
+		{:else}
+			<p class="dim">No user blocked in this channel</p>
+		{/if}
+		<h3>Admins</h3>
+		{#if isOwner($user)}
+			<!-- <Button>Remove admin</Button> -->
+		{/if}
+		<p class="dim">No admin in this channel</p>
+		{#if isAdmin($user)}
+			<Button>Stop being an admin</Button>
+		{/if}
+		{#if !isOwner($user)}
+			<Button on:click="{leaveChannel}">Leave</Button>
 		{/if}
 	{/await}
-</Modal>
-
-<Modal bind:this={settingsAdmin}>
-	<h2>Settings Administrator</h2>
-	<h3>Actual administrator</h3>
-	<h3>Other users</h3>
 </Modal>
