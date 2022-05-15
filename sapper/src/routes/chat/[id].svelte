@@ -114,7 +114,7 @@
 
 	async function removeChannel(): Promise<void> {
 		await fetch(`/api/channel/${id_room}`, { method: 'DELETE' });
-		document.location.href="/chat";
+		goto('/chat');
 	}
 
 	async function removePassword(): Promise<void> {
