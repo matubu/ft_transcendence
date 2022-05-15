@@ -94,7 +94,9 @@
 
 <div class="modal" style="{!opened && 'display: none'}">
 	<div class="card">
-		<slot />
+		{#if opened}
+			<slot />
+		{/if}
 	</div>
 	<div class="backdrop" on:click={() => close()}></div>
 </div>
