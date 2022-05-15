@@ -30,33 +30,10 @@
 </style>
 
 <div class="flex">
-	<label>
-		<input type=radio bind:group={theme} value="90">
-		<span>90's</span>
-	</label>
-
-	<label>
-		<input type=radio bind:group={theme} value="beach">
-		<span>Beach</span>
-	</label>
-
-	<label>
-		<input type=radio bind:group={theme} value="poker">
-		<span>Poker</span>
-	</label>
-
-	<label>
-		<input type=radio bind:group={theme} value="computer1">
-		<span>Computer1</span>
-	</label>
-
-	<label>
-		<input type=radio bind:group={theme} value="dontpanic">
-		<span>Don't Panic</span>
-	</label>
-
-	<label>
-		<input type=radio bind:group={theme} value="yourname">
-		<span>YourName.</span>
-	</label>
+	{#each ["90", "beach", "computer1", "dontpanic", "poker", "yourname"] as name}
+		<label>
+			<input type=radio bind:group={theme} value="{name}">
+			<span>{name}</span>
+		</label>
+	{/each}
 </div>

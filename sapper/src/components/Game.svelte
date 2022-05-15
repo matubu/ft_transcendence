@@ -16,12 +16,12 @@
 	export const WIDTH: number = 300
 	export const HEIGHT: number = 200
 
-	export const BALL_SPEED: number = 10
+	export const BALL_SPEED: number = 80
 	export const BALL_ACCELERATION: number = 1.1
 
 	export const PLAYER_SPEED = 80
 
-	export const BALL_SIZE: number = 150
+	export const BALL_SIZE: number = 10
 	export const BALL_RADIUS: number = BALL_SIZE / 2
 	export const PADDLE_WIDTH: number = 5
 	export const PADDLE_HEIGHT: number = 25
@@ -294,10 +294,10 @@
 		const theme = localStorage.getItem('theme') ?? '90'
 		if (theme !== '90') (async () => {
 			await tick()
-			arena.style.backgroundImage = `url("/theme/${theme}/arena.webp")`
-			ballElm.style.backgroundImage = `url("/theme/${theme}/ball.webp")`
+			arena.style.background = `no-repeat center/cover url("/theme/${theme}/arena.webp")`
+			ballElm.style.background = `no-repeat center/cover url("/theme/${theme}/ball.webp")`
 			for (let paddleElm of paddlesElm)
-				paddleElm.style.backgroundImage = `url("/theme/${theme}/paddle.webp")`
+				paddleElm.style.background = `no-repeat center/cover url("/theme/${theme}/paddle.webp")`
 		})()
 
 		return (() => cancelAnimationFrame(frame))
@@ -307,11 +307,6 @@
 <style>
 	.container {
 		margin: 0 auto;
-	}
-	.🏟️, .🏓, .🎾 {
-		background-repeat: no-repeat !important;
-		background-position: center !important;
-		background-size: cover !important;
 	}
 	.🏟️ {
 		border: 1px solid var(--bord);

@@ -60,12 +60,12 @@
 			sock.on('P', pos => game.updatePaddleAbsolute(1, pos))
 			// --- SYNC BALL ---
 			sock.on('B', ([[x, y], [vx, vy], collisionId]) => {
-				console.log(`%c[RECV]%c${new Date().toLocaleTimeString([], {
+				console.log(`%c[RECV]%c ${new Date().toLocaleTimeString([], {
 					hour12: false,
 					hour: '2-digit',
 					minute: '2-digit',
 					fractionalSecondDigits: 3
-				})} ${collisionId === game.DAMAGE_SOUND ? 'RESET' : ''}`, 'color: hotpink')
+				})} ${collisionId === game.DAMAGE_SOUND ? 'RESET' : ''}`, 'color: hotpink', '')
 				game.updateBall([game.WIDTH - x, y], [-vx, vy], collisionId)
 				// --- ASKING SCORE SYNC ---
 				collisionId === game.DAMAGE_SOUND && send('matchScore', [])
@@ -95,12 +95,12 @@
 	function syncBall(collisionId = 0) {
 		if (collisionId === game.DAMAGE_SOUND && weakPeer)
 			return ;
-		console.log(`%c[SEND]%c${new Date().toLocaleTimeString([], {
+		console.log(`%c[SEND]%c ${new Date().toLocaleTimeString([], {
 			hour12: false,
 			hour: '2-digit',
 			minute: '2-digit',
 			fractionalSecondDigits: 3
-		})} ${collisionId === game.DAMAGE_SOUND ? 'RESET' : ''}`, 'color: aquamarine')
+		})} ${collisionId === game.DAMAGE_SOUND ? 'RESET' : ''}`, 'color: aquamarine', '')
 		sendGameData('B', [game.getBallPos(), game.getBallVel(), collisionId])
 	}
 
