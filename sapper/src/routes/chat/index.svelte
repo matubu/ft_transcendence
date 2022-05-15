@@ -4,10 +4,10 @@
 	import Button from '@components/Button.svelte'
 	import Room from '@components/Room.svelte'
 	import Modal from '@components/Modal.svelte'
-	import IconButton from '@components/IconButton.svelte'
 	import { useMediaQuery } from '@lib/store'
 	import { writable } from 'svelte/store'
 	import { postjson } from '@lib/utils'
+	import { onMount } from 'svelte';
 
 	let modalNewChat
 	let formNewChat
@@ -23,7 +23,7 @@
 		rooms.set(json)
 	}
 	if (typeof document !== 'undefined')
-		reloadChatList()
+		onMount(reloadChatList)
 </script>
 
 <style>
