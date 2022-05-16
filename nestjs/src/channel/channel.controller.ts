@@ -28,6 +28,24 @@ export class ChannelController {
 		return await this.channelService.getUsers(id_channel);
 	}
 
+	@Get(':id_channel/usersBan')
+	async getUsersBan(@Param('id_channel') id_channel: string): Promise<User[]>
+	{
+		return await this.channelService.getUsersBan(id_channel);
+	}
+
+	@Get(':id_channel/usersAdmin')
+	async getUsersAdmin(@Param('id_channel') id_channel: string): Promise<User[]>
+	{
+		return await this.channelService.getUsersAdmin(id_channel);
+	}
+
+	@Get(':id_channel/usersAccess')
+	async getUsersAccess(@Param('id_channel') id_channel: string): Promise<User[]>
+	{
+		return await this.channelService.getUsersAccess(id_channel);
+	}
+
 	@Get(':id_channel/infoChannel')
 	async getInfoChannel(@Autorization() userId: number, @Param('id_channel') id_channel: string): Promise<Channel>
 	{
@@ -65,13 +83,6 @@ export class ChannelController {
 		const createChannel = await this.channelService.create(userId, channel);
 		await this.channelService.addAccess(friendId, createChannel.id, undefined);
 		res.status(302).redirect(`/chat/${createChannel.id}`);
-	}
-	
-
-	@Get(':id_channel/usersBan')
-	async getUsersBan(@Param('id_channel') id_channel: string): Promise<User[]>
-	{
-		return await this.channelService.getUsersBan(id_channel);
 	}
 
 	@Post()
@@ -141,12 +152,26 @@ export class ChannelController {
 		return await this.channelService.removeAdmin(body.id_user, owner, id_channel);
 	}
 
+	@Delete(':id_channel/removeMeAdmin')
+	async removeMeAdmin(@Param('id_channel') id_channel: string,
+					@Autorization() admin: number): Promise<DeleteResult>
+	{
+		return await this.channelService.removeMeAdmin(admin, id_channel);
+	}
+
 	@Delete(':id_channel/removeAccess')
 	async removeAccess(@Param('id_channel') id_channel: string,
 					@Autorization() sudo: number,
 					@Body() body: { id_user: number }): Promise<DeleteResult>
 	{
 		return await this.channelService.removeAccess(body.id_user, sudo, id_channel);
+	}
+
+	@Delete(':id_channel/leaveAccess')
+	async leaveAccess(@Param('id_channel') id_channel: string,
+					@Autorization() idUser: number,): Promise<DeleteResult>
+	{
+		return await this.channelService.removeAccessByUser(idUser, id_channel);
 	}
 
 	@Delete(':id_channel')

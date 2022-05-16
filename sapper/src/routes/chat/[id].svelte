@@ -17,6 +17,7 @@
 
 	let settings
 	let deleteConfirmation
+	let settingsAdmin;
 
 	let msg
 	let id_room: string = get(page).params.id
@@ -91,7 +92,7 @@
 	async function saveSettingOwner(channel): Promise<void> {
 		if (name !== undefined && channel.name !== name)
 			await changeValueChannel('changeName', { name })
-		if (desc !== undefined && channel.description !== desc)
+		if (channel.description !== desc)
 			await changeValueChannel('changeDescription', { description: desc })
 		if (isPrivate !== channel.private)
 			await changeValueChannel(`changeTo${isPrivate ? '' : 'Not'}Private`)
@@ -99,15 +100,59 @@
 			password && await changeValueChannel("setPassword", { password })
 		else
 			await fetch(`/api/channel/${id_room}/deletePassword`, { method: 'DELETE' })
+		settings.close();
 	}
 
 	async function leaveChannel(): Promise<void> {
-		await fetch(`/api/channel/${id_room}`, { method: 'DELETE' })
+		await fetch(`/api/channel/${id_room}/leaveAccess`, { method: 'DELETE' })
 		goto('/chat')
 	}
 	async function deleteChannel(): Promise<void> {
 		await fetch(`/api/channel/${id_room}`, { method: 'DELETE' })
 		goto('/chat')
+	}
+
+	async function removeAdminAccess(): Promise<void> {
+		await fetch(`/api/channel/${id_room}/removeMeAdmin`, { method: 'DELETE' })
+		settings.close();
+	}
+
+	async function addAdmin(id: number): Promise<void> {
+		await postjson(`/api/channel/${id_room}/addAdmin`, {id_user: id})
+	}
+
+	async function removeAdmin(id: number): Promise<void> {
+		await fetch(`/api/channel/${id_room}/removeAdmin`, {
+			method: 'DELETE',
+			headers: {'Content-Type': 'application/json'},
+			body: JSON.stringify({ id_user: id })
+		})
+	}
+
+	async function expulseUser(id: number): Promise<void> {
+		await fetch(`/api/channel/${id_room}/removeAccess`, {
+			method: 'DELETE',
+			headers: {'Content-Type': 'application/json'},
+			body: JSON.stringify({ id_user: id })
+		})
+	}
+
+	let dateBan;
+
+	async function banUser(id: number, date: string = null): Promise<void> {
+		/*
+			if date et inferieu a date courant et que elle et pas null
+			ne rien faire
+		*/
+		await postjson(`/api/channel/${id_room}/ban`, {id_user: id, date})
+	}
+
+	async function unbanUser(id: number): Promise<void> {
+		await fetch(`/api/channel/${id_room}/unban`, {
+			method: 'DELETE',
+			headers: {'Content-Type': 'application/json'},
+			body: JSON.stringify({ id_user: id })
+		})
 	}
 </script>
 
@@ -208,83 +253,103 @@
 	{#await infoChannel()}
 		<p class="dim">loading...</p>
 	{:then channel}
+		<h3>Owner</h3>
 		{#if isOwner($user)}
-			<label>
-				Name
-				<input type="text" bind:value={name} placeholder="Name"/>
-			</label>
-			<label>
-				Description
-				<input type="text" bind:value={desc} placeholder="Description"/>
-			</label>
+			<label>Name<input type="text" bind:value={name} placeholder="Name"/></label>
+			<label>Description<input type="text" bind:value={desc} placeholder="Description"/></label>
 			<Toggle desc="Private" bind:checked={isPrivate}/>
 			<div class="vflex">
 				<Toggle desc="Password" bind:checked={hasPassword}/>
-				{#if hasPassword}
-					<input type="password" bind:value={password} placeholder="Password"/>
-				{/if}
+				{#if hasPassword}<input type="password" bind:value={password} placeholder="Password"/>{/if}
 			</div>
 			<Button primary on:click={() => saveSettingOwner(channel)}>Save</Button>
-		{/if}
-		<!-- add admin -->
-		<!-- This part is not fonctional -->
-		<h3>Members</h3>
-		{#await getjson(`/api/channel/${id_room}/users`)}
-			loading
-		{:then members}
-			{#if members.length}
-				<div class="vflex">
-					{#each members as member}
-						<div class="flex-between">
-							<a class="flex member" href="/user/{member.id}">
-								<User user={member} />
-								{member.nickname ?? member.fullname.split(' ')[0]}
-							</a>
-							{#if isOwner($user) || isAdmin($user)}
-								<Button>Expulse</Button>
-								<Button on:click={() =>
-									changeValueChannel('ban', { id_user: member.id })
-								}>Ban</Button>
-							{/if}
-							{#if isOwner($user)}
-								<Button on:click={() =>
-									changeValueChannel('addAdmin', { id_user: member.id })
-								}>Add admin</Button>
-							{/if}
-						</div>
-					{/each}
-				</div>
-			{:else}
-				<p class="dim">No members in this chat</p>
-			{/if}
-		{/await}
-		<h3>Blocked users</h3>
-		{#if channel.blockList}
-			{#each channel.blockList as userBlocked}
-				<div class="flex">
-					<User user={userBlocked}/>
-					<p>{userBlocked.nickname ?? userBlocked.fullname.split(' ')[0]}</p>
-					{#if isOwner($user) || isAdmin($user)}
-						<Button>Unblock</Button>
-					{/if}
-				</div>
-			{/each}
-		{:else}
-			<p class="dim">No user blocked in this channel</p>
-		{/if}
-		<h3>Admins</h3>
-		<p class="dim">No admin in this channel</p>
 
+			<Button on:click={() => settingsAdmin.open()}>Settings admin</Button>
+		{/if}
+
+		<!-- This reload after click expulse button -->
+		<!-- Reste a faire: ban/unban user -->
+		{#if isAdmin($user) || isOwner($user)}
+			<h3>Adminstration</h3>
+
+			<h2>User ban in this channel</h2>
+			{#await getjson(`/api/channel/${id_room}/usersBan`)}
+				Loading users ban
+			{:then users}
+				{#if users.length}
+					<div class="vflex">
+						{#each users as user}
+							<div class="flex-between">
+								<p>{user.fullname}</p>
+								<Button on:click={() => unbanUser(user.id)}>Unban</Button>
+							</div>
+						{/each}
+					</div>
+				{:else}
+					<p>Not users ban</p>
+				{/if}
+			{/await}
+
+			<!-- Filter if not in userBan -->
+			<h2>Other Users</h2>
+			<div class="vflex">
+				{#if isOwner($user)}
+					{#await getjson(`/api/channel/${id_room}/usersAdmin`)}
+						Loading administrator
+					{:then admins}
+						{#if admins.length}
+							{#each admins as admin}
+								<div class="flex-between">
+									<p>{admin.fullname}</p>
+									<input type="datetime-local" bind:value={dateBan}>
+									<Button on:click={() => banUser(admin.id)}>Ban infiny</Button>
+									<Button on:click={() => banUser(admin.id, dateBan)}>Ban durer</Button>
+									<Button on:click={() => expulseUser(admin.id)}>Expulser</Button>
+								</div>
+							{/each}
+						{/if}
+					{/await}
+				{/if}
+				{#await getjson(`/api/channel/${id_room}/usersAccess`)}
+					Loading users
+				{:then users}
+					{#if users.length}
+						{#each users as user}
+							<div class="flex-between">
+								<p>{user.fullname}</p>
+								<input type="datetime-local" bind:value={dateBan}>
+								<Button on:click={() => banUser(user.id)}>Ban infiny</Button>
+								<Button on:click={() => banUser(user.id, dateBan)}>Ban durer</Button>
+								<Button on:click={() => expulseUser(user.id)}>Expulser</Button>
+							</div>
+						{/each}
+					{/if}
+				{/await}
+			</div>
+		{/if}
+		<!-- End reload -->
+		
+		<h3>Users</h3>
+		<h2>My user blocking</h2>
+		<h2>My Follow</h2>
+		<h2>Other Users</h2>
+
+		{#if isAdmin($user) || isOwner($user)}
+			<h3>Dangerous</h3>
+		{/if}
 		{#if isOwner($user)}
 			<Button on:click="{() => {
 				settings.close()
 				deleteConfirmation.open()
 			}}">Delete channel</Button>
-		{:else}
-			{#if isAdmin($user)}
-				<Button>Stop being an admin</Button>
-			{/if}
-			<Button on:click="{leaveChannel}">Leave</Button>
+		{/if}
+		{#if isAdmin($user) && !isOwner($user)}
+			<p>For leave channel, remove your admin access</p>
+			<Button on:click="{removeAdminAccess}">Remove my access administrator</Button>
+		{/if}
+		{#if !isAdmin($user) && !isOwner($user)}
+			<p>Your messages will not be deleted</p>
+			<Button on:click="{leaveChannel}">Leave this channel</Button>
 		{/if}
 	{/await}
 </Modal>
@@ -292,12 +357,55 @@
 <Modal bind:this={deleteConfirmation}>
 	<h2>Delete channel</h2>
     <p class="dim">
-		Do you really want to delete the channel ?<br>
-		This will delete all messages from the channel.
+		This will delete all messages from the channel.<br>
+		Do you really want to delete the channel ?
 	</p>
 	<Button on:click={deleteChannel}>Delete</Button>
 	<Button primary on:click={() => {
 		deleteConfirmation.close()
 		settings.open()
 	}}>Cancel</Button>
+</Modal>
+
+<!-- Reload this modal after click button -->
+<Modal bind:this={settingsAdmin}>
+	<h2>Settings Administrator</h2>
+
+	<h3>Actual administrator</h3>
+	{#await getjson(`/api/channel/${id_room}/usersAdmin`)}
+		Loading administrator
+	{:then admins}
+		{#if admins.length}
+			<div class="vflex">
+				{#each admins as admin}
+					<div class="flex-between">
+						<p>{admin.fullname}</p>
+						<Button on:click={() => removeAdmin(admin.id)}>Remove admin</Button>
+					</div>
+				{/each}
+			</div>
+		{:else}
+			<p class="dim">No Admin in this chat</p>
+		{/if}
+	{/await}
+
+	<h3>Other users</h3>
+	{#await getjson(`/api/channel/${id_room}/usersAccess`)}
+		Loading Others users
+	{:then UsersAccess}
+		{#if UsersAccess.length}
+			<div class="vflex">
+				{#each UsersAccess as usr}
+					<div class="flex-between">
+						<p>{usr.fullname}</p>
+						<Button on:click={() => addAdmin(usr.id)}>Add admin</Button>
+					</div>
+				{/each}
+			</div>
+		{:else}
+			<p class="dim">Nothing users</p>
+		{/if}
+	{/await}
+
+	<Button on:click={settingsAdmin.close()}>Close</Button>
 </Modal>

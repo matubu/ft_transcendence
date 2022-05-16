@@ -67,6 +67,27 @@ export class ChannelService {
 		return admins.concat(access, owner);
 	}
 
+	async getUsersAdmin(id_channel: string): Promise<User[]>
+	{
+		const channel = await this.get(id_channel);
+		if (channel == undefined)
+			throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
+		return await this.adminChannelService.getAdmins(channel);
+	}
+
+	async getUsersAccess(id_channel: string): Promise<User[]>
+	{
+		const channel = await this.get(id_channel);
+		if (channel == undefined)
+			throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
+		return await this.accessChannelService.getAccess(channel);
+	}
+
+	async getUsersBan(id_channel: string): Promise<User[]>
+	{
+		return this.blackListChannelService.listBan(id_channel);
+	}
+
 	async create(id_user: number, channel: ChannelInterface): Promise<Channel>
 	{
 		const owner = await this.userService.get(id_user, []);
@@ -135,7 +156,9 @@ export class ChannelService {
 		const userAccess = await this.accessChannelService.isAccess(id_user, id_channel);
 		if (userAccess)
 			this.accessChannelService.remove(id_user, id_channel);
-		return this.adminChannelService.insert(id_user, id_channel);
+		if (await this.adminChannelService.isAdmin(id_user, id_channel) == false)
+			return this.adminChannelService.insert(id_user, id_channel);
+		throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
 	}
 
 	async addAccess(id_user: number, id_channel: string, password?: string): Promise<AccessChannel>
@@ -155,11 +178,29 @@ export class ChannelService {
 		return this.adminChannelService.remove(id_user, id_channel);
 	}
 
+	async removeMeAdmin(id_admin: number, id_channel: string): Promise<DeleteResult>
+	{
+		if (await this.adminChannelService.isAdmin(id_admin, id_channel) == false)
+			throw new UnauthorizedException()
+		this.accessChannelService.insert(id_admin, id_channel);
+		return this.adminChannelService.remove(id_admin, id_channel);
+	}
+
 	async removeAccess(id_user: number, id_admin: number, id_channel: string): Promise<DeleteResult>
 	{
 		if (await this.adminChannelService.isAdmin(id_admin, id_channel) == false
 		&& await this.isOwner(id_admin, id_channel) == false)
 			throw new UnauthorizedException()
+		if (await this.accessChannelService.isAccess(id_user, id_channel))
+			return this.accessChannelService.remove(id_user, id_channel);
+		if (await this.isOwner(id_admin, id_channel)
+		&& await this.adminChannelService.isAdmin(id_user, id_channel))
+			return this.adminChannelService.remove(id_user, id_channel);
+		throw new UnauthorizedException()
+	}
+
+	async removeAccessByUser(id_user: number, id_channel: string): Promise<DeleteResult>
+	{
 		return this.accessChannelService.remove(id_user, id_channel);
 	}
 
@@ -180,11 +221,6 @@ export class ChannelService {
 		&& await this.isOwner(id_admin, id_channel) == false)
 			throw new UnauthorizedException();
 		return this.blackListChannelService.unban(id_user, id_channel);
-	}
-
-	async getUsersBan(id_channel: string): Promise<User[]>
-	{
-		return this.blackListChannelService.listBan(id_channel);
 	}
 
 	async getChannels(id_user: number): Promise<string[]>
