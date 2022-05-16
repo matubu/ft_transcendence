@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Res, UnauthorizedException } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Res, UnauthorizedException } from '@nestjs/common';
 import { AdminChannel } from 'src/admin-channel/admin-channel.entity';
 import { Autorization } from 'src/auth.guard';
 import { Message } from 'src/message/message.entity';
@@ -88,6 +88,8 @@ export class ChannelController {
 	@Post()
 	async create(@Autorization() userId: number, @Body() body: ChannelInterface): Promise<Channel>
 	{
+		if (body?.name == "Private Message")
+			throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
 		const channel: ChannelInterface = {
 			name: body?.name ?? undefined,
 			password: body?.password ?? undefined,
