@@ -1,95 +1,116 @@
 export default class Confetti {
-	//value = 5
-	c
-	n
-	p
-	sx
-	sy
-	a
-	d
-	canvas
-	i
-	f
-	constructor(id=undefined) {
-		let c = this.canvas = document.createElement('canvas'),
-			m = document.getElementById(id);
-		this.c = c.getContext('2d');
-		this.n = 75;//count
-		this.p = 25;//power
-		this.sx = 2;//size
-		this.sy = 8;//size
-		this.a = [];
-		this.d = Date.now();//prev
-		c.width = innerWidth;
-		c.height = innerHeight;
-		Object.assign(c.style, { position:'fixed', margin: 0, padding: 0, top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 9e9, pointerEvents: 'none' });
-		document.body.appendChild(c);
-		m?.addEventListener('click', e => (this?.f?.(m), this.startAt(e.clientX, e.clientY)));
-		window.addEventListener('resize', _ => (c.width = innerWidth, c.height = innerHeight));
-		this.r();
+	count
+	size
+	power
+	duration
+	constructor() {
+		this.count = 75
+		this.size = { x: 10, y: 25 }
+		this.power = 300
+		this.duration = .7
 	}
-	startAt(x = innerWidth / 2, y = innerHeight / 2) {
-		console.log(x, y)
-		for (let i = 0; i < this.n; i++) {
-			let r = Math.random(),
-				w = (this.sx * r + this.sx),
-				h = (this.sy * (this.i ? r : Math.random()) + this.sy),
-				vx = Math.random() / 2 - .25,
-				vy = Math.random() - .7,
-				vl = Math.hypot(vx, vy);
-			this.a.push({
-				p: { x: x - w / 2, y: y - h / 2 },//position
-				v: { x: (vx / vl) * (Math.random() * this.p), y: (vy / vl) * (Math.random() * this.p) },//velocity
-				s: { x: w, y: h },//size
-				r: 360 * Math.random(),//rotation
-				t: 10 * (Math.random() - .5),//rotation speed
-				h: 360 * Math.random(),//hue
-				o: 1,//opacity
-				l: (Math.random() * 20 + 20) / 100,//dead speed
-			});
+	
+	at(x, y) {
+		const canvas = document.createElement('canvas')
+		const ctx = canvas.getContext('2d')
+
+		; (document.onresize = () => {
+			canvas.width = document.body.clientWidth
+			canvas.height = document.body.clientHeight
+		})()
+
+		Object.assign(canvas.style, {
+			position:'fixed',
+			margin: 0,
+			padding: 0,
+			top: 0,
+			left: 0,
+			width: '100vw',
+			height: '100vh',
+			zIndex: 9e9,
+			pointerEvents: 'none'
+		})
+
+		let confettis = new Array(this.count).fill(0).map(() => {
+			let vx = (Math.random() - .5) * .6
+			let vy = Math.random() * .8 - .7
+			let fac = 1 / Math.hypot(vx, vy) * (Math.random() * .5 + 7)
+			return {
+				pos: { x, y },
+				vel: {
+					x: vx * fac,
+					y: vy * fac
+				},
+				slowDown: {
+					x: Math.random() * .3 + .6,
+					y: Math.random() * .3 + .65
+				},
+				size: Math.random() * .5 + .5,
+				hue: Math.random() * 360,
+				lifetime: (Math.random() * .3 + .7) * this.duration,
+				rotation: Math.random() * Math.PI,
+				rps: Math.random() * .5 + .5,
+				opacity: 1
+			}
+		})
+		document.body.appendChild(canvas)
+
+		let prev
+		const render = (t) => {
+			let dt = (t - (prev ?? t)) / 1000
+			prev = t
+			for (let c of confettis) {
+				c.pos.x += c.vel.x * dt * this.power
+				c.pos.y += c.vel.y * dt * this.power
+				c.vel.y += dt * 10
+				c.vel.x *= c.slowDown.x
+				c.vel.y *= c.slowDown.y
+				c.size *= .98
+				c.rotation += dt * c.rps
+				c.opacity -= dt / c.lifetime
+			}
+			confettis = confettis.filter(({ opacity }) => opacity > 0)
+			if (confettis.length)
+				requestAnimationFrame(render)
+			else
+				canvas.remove()
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			for (const c of confettis) {
+				const width = this.size.x * c.size
+				const height = this.size.y * c.size
+				ctx.save()
+				ctx.beginPath()
+				ctx.translate(
+					c.pos.x,
+					c.pos.y
+				)
+				ctx.rotate(c.rotation)
+				ctx.fillStyle = `hsl(${c.hue}deg,90%,65%,${c.opacity})`
+				ctx.fillRect(
+					-width / 2,
+					-height / 2,
+					width,
+					height
+				)
+				ctx.restore()
+			}
 		}
+		requestAnimationFrame(render)
 	}
-	r(t=undefined) {//render
-		requestAnimationFrame(this.r.bind(this));
-		if (!t)
-			return;
-		let d = (t - this.d) / 1e3;
-		this.d = t;
-		for (let i = this.a.length; --i >= 0;) {
-			let m = this.a[i];
-			m.p.x += (m.v.x *= .96);
-			m.p.y += (m.v.y = (m.v.y + 5 * d) * .95);
-			m.r += m.t;
-			m.o -= d * m.l;
-		}
-		this.c.clearRect(0, 0, innerWidth, innerHeight);
-		(this.a = this.a.filter(m => m.o > 0)).forEach(m =>
-			(this.c.save(),
-			this.c.beginPath(),
-			this.c.translate(m.p.x + m.s.x / 2, m.p.y + m.s.y / 2),
-			this.c.rotate((m.r * Math.PI) / 180),
-			this.c.globalAlpha = m.o,
-			this.c.fillStyle = `hsl(${m.h}deg,90%,65%)`,
-			this.i ?
-			this.c.drawImage(this.i, -m.s.x / 2, -m.s.y / 2, m.s.x, m.s.y)
-			: this.c.fillRect(-m.s.x / 2, -m.s.y / 2, m.s.x, m.s.y),
-			this.c.restore()));
+	setCount(count) {
+		this.count = count
+		return this
 	}
-	setImage(i, w = i?.width, h = i?.height) {
-		this.i = i;
-		this.sx = w;
-		this.sy = h
+	setSize(x, y = x) {
+		this.size = { x, y }
+		return this
 	}
-	set count(v) {
-		this.n = v;
+	setPower(power) {
+		this.power = power
+		return this
 	}
-	set power(v) {
-		this.p = v;
-	}
-	set size(v) {
-		!this.i && (this.sx = v * 2, this.sy = v * 8)
-	}
-	set removeFunc(f) {
-		this.f = f;
+	setDuration(duration) {
+		this.duration = duration
+		return this
 	}
 }

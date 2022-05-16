@@ -9,24 +9,23 @@
 	import Confetti from '@lib/confetti'
 
 	const { page } = stores()
-	const like = new Confetti();
+	const confetti = new Confetti()
 
 	let copyUrl = (e) => {
-		navigator.clipboard.writeText(window.location.href).then(() => like.startAt(e.detail.clientX, e.detail.clientY));
+		navigator.clipboard.writeText(window.location.href).then(() =>
+			confetti.at(e.detail.clientX, e.detail.clientY)
+		);
 	}
 
 	let { a, b } = $page.params
-	a = +a
-	b = +b
 	let oppId
-	console.log(`a: ${a}, b: ${b} user: ${$user.id}`)
 	if (a != b) {
 		if (a == $user.id) {
-			oppId = b
+			oppId = +b
 			console.log("requesting")
 			send("duelRequest", {oppId})
 		} else if (b == $user.id) {
-			oppId = a
+			oppId = +a
 			console.log("accepting")
 			send("duelAccept", {oppId})
 		}
