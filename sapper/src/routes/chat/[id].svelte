@@ -15,10 +15,8 @@
 	
 	const { page } = stores()
 
-	let settings;
-	// let settingsPassword;
-	// let settingsAdmin;
-	// let settingsRemoveChannel;
+	let settings
+	let deleteConfirmation
 
 	let msg
 	let id_room: string = get(page).params.id
@@ -278,7 +276,10 @@
 		<p class="dim">No admin in this channel</p>
 
 		{#if isOwner($user)}
-			<Button on:click="{deleteChannel}">Delete channel</Button>
+			<Button on:click="{() => {
+				settings.close()
+				deleteConfirmation.open()
+			}}">Delete channel</Button>
 		{:else}
 			{#if isAdmin($user)}
 				<Button>Stop being an admin</Button>
@@ -286,4 +287,17 @@
 			<Button on:click="{leaveChannel}">Leave</Button>
 		{/if}
 	{/await}
+</Modal>
+
+<Modal bind:this={deleteConfirmation}>
+	<h2>Delete channel</h2>
+    <p class="dim">
+		Do you really want to delete the channel ?<br>
+		This will delete all messages from the channel.
+	</p>
+	<Button on:click={deleteChannel}>Delete</Button>
+	<Button primary on:click={() => {
+		deleteConfirmation.close()
+		settings.open()
+	}}>Cancel</Button>
 </Modal>
