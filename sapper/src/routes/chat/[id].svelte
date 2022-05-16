@@ -107,6 +107,10 @@
 		await fetch(`/api/channel/${id_room}`, { method: 'DELETE' })
 		goto('/chat')
 	}
+	async function deleteChannel(): Promise<void> {
+		await fetch(`/api/channel/${id_room}`, { method: 'DELETE' })
+		goto('/chat')
+	}
 </script>
 
 <style>
@@ -271,14 +275,14 @@
 			<p class="dim">No user blocked in this channel</p>
 		{/if}
 		<h3>Admins</h3>
-		{#if isOwner($user)}
-			<!-- <Button>Remove admin</Button> -->
-		{/if}
 		<p class="dim">No admin in this channel</p>
-		{#if isAdmin($user)}
-			<Button>Stop being an admin</Button>
-		{/if}
-		{#if !isOwner($user)}
+
+		{#if isOwner($user)}
+			<Button on:click="{deleteChannel}">Delete channel</Button>
+		{:else}
+			{#if isAdmin($user)}
+				<Button>Stop being an admin</Button>
+			{/if}
 			<Button on:click="{leaveChannel}">Leave</Button>
 		{/if}
 	{/await}
