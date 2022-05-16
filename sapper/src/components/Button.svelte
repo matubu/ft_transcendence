@@ -2,6 +2,7 @@
 	import { createEventDispatcher, onMount } from 'svelte'
 
 	export let primary: boolean = false
+	export let danger: boolean = false
 	export let full: boolean = false
 	export let float: boolean = false
 	export let href: string = undefined
@@ -37,17 +38,26 @@
 		font-weight: 500;
 		background-position: var(--x, 0px) 0px;
 		text-align: center;
+		transition: background .5s;
 	}
-	:is(a, button).primary {
+	.primary {
 		background-image: linear-gradient(90deg, var(--prim), var(--seco), var(--prim));
 		color: var(--back);
+	}
+	.danger {
+		border: 2px solid var(--red);
+		background: rgba(0, 0, 0, 0) none repeat scroll 0% 0%;
+		color: var(--red);
+	}
+	.danger:hover {
+		background: var(--hove);
 	}
 	.float {
 		position: fixed;
 		bottom: 50px;
 		right: 50px;
 	}
-	:is(a, button).loading {
+	.loading {
 		color: #0000
 	}
 	@keyframes loader {
@@ -72,7 +82,12 @@
 </style>
 {#if href}
 <a
-	class="{primary !== false && 'primary'} {float !== false && 'float'} {loading !== false && 'loading'}"
+	class="
+		{primary !== false && 'primary'}
+		{danger !== false && 'danger'}
+		{float !== false && 'float'}
+		{loading !== false && 'loading'}
+	"
 	style="{full !== false && 'width: 100%; text-align: center'}"
 	rel=prefetch
 	href="{href}"
@@ -83,7 +98,12 @@
 </a>
 {:else}
 <button
-	class="{primary !== false && 'primary'} {float !== false && 'float'} {loading !== false && 'loading'}"
+	class="
+		{primary !== false && 'primary'}
+		{danger !== false && 'danger'}
+		{float !== false && 'float'}
+		{loading !== false && 'loading'}
+	"
 	style="{full !== false && 'width: 100%; text-align: center'}"
 	on:click={e => dispatch('click', e)}
 	{type}

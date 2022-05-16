@@ -17,19 +17,14 @@
 </script>
 
 <style>
-	.card {
-		width: 100%;
-		min-width: 200px;
-		max-width: 500px;
-		box-sizing: border-box;
-	}
-	.card, .card > :global(form) {
+	.card > div,
+	.card > div > :global(form) {
 		display: flex;
 		flex-direction: column;
 		gap: 30px;
 	}
-	.card > :global(*),
-	.card > :global(form > *) {
+	.card > div > :global(*),
+	.card > div > :global(form > *) {
 		margin: 0;
 	}
 
@@ -37,8 +32,8 @@
 		position: fixed;
 		top: 0;
 		left: 0;
-		width: 100%;
-		height: 100%;
+		width: 100vw;
+		height: 100vh;
 		display: grid;
 		place-items: center;
 		z-index: 999999;
@@ -58,9 +53,17 @@
 	}
 
 	.card {
-		overflow: auto;
+		display: block;
+		width: 100%;
+		min-width: 200px;
+		max-width: 500px;
+		box-sizing: border-box;
 		max-height: 100%;
 		animation: forwards modal-card-fade .2s ease-in-out;
+	}
+	.scroll {
+		max-height: calc(100vh - 100px);
+		overflow: auto;
 	}
 	@keyframes modal-backdrop-fade {
 		0% {
@@ -81,7 +84,7 @@
 		}
 	}
 
-	.modal :global(label) {
+	.card :global(label) {
 		display: flex;
 		flex-direction: column;
 		gap: 10px;
@@ -94,7 +97,12 @@
 <div class="modal" style="{!opened && 'display: none'}">
 	<div class="card">
 		{#if opened}
-			<slot />
+			<div class="scroll">
+				<slot />
+			</div>
+			<div>
+				<slot name="hidden" />
+			</div>
 		{/if}
 	</div>
 	<div class="backdrop" on:click={() => close()}></div>

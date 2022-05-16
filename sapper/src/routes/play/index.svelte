@@ -24,10 +24,6 @@
 </script>
 
 <style>
-	.noscroll-modal :global(.card) {
-		overflow: visible;
-	}
-
 	.container {
 		display: grid;
 		gap: 10px;
@@ -116,9 +112,9 @@
 	</div>
 </Layout>
 
-<div class="noscroll-modal">
-	<Modal bind:this={modalDuel}>
+<Modal bind:this={modalDuel}>
+	<form slot="hidden">
 		<h2>Choose your opponent</h2>
 		<SearchBar onPick={id => goto(`/play/duel/${get(user).id}-${id}`)} resultFilter={r => r.id != $user.id} />
-	</Modal>
-</div>
+	</form>
+</Modal>

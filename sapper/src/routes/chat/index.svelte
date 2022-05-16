@@ -7,7 +7,7 @@
 	import Toggle from '@components/Toggle.svelte'
 	import { useMediaQuery } from '@lib/store'
 	import { writable } from 'svelte/store'
-	import { postjson } from '@lib/utils'
+	import { fetchUser, postjson } from '@lib/utils'
 	import { onMount } from 'svelte';
 
 	let modalNewChat
@@ -60,6 +60,7 @@
 		await postjson('/api/channel', { password, private: mode, ...args })
 		modalNewChat.close()
 		reloadChatList()
+		fetchUser()
 	}}>
 		<label>
 			Chat<br>
@@ -74,12 +75,12 @@
 			<input type="password" placeholder="Password" name="password">
 		</label>
 		<Toggle desc="Private" name="mode" />
-		<div style="text-align: right">
+		<div class="vflex">
+			<Button primary>Create chat</Button>
 			<Button on:click={e => {
 				e.preventDefault()
 				modalNewChat.close()
 			}}>Cancel</Button>
-			<Button primary>Create chat</Button>
 		</div>
 	</form>
 </Modal>
