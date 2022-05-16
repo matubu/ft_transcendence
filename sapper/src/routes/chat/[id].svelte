@@ -224,7 +224,6 @@
 			</div>
 			<Button primary on:click={() => saveSettingOwner(channel)}>Save</Button>
 		{/if}
-		{JSON.stringify(channel)}
 		<!-- add admin -->
 		<!-- This part is not fonctional -->
 		<h3>Members</h3>

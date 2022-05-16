@@ -62,7 +62,7 @@ export default class Confetti {
 			for (let c of confettis) {
 				c.pos.x += c.vel.x * dt * this.power
 				c.pos.y += c.vel.y * dt * this.power
-				c.vel.y += dt * 10
+				c.vel.y += dt * 3
 				c.vel.x *= c.slowDown.x
 				c.vel.y *= c.slowDown.y
 				c.size *= .98

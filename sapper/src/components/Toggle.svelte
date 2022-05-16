@@ -47,6 +47,7 @@
 	input:checked + i:after {
 		transform: translateX(25px);
 		background: #8cc4f0;
+		box-shadow: 0px 0px 4px 0 #fff5;
 	}
 </style>
 
