@@ -2,6 +2,7 @@
 	import IconButton from "@components/IconButton.svelte"
 	import User from '@components/User.svelte'
 	import { user } from '@lib/store'
+	import { get } from 'svelte/store'
 
 	let container
 	let blur: boolean
@@ -13,14 +14,16 @@
 		let res = await fetch(`/api/notification/readAll`, { method: "PUT" })
 		if (!res.ok) return ;
 		notifs = notifs.map(notif => ({ ...notif, seen: true }))
+		user.set({ ...get(user), notifications: notifs })
 	}
 
 	async function removeOneNotification(notification_id: number) {
-		const res = await fetch(`/api/notification/remove`,
+		await fetch(`/api/notification/remove`,
 			{ method: "POST",
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ notification_id }) });
 		notifs = notifs.filter(notif => notif.id != notification_id)
+		user.set({ ...get(user), notifications: notifs })
 	}
 </script>
 
