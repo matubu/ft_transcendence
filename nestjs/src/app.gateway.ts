@@ -404,7 +404,9 @@ export class AppGateway {
 		if (this.duelRequestMap.get(oppId).oppId != client.userId) return;
 		//TODO send him duel error reason...
 		if (this.getStatus(oppId) !== "online") return;
-		const opp = this.duelRequestMap.get(oppId).ws ?? [...this.userMap.get(oppId)][0]
+		let opp = this.duelRequestMap.get(oppId).ws
+		if (opp.readyState === WebSocket.CLOSED)
+			opp = [...this.userMap.get(oppId)][0]
 		this.createMatch(opp, client)
 		this.duelRequestMap.delete(oppId)
 	}
