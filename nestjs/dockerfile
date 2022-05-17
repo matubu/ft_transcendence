@@ -1,5 +1,7 @@
 FROM node:17.8.0-alpine
 
+# (API)
+# EXPOSE 3000
 # (Websocket)
 EXPOSE 3001
 

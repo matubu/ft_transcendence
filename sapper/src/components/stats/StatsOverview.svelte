@@ -7,12 +7,11 @@
 	let wins
 	let lose
 	let winratio
-	onMount(() => {
-		total = user.matchs.length
-		wins = user.matchs.filter(({ victory }) => victory.id === user.id).length
-		lose = total - wins
-		winratio = wins / total
-	})
+
+	$: total = user.matchs.length
+	$: wins = user.matchs.filter(({ victory }) => victory.id === user.id).length
+	$: lose = total - wins
+	$: winratio = wins / total
 </script>
 
 <style>

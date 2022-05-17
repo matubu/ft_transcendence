@@ -3,7 +3,7 @@ FROM node:17.8.0-alpine
 # (App)
 EXPOSE 80
 # (Hot reload)
-EXPOSE 10000
+# EXPOSE 10000
 
 WORKDIR	/var/sapper
 

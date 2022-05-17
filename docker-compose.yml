@@ -6,8 +6,8 @@ services:
     hostname: postgres
     image: postgres:14.2-alpine
     env_file: [.env]
-    ports:
-      - 5432:5432 # TODO remove for prod
+    # ports:
+    #   - 5432:5432 # TODO remove for prod
     volumes:
       - ./achievement.sql:/docker-entrypoint-initdb.d/achievement.sql
       - ./postgres-data:/var/lib/postgresql/data
@@ -23,7 +23,7 @@ services:
     env_file: [.env]
     ports:
       - 3001:3001 # (websocket)
-      - 3000:3000 # TODO remove for prod
+      # - 3000:3000 # TODO remove for prod
     volumes:
       - ./nestjs:/var/nestjs
     networks: [transcendence-network]
@@ -38,7 +38,7 @@ services:
     env_file: [.env]
     ports:
       - 80:80 # (app)
-      - 10000:10000 # (hot reload)
+      # - 10000:10000 # (hot reload)
     volumes:
       - ./sapper:/var/sapper
     networks: [transcendence-network]
