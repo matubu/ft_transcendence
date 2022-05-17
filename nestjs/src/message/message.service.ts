@@ -48,4 +48,9 @@ export class MessageService {
 	async removeMessagesChannel(channel: Channel) : Promise<DeleteResult> {
 		return this.messageRepository.delete({ channel });
 	}
+
+	async removeMeMessage(userId: number, channelId: string): Promise<DeleteResult> {
+		let channel = await this.channelService.get(channelId);
+		return this.messageRepository.delete({ userId, channel });
+	}
 }

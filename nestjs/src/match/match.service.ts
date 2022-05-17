@@ -20,6 +20,7 @@ export class MatchService {
 	}
 
 	async saveMatch(
+		winner_id: number,
 		id_player1: number,
 		id_player2: number,
 		player1_score: number,
@@ -33,7 +34,7 @@ export class MatchService {
 			player2,
 			player1_score,
 			player2_score,
-			victory: player1_score >= 11 ? player1 : player2
+			victory: winner_id === id_player1 ? player1 : player2
 		});
 	}
 

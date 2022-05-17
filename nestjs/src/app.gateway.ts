@@ -12,6 +12,8 @@ import { MessageService } from './message/message.service';
 import { Notification } from 'src/notification/notification.entity'
 import { NotificationService } from './notification/notification.service'
 import { Cron } from '@nestjs/schedule';
+import { BlacklistChannel } from 'src/blacklist-channel/blacklist-channel.entity';
+import { forwardRef, Inject } from '@nestjs/common'
 
 let g_userService
 let g_matchService
@@ -94,7 +96,7 @@ class Match {
 		send(l, "winner", [false, this.score, `-${d_elo}`])
 		g_userService.updateUser(winner)
 		g_userService.updateUser(loser)
-		g_matchService.saveMatch(this.players[0].userId, this.players[1].userId, this.score[0], this.score[1])
+		g_matchService.saveMatch(w.userId, this.players[0].userId, this.players[1].userId, this.score[0], this.score[1])
 	}
 	updateScore(client: any, gameScore: number[]) {
 		if (this.isFinish()) return;
@@ -115,10 +117,15 @@ class Match {
 @WebSocketGateway(3001)
 export class AppGateway {
 	constructor(
+		@Inject(forwardRef(() => UserService))
 		private readonly userService: UserService,
+		@Inject(forwardRef(() => MatchService))
 		private readonly matchService: MatchService,
+		@Inject(forwardRef(() => ChannelService))
 		private readonly channelService: ChannelService,
+		@Inject(forwardRef(() => MessageService))
 		private readonly messageService: MessageService,
+		@Inject(forwardRef(() => NotificationService))
 		private readonly notificationService: NotificationService
 	) {
 		g_userService = this.userService
@@ -328,10 +335,20 @@ export class AppGateway {
 			send(this.matchMap.get(gameId).getOpponent(client), 'proxy', msg)
 	}
 
+	sendExpulseEvent(id_user: number, id_channel: string) {
+		this.sendTo(id_user, 'expulse', { room: id_channel })
+	}
+
+	sendBanEvent(ban: BlacklistChannel) {
+		this.sendTo(ban.user.id, 'banned', { room: ban.channel.id })
+	}
+
 	@SubscribeMessage('chat')
 	async onChat(client: any, data: any) {
 		const { room, msg } = data;
-		const users = await this.channelService.getUsers(room);
+		let users = await this.channelService.getUsers(room);
+		const banned = await this.channelService.getUsersBan(room);
+		users = users.filter(user => banned.every(banned => user.id != banned.id))
 		const user = users.find(user => user.id === client.userId);
 		if (user == undefined || user == null)
 			return ;
@@ -375,9 +392,11 @@ export class AppGateway {
 
 	@SubscribeMessage('typing')
 	async isTyping({ userId }, data: { room: string, typing: boolean }) {
-		const users = await this.channelService.getUsers(data.room);
+		let users = await this.channelService.getUsers(data.room);
+		const banned = await this.channelService.getUsersBan(data.room);
+		users = users.filter(user => banned.every(banned => user.id != banned.id))
 		const typingUser = users.find(user => user.id === userId);
-		//console.log(userId)
+		if (!typingUser) return ;
 		for (const user of users)
 			if (userId !== user.id)
 				this.sendTo(user.id, 'typing',

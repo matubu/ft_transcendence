@@ -21,6 +21,7 @@
 	let leaveConfirmation
 	let askPassword
 	let askPasswordField
+	let bannedModal
 
 	let msg
 	let id_room: string = get(page).params.id
@@ -53,12 +54,14 @@
 	{
 		onMount(async () => {
 			if (await loadChat()) {
+				infoChannel = infoChannel
 				await tick()
 				msg.focus()
 			}
-			else {
+			else if (isBan(await getUserBan(), get(user).id))
+				bannedModal.open()
+			else
 				askPassword.open()
-			}
 		})
 	}
 
@@ -284,8 +287,15 @@
 	const { channel, data } = e.detail;
 	if (data.room !== id_room)
 		return ;
-	channel === 'chat' && addMessage(data);
-	if (channel === 'typing')
+	if (channel === 'banned') {
+		bannedModal.open()
+		infoChannel = infoChannel
+	}
+	else if (channel === 'expulse')
+		goto('/chat')
+	else if (channel === 'chat')
+		addMessage(data);
+	else if (channel === 'typing')
 	{
 		userInfo.set(data.user.id, data.user)
 		userInfo = userInfo
@@ -424,7 +434,7 @@
 			<Button danger on:click="{removeAdminAccess}">Remove my access administrator</Button>
 		{/if}
 		{#if !isAdmin($user) && !isOwner($user)}
-			<p class="dim">Your messages will not be deleted</p>
+			<p class="dim">Your messages will be deleted</p>
 			<Button danger on:click="{leaveConfirmation.open()}">Leave channel</Button>
 		{/if}
 	{/await}
@@ -488,6 +498,7 @@
 		e.preventDefault()
 		if (await loadChat(askPasswordField.value)) {
 			askPassword.close()
+			infoChannel = infoChannel
 			msg.focus()
 			fetchUser()
 		}
@@ -501,4 +512,9 @@
 			<Button primary>Enter</Button>
 		</div>
 	</form>
+</Modal>
+
+<Modal bind:this={bannedModal}>
+	<h2>You are banned</h2>
+	<Button on:click={() => goto('/chat')}>Go back to channel list</Button>
 </Modal>

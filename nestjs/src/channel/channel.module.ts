@@ -10,6 +10,7 @@ import { MessageModule } from 'src/message/message.module';
 import { BlacklistChannelModule } from 'src/blacklist-channel/blacklist-channel.module';
 import { ChannelSubscriber } from './channel.subscriber';
 import { UserAchievementModule } from 'src/user-achievement/user-achievement.module';
+import { AppModule } from 'src/app.module';
 
 @Module({
 	imports: [TypeOrmModule.forFeature([Channel]),
@@ -18,7 +19,8 @@ import { UserAchievementModule } from 'src/user-achievement/user-achievement.mod
 				forwardRef(() => UserModule),
 				forwardRef(() => MessageModule),
 				BlacklistChannelModule,
-				forwardRef(() => UserAchievementModule)],
+				forwardRef(() => UserAchievementModule),
+				forwardRef(() => AppModule)],
 	controllers: [ChannelController],
 	providers: [ChannelService, ChannelSubscriber],
 	exports: [ChannelService]

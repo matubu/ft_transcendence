@@ -13,6 +13,7 @@ import { User } from 'src/user/user.entity';
 import { BlacklistChannelService } from 'src/blacklist-channel/blacklist-channel.service';
 import { BlacklistChannel } from 'src/blacklist-channel/blacklist-channel.entity';
 import { MessageService } from 'src/message/message.service';
+import { AppGateway } from 'src/app.gateway';
 
 @Injectable()
 export class ChannelService {
@@ -28,6 +29,8 @@ export class ChannelService {
 		private readonly blackListChannelService: BlacklistChannelService,
 		@Inject(forwardRef(() => MessageService))
 		private readonly messageService: MessageService,
+		@Inject(forwardRef(() => AppGateway))
+		private readonly gateway: AppGateway
 	) {}
 
 	async getALL(userId: number): Promise<Channel[]>
@@ -192,15 +195,24 @@ export class ChannelService {
 		&& await this.isOwner(id_admin, id_channel) == false)
 			throw new UnauthorizedException()
 		if (await this.accessChannelService.isAccess(id_user, id_channel))
+		{
+			this.gateway.sendExpulseEvent(id_user, id_channel)
+			await this.messageService.removeMeMessage(id_user, id_channel);
 			return this.accessChannelService.remove(id_user, id_channel);
+		}
 		if (await this.isOwner(id_admin, id_channel)
 		&& await this.adminChannelService.isAdmin(id_user, id_channel))
+		{
+			this.gateway.sendExpulseEvent(id_user, id_channel)
+			await this.messageService.removeMeMessage(id_user, id_channel);
 			return this.adminChannelService.remove(id_user, id_channel);
+		}
 		throw new UnauthorizedException()
 	}
 
 	async removeAccessByUser(id_user: number, id_channel: string): Promise<DeleteResult>
 	{
+		await this.messageService.removeMeMessage(id_user, id_channel);
 		return this.accessChannelService.remove(id_user, id_channel);
 	}
 

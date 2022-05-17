@@ -1,10 +1,10 @@
 import { forwardRef, Inject } from "@nestjs/common";
 import { AppGateway } from "src/app.gateway";
 import { Connection, EntitySubscriberInterface, EventSubscriber, InsertEvent } from "typeorm";
-import { Notification } from './notification.entity';
+import { BlacklistChannel } from './blacklist-channel.entity';
 
 @EventSubscriber()
-export class NotificationSubscriber implements EntitySubscriberInterface<Notification> {
+export class BlacklistSubscriber implements EntitySubscriberInterface<BlacklistChannel> {
 	constructor(connection: Connection,
 		@Inject(forwardRef(() => AppGateway))
 		private readonly gateway: AppGateway) {
@@ -12,10 +12,10 @@ export class NotificationSubscriber implements EntitySubscriberInterface<Notific
 	}
 
 	listenTo() {
-		return Notification;
+		return BlacklistChannel;
 	}
 
-	async afterInsert(event: InsertEvent<Notification>): Promise<void> {
-		this.gateway.handleNotifcation(event.entity);
+	async afterInsert(event: InsertEvent<BlacklistChannel>): Promise<void> {
+		this.gateway.sendBanEvent(event.entity);
 	}
 }
