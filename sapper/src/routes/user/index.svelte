@@ -136,7 +136,7 @@
 					{/each}
 				</div>
 			{:else}
-				<p class="dim">You have no friends</p>
+				<p class="dim">You have no achievements</p>
 			{/if}
 
 			<div>

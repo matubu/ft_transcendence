@@ -6,7 +6,7 @@ export class AlcoholService {
 	async isAlcohol(search: string): Promise<boolean>
 	{
 		const url = "https://www.thecocktaildb.com/api/json/v1/1/search.php?i=";
-		const result = await axios.get(url + search)
+		const result = await axios.get(url + encodeURIComponent(search))
 				.then(res => res['data']['ingredients'])
 		
 		if (result == null || result == undefined)
