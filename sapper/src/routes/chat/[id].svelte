@@ -421,7 +421,7 @@
 
 <Modal bind:this={banModal}>
 	<h2>Ban user</h2>
-	<p class="dim">Are you sure you want to ban <b>{banModalUser.nickname ?? banModalUser.fullname}</b> ?<p>
+	<p class="dim">Are you sure you want to ban <b>{banModalUser.nickname ?? banModalUser.fullname}</b> ?</p>
 	<div class="vflex">
 		<Toggle desc="Ban duration" bind:checked={banHasDuration}/>
 		{#if banHasDuration}
