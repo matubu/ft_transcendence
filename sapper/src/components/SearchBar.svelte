@@ -51,8 +51,8 @@
 
 <form on:submit={e => {
 	e.preventDefault()
-	results.then(res => {
-		if (res.length)
+	results?.then(res => {
+		if (res?.length)
 		{
 			onPick(res[0].id)
 			searchValue = ''

@@ -129,7 +129,7 @@ export class AppGateway {
 	matchingMap: Map<number, any> = new Map()
 	matchMap: Map<string, Match> = new Map()
 	listenerMap: Map<number, Set<any>> = new Map()
-	duelRequestMap: Map<number, number> = new Map()
+	duelRequestMap: Map<number, any> = new Map()
 
 	@WebSocketServer()
 	server: Server
@@ -389,11 +389,11 @@ export class AppGateway {
 		const oppId = data.oppId
 		if (oppId == client.userId) return;
 		if (this.duelRequestMap.has(client.userId)) return;
-		if (this.duelRequestMap.get(oppId) == client.userId) {
+		if (this.duelRequestMap.get(oppId)?.oppId == client.userId) {
 			await this.onDuelAccept(client, data)
 			return
 		}
-		this.duelRequestMap.set(client.userId, oppId)
+		this.duelRequestMap.set(client.userId, {oppId: oppId, ws: client})
 		this.notificationService.insert(oppId, "someone wants to show you who's the boss! O_o", client.userId, `/play/duel/${client.userId}-${oppId}`)
 	}
 
@@ -401,10 +401,10 @@ export class AppGateway {
 	async onDuelAccept(client: any, data: any) {
 		const oppId = data.oppId
 		if (!this.duelRequestMap.has(oppId)) return;
-		if (this.duelRequestMap.get(oppId) != client.userId) return;
+		if (this.duelRequestMap.get(oppId).oppId != client.userId) return;
 		//TODO send him duel error reason...
 		if (this.getStatus(oppId) !== "online") return;
-		const opp = [...this.userMap.get(oppId)][0]
+		const opp = this.duelRequestMap.get(oppId).ws ?? [...this.userMap.get(oppId)][0]
 		this.createMatch(opp, client)
 		this.duelRequestMap.delete(oppId)
 	}
