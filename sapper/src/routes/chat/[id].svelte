@@ -359,7 +359,7 @@
 				saveSettingOwner(channel)
 				settings.close()
 			}}>Save</Button>
-			<Button on:click={() => settingsAdmin.open()}>Settings admin</Button>
+			<Button on:click={() => settingsAdmin.open()}>Admin settings</Button>
 		{/if}
 
 		{#await getjson(`/api/channel/${id_room}/users`)}
@@ -380,8 +380,8 @@
 									{#if !isAdminList(usr.id)
 									|| (isAdminList(usr.id) && isOwner($user))}
 										<input type="datetime-local" bind:value={dateBan}>
-										<Button on:click={() => banUser(usr.id)}>Ban infiny</Button>
-										<Button on:click={() => banUser(usr.id, dateBan)}>Ban durer</Button>
+										<Button on:click={() => banUser(usr.id)}>Ban forever</Button>
+										<Button on:click={() => banUser(usr.id, dateBan)}>Ban duration</Button>
 										<Button on:click={() => expulseUser(usr.id)}>Expulser</Button>
 									{/if}
 								{/if}
@@ -392,7 +392,7 @@
 								<Button on:click={() => blockUser(usr.id)}>Block</Button>
 							{/if}
 							{#if isFriend($user, usr.id)}
-								<Button on:click={() => removeFriend(usr.id)}>UnFollow</Button>
+								<Button on:click={() => removeFriend(usr.id)}>Unfollow</Button>
 							{:else}
 								<Button on:click={() => addFriend(usr.id)}>Follow</Button>
 							{/if}
@@ -400,7 +400,7 @@
 					{/if}
 				{/each}
 			{:else}
-				<p>Not users found in this channel</p>
+				<p>No user found in this channel</p>
 			{/if}
 		{/await}
 
@@ -411,8 +411,8 @@
 			<Button danger on:click="{() => deleteConfirmation.open()}">Delete channel</Button>
 		{/if}
 		{#if isAdmin($user) && !isOwner($user)}
-			<p class="dim">For leave channel, remove your admin access</p>
-			<Button on:click="{removeAdminAccess}">Remove my access administrator</Button>
+			<p class="dim">You must remove your admin access to leave channel</p>
+			<Button on:click="{removeAdminAccess}">Remove my administrator access</Button>
 		{/if}
 		{#if !isAdmin($user) && !isOwner($user)}
 			<p class="dim">Your messages will not be deleted</p>
@@ -427,7 +427,7 @@
 	{:then channel}
 		<h2>Delete channel</h2>
 		<p class="dim">
-			Are you sure you want to delete this chat with <b>{channel.name}</b> ?
+			Are you sure you want to delete <b>{channel.name}</b> chat ?
 		</p>
 		<div class="vflex">
 			<Button on:click={() => deleteConfirmation.close()}>Cancel</Button>
@@ -438,7 +438,7 @@
 
 <!-- Reload this modal after click button -->
 <Modal bind:this={settingsAdmin}>
-	<h2>Settings Administrator</h2>
+	<h2>Administrator Settings</h2>
 
 	<h3>Actual administrator</h3>
 	{#await getjson(`/api/channel/${id_room}/usersAdmin`)}
@@ -472,7 +472,7 @@
 				{/each}
 			</div>
 		{:else}
-			<p class="dim">Nothing users</p>
+			<p class="dim">No users</p>
 		{/if}
 	{/await}
 
@@ -485,7 +485,7 @@
 	{:then channel}
 		<h2>Leave channel</h2>
 		<p class="dim">
-			Are you sure you want to leave this chat with <b>{channel.name}</b> ?
+			Are you sure you want to leave <b>{channel.name}</b> chat ?
 		</p>
 		<div class="vflex">
 			<Button on:click={() => leaveConfirmation.close()}>Cancel</Button>
@@ -497,7 +497,7 @@
 <Modal bind:this={askPassword} on:close={(e) => {
 	console.log('test', e)
 }}>
-	<h2>This channel use a password</h2>
+	<h2>This channel require a password</h2>
 	<form on:submit={async e => {
 		e.preventDefault()
 		if (await loadChat(askPasswordField.value)) {
