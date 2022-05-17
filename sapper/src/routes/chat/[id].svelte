@@ -16,13 +16,12 @@
 	const { page } = stores()
 
 	let settings
-	let settingsAdmin;
+	let settingsAdmin
+	let banModal
 	let deleteConfirmation
 	let leaveConfirmation
 	let askPassword
 	let askPasswordField
-
-	let hasAccess = false
 
 	let msg
 	let id_room: string = get(page).params.id
@@ -86,6 +85,10 @@
 	let hasPassword: boolean = false;
 	let password: string = '';
 
+	let banModalUser: any
+	let banHasDuration: boolean = false
+	let banDuration: any
+
 	async function infoChannel(): Promise<any> {
 		let channel = await getjson(`/api/channel/${id_room}/infoChannel`)
 		name = channel.name
@@ -147,8 +150,6 @@
 		})
 	}
 
-	let dateBan;
-
 	async function banUser(id: number, date: string = null): Promise<void> {
 		/*
 			if date et inferieu a date courant et que elle et pas null
@@ -167,14 +168,17 @@
 
 	async function blockUser(id: number): Promise<void> {
 		await postjson(`/api/block`, {blocked: true, blockedId: id})
+		fetchUser()
 	}
 
 	async function unblockUser(id: number): Promise<void> {
 		await postjson(`/api/block`, {blocked: false, blockedId: id})
+		fetchUser()
 	}
 
 	async function addFriend(id: number): Promise<void> {
 		await postjson(`/api/friend`, {friend: id})
+		fetchUser()
 	}
 
 	async function removeFriend(id: number): Promise<void> {
@@ -183,6 +187,7 @@
 			headers: {'Content-Type': 'application/json'},
 			body: JSON.stringify({ friend: id })
 		})
+		fetchUser()
 	}
 
 	function isBlocked(user: any, blockedId: number): boolean {
@@ -356,32 +361,42 @@
 				{:then [ banList, adminList ]}
 					{#each users as usr}
 						{#if usr.id != $user.id}
-							<div class="flex-between">
-								<p>{usr.fullname}</p>
-								{#if isAdmin($user) || isOwner($user)}
-									{#if isBan(banList, usr.id)}
-										<Button on:click={() => unbanUser(usr.id)}>Unban</Button>
-									{:else}
-										{#if !isAdminList(adminList, usr.id)
-										|| (isAdminList(adminList, usr.id) && isOwner($user))}
-											<input type="datetime-local" bind:value={dateBan}>
-											<Button on:click={() => banUser(usr.id)}>Ban forever</Button>
-											<Button on:click={() => banUser(usr.id, dateBan)}>Ban duration</Button>
-											<Button on:click={() => expulseUser(usr.id)}>Expulser</Button>
+							<details>
+								<summary>
+									<a href="/user/{usr.id}" class="flex" style="align-items: center">
+										<User user={usr} />
+										<span>{usr.nickname ?? usr.fullname}</span>
+									</a>
+								</summary>
+								<div class="vflex">
+									{#if isAdmin($user) || isOwner($user)}
+										{#if isBan(banList, usr.id)}
+											<Button on:click={() => unbanUser(usr.id)}>Unban</Button>
+										{:else}
+											{#if !isAdminList(adminList, usr.id)
+											|| (isAdminList(adminList, usr.id) && isOwner($user))}
+												<Button danger on:click={() => {
+													banModalUser = usr
+													banHasDuration = false
+													banDuration = undefined
+													banModal.open()
+												}}>Ban</Button>
+												<Button danger on:click={() => expulseUser(usr.id)}>Expulser</Button>
+											{/if}
 										{/if}
 									{/if}
-								{/if}
-								{#if isBlocked($user, usr.id)}
-									<Button on:click={() => unblockUser(usr.id)}>Unblock</Button>
-								{:else}
-									<Button on:click={() => blockUser(usr.id)}>Block</Button>
-								{/if}
-								{#if isFriend($user, usr.id)}
-									<Button on:click={() => removeFriend(usr.id)}>Unfollow</Button>
-								{:else}
-									<Button on:click={() => addFriend(usr.id)}>Follow</Button>
-								{/if}
-							</div>
+									{#if isBlocked($user, usr.id)}
+										<Button danger on:click={() => unblockUser(usr.id)}>Unblock</Button>
+									{:else}
+										<Button danger on:click={() => blockUser(usr.id)}>Block</Button>
+									{/if}
+									{#if isFriend($user, usr.id)}
+										<Button on:click={() => removeFriend(usr.id)}>Unfollow</Button>
+									{:else}
+										<Button on:click={() => addFriend(usr.id)}>Follow</Button>
+									{/if}
+								</div>
+							</details>
 						{/if}
 					{/each}
 				{/await}
@@ -402,6 +417,28 @@
 			<Button danger on:click="{leaveConfirmation.open()}">Leave channel</Button>
 		{/if}
 	{/await}
+</Modal>
+
+<Modal bind:this={banModal}>
+	<h2>Ban user</h2>
+	<p class="dim">Are you sure you want to ban <b>{banModalUser.nickname ?? banModalUser.fullname}</b> ?<p>
+	<div class="vflex">
+		<Toggle desc="Ban duration" bind:checked={banHasDuration}/>
+		{#if banHasDuration}
+			<div>
+				<input type="datetime-local" bind:value={banDuration}>
+			</div>
+		{/if}
+	</div>
+	<div class="vflex">
+		<Button on:click={() => {
+			banModal.close()
+		}}>Cancel</Button>
+		<Button danger on:click={() => {
+			banUser(banModalUser.id, banHasDuration && banDuration)
+			banModal.close()
+		}}>Ban</Button>
+	</div>
 </Modal>
 
 <Modal bind:this={deleteConfirmation}>

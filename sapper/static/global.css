@@ -163,3 +163,24 @@ input[type="text"], input[type="password"] {
 	font-size: 30px;
 	margin-bottom: 10px;
 }
+
+summary {
+	display: flex;
+	position: relative;
+	border: 1px solid var(--bord);
+	padding: 10px;
+	border-radius: 5px;
+}
+summary[open]::after {
+	content: '▲';
+}
+summary::after {
+	cursor: pointer;
+	padding: 10px;
+	position: absolute;
+	top: 13px;
+	right: 10px;
+	color: var(--whit);
+	font-size: 1.2em;
+	content: '▼';
+}
