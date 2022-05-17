@@ -16,7 +16,6 @@
 	const { page } = stores()
 
 	let settings
-	let settingsAdmin
 	let banModal
 	let deleteConfirmation
 	let leaveConfirmation
@@ -127,11 +126,12 @@
 
 	async function removeAdminAccess(): Promise<void> {
 		await fetch(`/api/channel/${id_room}/removeMeAdmin`, { method: 'DELETE' })
-		settings.close();
+		settings.close()
 	}
 
 	async function addAdmin(id: number): Promise<void> {
 		await postjson(`/api/channel/${id_room}/addAdmin`, {id_user: id})
+		infoChannel = infoChannel
 	}
 
 	async function removeAdmin(id: number): Promise<void> {
@@ -140,6 +140,7 @@
 			headers: {'Content-Type': 'application/json'},
 			body: JSON.stringify({ id_user: id })
 		})
+		infoChannel = infoChannel
 	}
 
 	async function expulseUser(id: number): Promise<void> {
@@ -148,6 +149,8 @@
 			headers: {'Content-Type': 'application/json'},
 			body: JSON.stringify({ id_user: id })
 		})
+		infoChannel = infoChannel
+		getAdmin = getAdmin
 	}
 
 	async function banUser(id: number, date: string = null): Promise<void> {
@@ -156,6 +159,7 @@
 			ne rien faire
 		*/
 		await postjson(`/api/channel/${id_room}/ban`, {id_user: id, date})
+		getBanAdmin = getBanAdmin
 	}
 
 	async function unbanUser(id: number): Promise<void> {
@@ -164,6 +168,7 @@
 			headers: {'Content-Type': 'application/json'},
 			body: JSON.stringify({ id_user: id })
 		})
+		getBanAdmin = getBanAdmin
 	}
 
 	async function blockUser(id: number): Promise<void> {
@@ -349,7 +354,6 @@
 				saveSettingOwner(channel)
 				settings.close()
 			}}>Save</Button>
-			<Button on:click={() => settingsAdmin.open()}>Admin settings</Button>
 		{/if}
 
 		{#await getjson(`/api/channel/${id_room}/users`)}
@@ -369,9 +373,26 @@
 									</a>
 								</summary>
 								<div class="vflex">
+									{#if isOwner($user)}
+										{#if isAdminList(adminList, usr.id)}
+											<Button on:click={() => removeAdmin(usr.id)}>Remove admin</Button>
+										{:else}
+											<Button on:click={() => addAdmin(usr.id)}>Add admin</Button>
+										{/if}
+									{/if}
+									{#if isBlocked($user, usr.id)}
+										<Button on:click={() => unblockUser(usr.id)}>Unblock</Button>
+									{:else}
+										<Button on:click={() => blockUser(usr.id)}>Block</Button>
+									{/if}
+									{#if isFriend($user, usr.id)}
+										<Button on:click={() => removeFriend(usr.id)}>Unfollow</Button>
+									{:else}
+										<Button on:click={() => addFriend(usr.id)}>Follow</Button>
+									{/if}
 									{#if isAdmin($user) || isOwner($user)}
 										{#if isBan(banList, usr.id)}
-											<Button on:click={() => unbanUser(usr.id)}>Unban</Button>
+											<Button danger on:click={() => unbanUser(usr.id)}>Unban</Button>
 										{:else}
 											{#if !isAdminList(adminList, usr.id)
 											|| (isAdminList(adminList, usr.id) && isOwner($user))}
@@ -384,16 +405,6 @@
 												<Button danger on:click={() => expulseUser(usr.id)}>Expulser</Button>
 											{/if}
 										{/if}
-									{/if}
-									{#if isBlocked($user, usr.id)}
-										<Button danger on:click={() => unblockUser(usr.id)}>Unblock</Button>
-									{:else}
-										<Button danger on:click={() => blockUser(usr.id)}>Block</Button>
-									{/if}
-									{#if isFriend($user, usr.id)}
-										<Button on:click={() => removeFriend(usr.id)}>Unfollow</Button>
-									{:else}
-										<Button on:click={() => addFriend(usr.id)}>Follow</Button>
 									{/if}
 								</div>
 							</details>
@@ -456,49 +467,6 @@
 	{/await}
 </Modal>
 
-<!-- Reload this modal after click button -->
-<Modal bind:this={settingsAdmin}>
-	<h2>Administrator Settings</h2>
-
-	<h3>Actual administrator</h3>
-	{#await getjson(`/api/channel/${id_room}/usersAdmin`)}
-		<p class="dim">Loading administrator</p>
-	{:then admins}
-		{#if admins.length}
-			<div class="vflex">
-				{#each admins as admin}
-					<div class="flex-between">
-						<p>{admin.fullname}</p>
-						<Button on:click={() => removeAdmin(admin.id)}>Remove admin</Button>
-					</div>
-				{/each}
-			</div>
-		{:else}
-			<p class="dim">No Admin in this chat</p>
-		{/if}
-	{/await}
-
-	<h3>Other users</h3>
-	{#await getjson(`/api/channel/${id_room}/usersAccess`)}
-		<p class="dim">Loading Others users</p>
-	{:then UsersAccess}
-		{#if UsersAccess.length}
-			<div class="vflex">
-				{#each UsersAccess as usr}
-					<div class="flex-between">
-						<p>{usr.fullname}</p>
-						<Button on:click={() => addAdmin(usr.id)}>Add admin</Button>
-					</div>
-				{/each}
-			</div>
-		{:else}
-			<p class="dim">No users</p>
-		{/if}
-	{/await}
-
-	<Button on:click={settingsAdmin.close()}>Close</Button>
-</Modal>
-
 <Modal bind:this={leaveConfirmation}>
 	{#await infoChannel()}
 		<p class="dim">loading...</p>
@@ -514,9 +482,7 @@
 	{/await}
 </Modal>
 
-<Modal bind:this={askPassword} on:close={(e) => {
-	console.log('test', e)
-}}>
+<Modal bind:this={askPassword}>
 	<h2>This channel require a password</h2>
 	<form on:submit={async e => {
 		e.preventDefault()
