@@ -1,10 +1,18 @@
 <script>
+	import { onMount } from "svelte";
+
 	export let user
 
-	let total = user.matchs.length
-	let wins = user.matchs.filter(({ victory }) => victory.id === user.id).length
-	let lose = total - wins
-	let winratio = wins / total
+	let total
+	let wins
+	let lose
+	let winratio
+	onMount(() => {
+		total = user.matchs.length
+		wins = user.matchs.filter(({ victory }) => victory.id === user.id).length
+		lose = total - wins
+		winratio = wins / total
+	})
 </script>
 
 <style>
