@@ -5,4 +5,4 @@ EXPOSE 3001
 
 WORKDIR	/var/nestjs
 
-ENTRYPOINT	npm i && npm run dev
+ENTRYPOINT	npm i && npm run build && npm run start

@@ -9,4 +9,4 @@ WORKDIR	/var/sapper
 
 USER node
 
-ENTRYPOINT	npm i && npm run dev
+ENTRYPOINT	npm i && npm run build && npm run start
