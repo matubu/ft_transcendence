@@ -47,8 +47,12 @@ export class WsAdapter implements WebSocketAdapter {
 				client.terminate()
 				return ;
 			}
-			const data = JSON.parse(msg.slice(idx + 1))
-			map[channel]?.(data)
+			try {
+				const data = JSON.parse(msg.slice(idx + 1))
+				map[channel]?.(data)
+			} catch (e) {
+				console.log(e)
+			}
 		})
 	}
 

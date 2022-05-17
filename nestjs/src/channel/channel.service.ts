@@ -167,7 +167,9 @@ export class ChannelService {
 	async addAccess(id_user: number, id_channel: string, password?: string): Promise<AccessChannel>
 	{
 		const channel = await this.getIncludePassword(id_channel);
-		if (channel != undefined && channel.password != "")
+		if (channel == undefined)
+			throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
+		if (channel.password_is_set)
 			if (password == undefined || await bcrypt.compare(password, channel.password) == false)
 				throw new UnauthorizedException()
 		return this.accessChannelService.insert(id_user, id_channel);
@@ -278,7 +280,7 @@ export class ChannelService {
 	}
 
 	async changeToPrivate(userId: number, channelId: string): Promise<Channel> {
-		const channel = await this.get(channelId);
+		let channel = await this.get(channelId);
 		if (userId != channel.owner.id)
 			throw new UnauthorizedException();
 		channel.private = true;
@@ -286,7 +288,7 @@ export class ChannelService {
 	}
 
 	async changeToNotPrivate(userId: number, channelId: string): Promise<Channel> {
-		const channel = await this.get(channelId);
+		let channel = await this.get(channelId);
 		if (userId != channel.owner.id)
 			throw new UnauthorizedException();
 		channel.private = false;
@@ -294,7 +296,7 @@ export class ChannelService {
 	}
 
 	async deletePassword(channelId: string, userId: number): Promise<Channel> {
-		const channel = await this.get(channelId);
+		let channel = await this.get(channelId);
 		if (userId != channel.owner.id)
 			throw new UnauthorizedException();
 		channel.password_is_set = false;
@@ -303,7 +305,7 @@ export class ChannelService {
 	}
 
 	async setPassword(channelId: string, userId: number, password: string): Promise<Channel> {
-		const channel = await this.get(channelId);
+		let channel = await this.get(channelId);
 		if (userId != channel.owner.id)
 			throw new UnauthorizedException();
 		if (password !== undefined && password.length >= 1)
