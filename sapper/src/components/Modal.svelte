@@ -1,16 +1,19 @@
 <script>
-	import { createEventDispatcher } from 'svelte'
+	import { createEventDispatcher, tick } from 'svelte'
 
 	const dispatch = createEventDispatcher()
 
 	export let opened = false
 
 	export function toggle(_opened = !opened) {
-		if (opened = _opened)
-			requestAnimationFrame(() => dispatch('open'))
-		else
-			requestAnimationFrame(() => dispatch('close'))
-		requestAnimationFrame(() => dispatch('toggle'))
+		opened = _opened
+		tick().then(() => {
+			if (opened)
+				dispatch('open')
+			else
+				dispatch('close')
+			dispatch('toggle')
+		})
 	}
 	export function close() { toggle(false) }
 	export function open() { toggle(true) }

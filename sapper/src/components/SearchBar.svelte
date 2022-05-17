@@ -63,7 +63,7 @@
 	{#if results}
 		<div class="vflex">
 			{#await results}
-				<p>loading...</p>
+				<p class="dim">loading...</p>
 			{:then res} 
 				{#if res.length}
 					{#each res as result}

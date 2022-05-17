@@ -6,12 +6,13 @@
 	import Modal from '@components/Modal.svelte'
 	import Toggle from '@components/Toggle.svelte'
 	import { useMediaQuery } from '@lib/store'
-	import { writable } from 'svelte/store'
+	import { writable, get } from 'svelte/store'
 	import { fetchUser, postjson } from '@lib/utils'
 	import { onMount } from 'svelte';
 
 	let modalNewChat
 	let formNewChat
+	let newChatInput
 
 	let mediaQuery = useMediaQuery('(max-width: 800px)')
 
@@ -20,8 +21,7 @@
 	const reloadChatList = async () => {
 		let res = await fetch('/api/channel')
 		if (!res.ok) return ;
-		let json = await res.json()
-		rooms.set(json)
+		rooms.set(await res.json())
 	}
 	if (typeof document !== 'undefined')
 		onMount(reloadChatList)
@@ -52,19 +52,20 @@
 	{/if}
 </Button>
 
-<Modal bind:this={modalNewChat}>
+<Modal bind:this={modalNewChat} on:open={() => {
+	newChatInput.focus()
+}}>
 	<h2>Create chat</h2>
 	<form bind:this={formNewChat} on:submit={async e => {
 		e.preventDefault()
 		const { password, mode, ...args } = Object.fromEntries([...formNewChat.querySelectorAll('input, textarea')].map(elm => [elm.name, elm.name === 'mode' ? elm.checked : elm.value]))
-		await postjson('/api/channel', { password, private: mode, ...args })
+		rooms.set([ await (await postjson('/api/channel', { password, private: mode, ...args })).json(), ...get(rooms) ])
 		modalNewChat.close()
-		reloadChatList()
 		fetchUser()
 	}}>
 		<label>
 			Chat<br>
-			<input type="text" placeholder="Chat name" required name="name">
+			<input type="text" placeholder="Chat name" required name="name" bind:this={newChatInput}>
 		</label>
 		<label>
 			Description<br>

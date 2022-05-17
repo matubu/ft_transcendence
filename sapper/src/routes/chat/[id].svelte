@@ -54,12 +54,7 @@
 	if (typeof document !== 'undefined')
 	{
 		onMount(async () => {
-			hasAccess = get(user)
-				&& (get(user).ownerChannels.some(channel => channel.id === id_room)
-				|| get(user).adminChannels.some(channel => channel.id === id_room)
-				|| get(user).accessChannels.some(channel => channel.id === id_room))
-			if (hasAccess) {
-				loadChat()
+			if (await loadChat()) {
 				await tick()
 				msg.focus()
 			}
@@ -210,26 +205,19 @@
 		return false;
 	}
 
-
-	let banList:any = undefined, adminList:any = undefined;
-
 	async function getUserBan(): Promise<any> {
-		banList = await getjson(`/api/channel/${id_room}/usersBan`);
-		return banList;
+		return await getjson(`/api/channel/${id_room}/usersBan`);
 	}
 
 	async function getAdmin(): Promise<any> {
-		adminList = await getjson(`/api/channel/${id_room}/usersAdmin`);
-		return adminList;
+		return await getjson(`/api/channel/${id_room}/usersAdmin`);
 	}
 
-	async function getBanAdmin(): Promise<boolean> {
-		await getUserBan();
-		await getAdmin();
-		return true;
+	async function getBanAdmin(): Promise<any[]> {
+		return [await getUserBan(), await getAdmin()];
 	}
 
-	function isBan(banId: number): boolean {
+	function isBan(banList: any[], banId: number): boolean {
 		if (banList === undefined)
 			return false;
 		for (let i = 0; i < banList.length; i++) {
@@ -239,7 +227,7 @@
 		return false;
 	}
 
-	function isAdminList(adminId: number) {
+	function isAdminList(adminList: any[], adminId: number) {
 		if (adminList === undefined)
 			return false;
 		for (let i = 0; i < adminList.length; i++) {
@@ -277,9 +265,6 @@
 		justify-content: space-between;
 		align-items: center;
 		gap: 10px;
-	}
-	.member {
-		align-items: center;
 	}
 </style>
 
@@ -366,57 +351,55 @@
 			Loading users
 		{:then users}
 			{#if users.length > 1}
-				{#if (isAdmin($user) || isOwner($user)) && getBanAdmin()}
-					<p>Admin Mode</p>
-				{/if}
-				{#each users as usr}
-					{#if usr.id != $user.id}
-						<div class="flex-between">
-							<p>{usr.fullname}</p>
-							{#if isAdmin($user) || isOwner($user)}
-								{#if isBan(usr.id)}
-									<Button on:click={() => unbanUser(usr.id)}>Unban</Button>
-								{:else}
-									{#if !isAdminList(usr.id)
-									|| (isAdminList(usr.id) && isOwner($user))}
-										<input type="datetime-local" bind:value={dateBan}>
-										<Button on:click={() => banUser(usr.id)}>Ban forever</Button>
-										<Button on:click={() => banUser(usr.id, dateBan)}>Ban duration</Button>
-										<Button on:click={() => expulseUser(usr.id)}>Expulser</Button>
+				{#await getBanAdmin()}
+					loading...
+				{:then [ banList, adminList ]}
+					{#each users as usr}
+						{#if usr.id != $user.id}
+							<div class="flex-between">
+								<p>{usr.fullname}</p>
+								{#if isAdmin($user) || isOwner($user)}
+									{#if isBan(banList, usr.id)}
+										<Button on:click={() => unbanUser(usr.id)}>Unban</Button>
+									{:else}
+										{#if !isAdminList(adminList, usr.id)
+										|| (isAdminList(adminList, usr.id) && isOwner($user))}
+											<input type="datetime-local" bind:value={dateBan}>
+											<Button on:click={() => banUser(usr.id)}>Ban forever</Button>
+											<Button on:click={() => banUser(usr.id, dateBan)}>Ban duration</Button>
+											<Button on:click={() => expulseUser(usr.id)}>Expulser</Button>
+										{/if}
 									{/if}
 								{/if}
-							{/if}
-							{#if isBlocked($user, usr.id)}
-								<Button on:click={() => unblockUser(usr.id)}>Unblock</Button>
-							{:else}
-								<Button on:click={() => blockUser(usr.id)}>Block</Button>
-							{/if}
-							{#if isFriend($user, usr.id)}
-								<Button on:click={() => removeFriend(usr.id)}>Unfollow</Button>
-							{:else}
-								<Button on:click={() => addFriend(usr.id)}>Follow</Button>
-							{/if}
-						</div>
-					{/if}
-				{/each}
+								{#if isBlocked($user, usr.id)}
+									<Button on:click={() => unblockUser(usr.id)}>Unblock</Button>
+								{:else}
+									<Button on:click={() => blockUser(usr.id)}>Block</Button>
+								{/if}
+								{#if isFriend($user, usr.id)}
+									<Button on:click={() => removeFriend(usr.id)}>Unfollow</Button>
+								{:else}
+									<Button on:click={() => addFriend(usr.id)}>Follow</Button>
+								{/if}
+							</div>
+						{/if}
+					{/each}
+				{/await}
 			{:else}
-				<p>No user found in this channel</p>
+				<p class="dim">No user found in this channel</p>
 			{/if}
 		{/await}
 
-		{#if isAdmin($user) || isOwner($user)}
-			<h3>Dangerous</h3>
-		{/if}
 		{#if isOwner($user)}
 			<Button danger on:click="{() => deleteConfirmation.open()}">Delete channel</Button>
 		{/if}
 		{#if isAdmin($user) && !isOwner($user)}
 			<p class="dim">You must remove your admin access to leave channel</p>
-			<Button on:click="{removeAdminAccess}">Remove my administrator access</Button>
+			<Button danger on:click="{removeAdminAccess}">Remove my access administrator</Button>
 		{/if}
 		{#if !isAdmin($user) && !isOwner($user)}
 			<p class="dim">Your messages will not be deleted</p>
-			<Button on:click="{leaveConfirmation.open()}">Leave channel</Button>
+			<Button danger on:click="{leaveConfirmation.open()}">Leave channel</Button>
 		{/if}
 	{/await}
 </Modal>
@@ -442,7 +425,7 @@
 
 	<h3>Actual administrator</h3>
 	{#await getjson(`/api/channel/${id_room}/usersAdmin`)}
-		Loading administrator
+		<p class="dim">Loading administrator</p>
 	{:then admins}
 		{#if admins.length}
 			<div class="vflex">
@@ -460,7 +443,7 @@
 
 	<h3>Other users</h3>
 	{#await getjson(`/api/channel/${id_room}/usersAccess`)}
-		Loading Others users
+		<p class="dim">Loading Others users</p>
 	{:then UsersAccess}
 		{#if UsersAccess.length}
 			<div class="vflex">
@@ -507,7 +490,7 @@
 		}
 	}}>
 		<input type="password" placeholder="Password" bind:this={askPasswordField} >
-		<div class="vflex">
+		<div class="vflex" style="width: 100%">
 			<Button on:click={e => {
 				e.preventDefault()
 				goto('/chat')
