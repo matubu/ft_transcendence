@@ -206,8 +206,8 @@ export class AppGateway {
 		if (match === undefined) return;
 		match.endGame(match.getOpponent(client))
 		this.matchMap.delete(id)
-		this.updateStatusListener(match.players[0])
-		this.updateStatusListener(match.players[1])
+		this.updateStatusListener(match.players[0].userId)
+		this.updateStatusListener(match.players[1].userId)
 	}
 
 	sendGameData(match, data) {
@@ -317,8 +317,8 @@ export class AppGateway {
 		match.updateScore(client, gameScore)
 		if (match.isFinish()) {
 			this.matchMap.delete(id)
-			this.updateStatusListener(match.players[0])
-			this.updateStatusListener(match.players[1])
+			this.updateStatusListener(match.players[0].userId)
+			this.updateStatusListener(match.players[1].userId)
 		}
 		else
 			send(client, 'matchScore', match.getScore(client))
