@@ -1,0 +1,23 @@
+{
+    "type": "postgres",
+    "host": "postgres",
+    "port": 5432,
+    "username": "postgres",
+    "password": "123",
+    "database": "transcendence",
+    "entities": ["./dist/access-channel/access-channel.entity.js",
+                "./dist/achievement/achievement.entity.js",
+                "./dist/admin-channel/admin-channel.entity.js",
+                "./dist/blacklist-channel/blacklist-channel.entity.js",
+                "./dist/channel/channel.entity.js",
+                "./dist/dfa/dfa.entity.js",
+                "./dist/friend/friend.entity.js",
+                "./dist/match/match.entity.js",
+                "./dist/message/message.entity.js",
+                "./dist/notification/notification.entity.js",
+                "./dist/picture/picture.entity.js",
+                "./dist/user/user.entity.js",
+                "./dist/user-achievement/user-achievement.entity.js",
+				"./dist/block/block.entity.js"],
+    "synchronize": true
+}

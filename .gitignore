@@ -25,5 +25,5 @@ nestjs/upload/tmp/*
 !nestjs/upload/tmp/.gitkeep
 
 # Env
-.env
-nestjs/ormconfig.json
+#.env
+#nestjs/ormconfig.json
