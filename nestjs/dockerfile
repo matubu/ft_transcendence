@@ -1,5 +1,8 @@
 FROM node:current-alpine
 
+RUN apk add tzdata
+RUN cp /usr/share/zoneinfo/Europe/Paris /etc/localtime
+
 # (API)
 # EXPOSE 3000
 # (Websocket)

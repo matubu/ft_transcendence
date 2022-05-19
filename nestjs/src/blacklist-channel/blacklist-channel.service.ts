@@ -22,13 +22,14 @@ export class BlacklistChannelService {
 	{
 		const user = await this.userService.get(id_user, []);
 		const channel = await this.channelService.get(id_channel);
-		const blacklist = await this.blackListRepository.findOne({ where: { user: user, channel: channel } });
+		const blacklist = await this.blackListRepository.findOne({ where: { user: user, channel: channel },
+																	relations: ["user"] });
 		if (blacklist == null || blacklist == undefined)
 			return false;
 		if (blacklist.date.toString() != new Date("1970-01-01 00:00:00").toString()
 		&& new Date() >= blacklist.date)
 		{
-			this.unban(blacklist.user.id, blacklist.channel.id);
+			await this.unban(blacklist.user.id, blacklist.channel.id);
 			return false;
 		}
 		return true;
@@ -44,7 +45,7 @@ export class BlacklistChannelService {
 		{
 			if (listBan[i].date.toString() != new Date("1970-01-01 00:00:00").toString()
 				&& new Date() >= listBan[i].date)
-				this.unban(listBan[i].user.id, listBan[i].channel.id);
+				await this.unban(listBan[i].user.id, listBan[i].channel.id);
 			else
 				users.push(listBan[i].user);
 		}
