@@ -54,9 +54,7 @@
 		{#if ($user?.id !== data.id)}
 			<div class="flex">
 				<Button href="/play/duel/{$user.id}-{data.id}">Duel</Button>
-				<Button href="/api/channel/friend/{data.id}">
-					Chat
-				</Button>
+				<Button href="/api/channel/friend/{data.id}">Chat</Button>
 				{#if ($user.blockList.find(({ blockedId }) => blockedId === data.id))}
 					<Button on:click={async () => {
 						await postjson('/api/block', {

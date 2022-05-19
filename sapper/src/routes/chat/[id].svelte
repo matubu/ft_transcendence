@@ -400,6 +400,8 @@
 									{:else}
 										<Button on:click={() => addFriend(usr.id)}>Follow</Button>
 									{/if}
+									<Button href="/play/duel/{$user.id}-{usr.id}">Duel</Button>
+									<Button href="/api/channel/friend/{usr.id}">Chat</Button>
 									{#if isAdmin($user) || isOwner($user)}
 										{#if isBan(banList, usr.id)}
 											<Button danger on:click={() => unbanUser(usr.id)}>Unban</Button>
