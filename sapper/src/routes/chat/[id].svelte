@@ -449,7 +449,7 @@
 		<Toggle desc="Ban duration" bind:checked={banHasDuration}/>
 		{#if banHasDuration}
 			<div>
-				<input type="datetime-local" bind:value={banDuration}>
+				<input required type="datetime-local" bind:value={banDuration}>
 			</div>
 		{/if}
 	</div>
