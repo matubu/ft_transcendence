@@ -1,4 +1,4 @@
-FROM node:17.8.0-alpine
+FROM node:current-alpine
 
 # (API)
 # EXPOSE 3000
